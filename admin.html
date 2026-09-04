@@ -1,450 +1,67 @@
 <!DOCTYPE html>
 <html dir="rtl" lang="fa">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<link rel="preconnect" href="https://script.google.com" crossorigin>
-<link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
-<link rel="dns-prefetch" href="//script.google.com">
-<title>🔐 پنل مدیریت لایسنس - همیار نت</title>
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;900&display=swap" rel="stylesheet"/>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet"/>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://dmvttrdvarysgyuzfhgg.supabase.co" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<title>🔐 پنل مدیریت حرفه‌ای همیار نت</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
 <style>
-:root { --primary:#0d6efd; --bg:#f4f7fb; --card:#fff; --text:#2c3345; --muted:#8a93a5; --radius:14px; --success:#198754; --danger:#dc3545; }
-* { box-sizing:border-box; }
-body { font-family:'Vazirmatn',Tahoma,sans-serif; background:var(--bg); margin:0; color:var(--text); min-height:100vh; }
-.header { background:linear-gradient(135deg,#0d6efd,#6f42c1); color:#fff; text-align:center; padding:24px 16px; }
-.header h1 { margin:0; font-size:22px; }
-.container { max-width:1100px; margin:0 auto; padding:20px 14px; }
-.login-box { background:var(--card); max-width:400px; margin:60px auto; padding:36px; border-radius:20px; box-shadow:0 10px 40px rgba(0,0,0,.1); text-align:center; }
-.login-box input { width:100%; padding:12px; border:2px solid #e3e8f0; border-radius:12px; font-family:inherit; font-size:15px; margin:10px 0; text-align:center; }
-.btn { display:inline-flex; align-items:center; gap:8px; padding:11px 20px; border:none; border-radius:12px; cursor:pointer; font-family:inherit; font-weight:700; font-size:14px; transition:.2s; }
-.btn-primary { background:var(--primary); color:#fff; }
-.btn-success { background:var(--success); color:#fff; }
-.btn-danger { background:var(--danger); color:#fff; }
-.btn-outline { background:#fff; border:2px solid #e3e8f0; color:var(--text); }
-.btn:hover { filter:brightness(1.08); transform:translateY(-1px); }
-.card { background:var(--card); border-radius:var(--radius); padding:20px; margin-bottom:16px; box-shadow:0 2px 10px rgba(0,0,0,.05); }
-.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-@media(max-width:600px){ .grid-2 { grid-template-columns:1fr; } }
-table { width:100%; border-collapse:collapse; font-size:13px; }
-th, td { padding:10px 8px; text-align:right; border-bottom:1px solid #eef1f6; }
-th { background:#f8fafc; font-weight:700; position:sticky; top:0; }
-tr:hover { background:#f8fafc; }
-.status-active { color:var(--success); font-weight:700; }
-.status-expired { color:var(--danger); font-weight:700; }
-.status-disabled { color:#6c757d; font-weight:700; }
-.form-group { margin-bottom:12px; }
-.form-group label { display:block; font-size:13px; font-weight:600; margin-bottom:4px; color:#596273; }
-.form-group input, .form-group select { width:100%; padding:10px 12px; border:2px solid #e3e8f0; border-radius:10px; font-family:inherit; font-size:14px; }
-.actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:16px; }
-.hidden { display:none !important; }
-.btn-loading { opacity:.75; pointer-events:none; }
-.alert { padding:12px 16px; border-radius:10px; margin-bottom:14px; font-size:13px; }
-.alert-success { background:#e9f7ef; color:#198754; }
-.alert-error { background:#fdebec; color:#dc3545; }
-.stats { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:20px; }
-.stat { background:#fff; padding:14px 18px; border-radius:12px; min-width:120px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,.05); }
-.stat strong { display:block; font-size:22px; color:var(--primary); }
-.stat span { font-size:12px; color:var(--muted); }
-#adminContent { display:none; }
+:root{--p:#1769e0;--p2:#6d42d9;--bg:#f3f6fb;--card:#fff;--text:#20283a;--muted:#7d8799;--line:#e7ebf2;--ok:#168b57;--bad:#dc3b4a;--warn:#e49a19;--shadow:0 8px 30px rgba(30,50,90,.07);--r:18px}
+*{box-sizing:border-box}body{margin:0;font-family:Vazirmatn,Tahoma,sans-serif;background:var(--bg);color:var(--text)}button,input,select,textarea{font-family:inherit}.hidden{display:none!important}
+.header{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;padding:22px 18px;position:sticky;top:0;z-index:30;box-shadow:0 6px 25px #23408020}.headin{max-width:1250px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:15px}.brand h1{font-size:21px;margin:0}.brand p{font-size:11px;opacity:.82;margin:5px 0 0}.head-actions{display:flex;gap:8px;flex-wrap:wrap}.hbtn{background:#ffffff1c;border:1px solid #ffffff45;color:#fff;border-radius:12px;padding:9px 12px;cursor:pointer;font-weight:700}.hbtn:hover{background:#ffffff2c}
+.wrap{max-width:1250px;margin:auto;padding:22px 14px 50px}.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px}.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:17px;box-shadow:var(--shadow)}.stat .ico{font-size:18px;color:var(--p);margin-bottom:7px}.stat strong{display:block;font-size:26px}.stat span{color:var(--muted);font-size:12px}
+.grid{display:grid;grid-template-columns:1.05fr .95fr;gap:16px}.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:19px;box-shadow:var(--shadow);margin-bottom:16px}.title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:15px}.title h2,.title h3{font-size:16px;margin:0}.sub{font-size:11px;color:var(--muted)}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:11px}.fg label{display:block;font-size:12px;font-weight:700;color:#5d6779;margin-bottom:5px}.fg input,.fg select,.fg textarea{width:100%;border:1px solid var(--line);background:#fbfcfe;border-radius:11px;padding:10px 11px;outline:none;font-size:13px}.fg textarea{min-height:72px;resize:vertical}.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:#8bb2ef;box-shadow:0 0 0 3px #1769e012}.full{grid-column:1/-1}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.btn{border:0;border-radius:11px;padding:10px 13px;cursor:pointer;font-weight:700;font-size:12px;display:inline-flex;align-items:center;gap:7px}.primary{background:var(--p);color:#fff}.success{background:var(--ok);color:#fff}.danger{background:var(--bad);color:#fff}.outline{background:#fff;border:1px solid var(--line);color:var(--text)}.warn{background:#fff5dd;color:#a36a00;border:1px solid #f3d899}.btn:disabled{opacity:.55;cursor:not-allowed}.searchbar{display:grid;grid-template-columns:1fr 170px 170px auto;gap:9px;margin-bottom:12px}.searchbar input,.searchbar select{border:1px solid var(--line);border-radius:11px;padding:10px;background:#fff;font-family:inherit}.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:13px;max-height:570px}table{width:100%;border-collapse:collapse;min-width:930px;font-size:12px}th,td{padding:11px 9px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}th{background:#f8fafd;position:sticky;top:0;z-index:2;font-weight:800}tr:hover td{background:#fbfcff}.key{direction:ltr;font-family:ui-monospace,monospace;font-weight:700}.badge{display:inline-flex;border-radius:30px;padding:4px 8px;font-size:10px;font-weight:800}.b-ok{background:#e8f7ef;color:var(--ok)}.b-bad{background:#fdebed;color:var(--bad)}.b-warn{background:#fff3d9;color:#a66a00}.b-gray{background:#eef1f5;color:#697386}.rowbtn{padding:6px 8px;border-radius:8px;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:11px}.rowbtn:hover{background:#f5f7fb}.menu{display:flex;gap:6px;flex-wrap:wrap}.alert{border-radius:11px;padding:10px 12px;font-size:12px;margin-bottom:12px}.a-ok{background:#eaf8f0;color:var(--ok)}.a-bad{background:#fff0f1;color:var(--bad)}
+.overlay{position:fixed;inset:0;background:#11182766;display:none;align-items:center;justify-content:center;padding:15px;z-index:100}.modal{width:min(620px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:20px;padding:20px;box-shadow:0 25px 80px #0004}.modal h3{margin:0 0 15px}.close{float:left;border:0;background:#f1f3f7;border-radius:9px;padding:7px 10px;cursor:pointer}.device{border:1px solid var(--line);border-radius:12px;padding:12px;margin:8px 0;display:flex;justify-content:space-between;gap:10px;align-items:center}.device small{color:var(--muted);display:block;margin-top:4px}.log{border-bottom:1px solid var(--line);padding:10px 0}.log:last-child{border:0}.login{min-height:calc(100vh - 88px);display:flex;align-items:center;justify-content:center;padding:20px}.loginbox{width:min(420px,100%);background:#fff;border-radius:22px;padding:34px;box-shadow:0 15px 55px #263b6818;text-align:center;border:1px solid var(--line)}.loginbox .logo{width:70px;height:70px;border-radius:22px;background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;display:grid;place-items:center;font-size:28px;margin:0 auto 15px}.loginbox input{width:100%;padding:12px;border:1px solid var(--line);border-radius:12px;text-align:center;margin:12px 0}.loginbox button{width:100%}
+.dark{--bg:#101522;--card:#171e2d;--text:#edf2fa;--muted:#9ba7ba;--line:#2b3548}.dark .fg input,.dark .fg select,.dark .fg textarea,.dark .outline,.dark .rowbtn,.dark .searchbar input,.dark .searchbar select{background:#111827;color:var(--text);border-color:#2b3548}.dark th{background:#1c2535}.dark tr:hover td{background:#1b2434}.dark .loginbox{background:#171e2d}.dark .close{background:#263043;color:#fff}
+@media(max-width:900px){.stats{grid-template-columns:repeat(3,1fr)}.grid{grid-template-columns:1fr}.searchbar{grid-template-columns:1fr 1fr}.headin{align-items:flex-start}.head-actions{justify-content:flex-end}}@media(max-width:600px){.stats{grid-template-columns:1fr 1fr}.formgrid{grid-template-columns:1fr}.full{grid-column:auto}.searchbar{grid-template-columns:1fr}.header{padding:17px 12px}.brand h1{font-size:17px}.wrap{padding:14px 9px 40px}.card{padding:14px}.stat{padding:13px}.stat strong{font-size:21px}}
 </style>
-</head>
-<body>
-<div class="header">
-  <h1><i class="fa-solid fa-shield-halved"></i> پنل مدیریت لایسنس همیار نت</h1>
-  <p style="margin:6px 0 0;opacity:.85;font-size:13px;">طراحی و پشتیبانی: ۰۹۰۳۳۷۶۴۴۲۸ - ۰۹۹۹۹۹۳۰۷۱۹</p>
-</div>
-
-<!-- صفحه ورود ادمین -->
-<div id="adminLogin" class="login-box">
-  <i class="fa-solid fa-user-shield" style="font-size:42px;color:var(--primary);margin-bottom:12px;"></i>
-  <h2 style="margin:0 0 8px;">ورود مدیر</h2>
-  <p style="color:var(--muted);font-size:13px;">رمز عبور مدیریت را وارد کنید</p>
-  <input type="password" id="adminPass" placeholder="رمز عبور ادمین" onkeydown="if(event.key==='Enter') loginAdmin()"/>
-  <div id="loginErr" style="color:var(--danger);font-size:12px;min-height:18px;margin:8px 0;"></div>
-  <button class="btn btn-primary" style="width:100%;" onclick="loginAdmin()"><i class="fa-solid fa-right-to-bracket"></i> ورود</button>
-</div>
-
-<!-- محتوای اصلی ادمین -->
-<div id="adminContent" class="container">
-  <div class="stats" id="statsBox">
-    <div class="stat"><strong id="statTotal">0</strong><span>کل لایسنس‌ها</span></div>
-    <div class="stat"><strong id="statActive">0</strong><span>فعال</span></div>
-    <div class="stat"><strong id="statExpired">0</strong><span>منقضی</span></div>
-  </div>
-
-  <div class="card">
-    <h3 style="margin:0 0 14px;"><i class="fa-solid fa-plus-circle"></i> افزودن لایسنس جدید</h3>
-    <div class="grid-2">
-      <div class="form-group">
-        <label>نام مشتری</label>
-        <input type="text" id="custName" placeholder="نام یا نام کافی‌نت"/>
-      </div>
-      <div class="form-group">
-        <label>شماره تماس</label>
-        <input type="text" id="custPhone" placeholder="۰۹۱۲..."/>
-      </div>
-      <div class="form-group">
-        <label>مدت اعتبار (روز)</label>
-        <input type="number" id="durationDays" value="365" min="1"/>
-      </div>
-      <div class="form-group">
-        <label>تعداد دستگاه مجاز</label>
-        <input type="number" id="maxDevices" value="1" min="1" max="999"/>
-      </div>
-      <div class="form-group">
-        <label>یادداشت</label>
-        <input type="text" id="notes" placeholder="اختیاری"/>
-      </div>
-    </div>
-    <div class="actions">
-      <button class="btn btn-success" onclick="addLicense()"><i class="fa-solid fa-key"></i> تولید و ثبت لایسنس</button>
-      <button class="btn btn-outline" onclick="generateRandomKey()"><i class="fa-solid fa-shuffle"></i> تولید کلید تصادفی</button>
-    </div>
-    <div id="newKeyBox" class="alert alert-success hidden" style="margin-top:14px;">
-      لایسنس جدید: <strong id="newKeyText" style="direction:ltr;letter-spacing:1px;"></strong>
-      <button class="btn btn-outline" style="margin-right:10px;padding:4px 10px;font-size:12px;" onclick="copyKey()"><i class="fa-solid fa-copy"></i> کپی</button>
-    </div>
-  </div>
-
-  <div class="card">
-    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
-      <h3 style="margin:0;"><i class="fa-solid fa-list"></i> لیست لایسنس‌ها</h3>
-      <button id="refreshBtn" class="btn btn-outline" onclick="loadLicenses(true)"><i class="fa-solid fa-rotate"></i> بروزرسانی</button>
-    </div>
-    <div id="msgBox"></div>
-    <div style="overflow-x:auto;max-height:500px;">
-      <table>
-        <thead>
-          <tr>
-            <th>کلید لایسنس</th>
-            <th>مشتری</th>
-            <th>تماس</th>
-            <th>شروع</th>
-            <th>انقضا</th>
-            <th>دستگاه‌ها</th>
-            <th>وضعیت</th>
-            <th>عملیات</th>
-          </tr>
-        </thead>
-        <tbody id="licenseTable"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
+</head><body>
+<header class="header"><div class="headin"><div class="brand"><h1><i class="fa-solid fa-shield-halved"></i> پنل مدیریت حرفه‌ای همیار نت</h1><p>مدیریت مشتریان، لایسنس‌ها و دستگاه‌ها</p></div><div class="head-actions"><button class="hbtn" onclick="toggleDark()"><i class="fa-solid fa-moon"></i> حالت شب</button><button class="hbtn" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> خروج</button></div></div></header>
+<section id="login" class="login"><div class="loginbox"><div class="logo"><i class="fa-solid fa-user-shield"></i></div><h2>ورود مدیر</h2><p style="color:var(--muted);font-size:12px">برای ورود رمز مدیریت را وارد کنید</p><input id="pass" type="password" placeholder="رمز مدیریت" onkeydown="if(event.key==='Enter')loginAdmin()"><div id="loginErr" style="color:var(--bad);font-size:12px;min-height:18px"></div><button class="btn primary" onclick="loginAdmin()"><i class="fa-solid fa-right-to-bracket"></i> ورود به پنل</button></div></section>
+<main id="app" class="wrap hidden">
+<div id="msg"></div>
+<div class="stats"><div class="stat"><div class="ico"><i class="fa-solid fa-key"></i></div><strong id="sTotal">0</strong><span>کل لایسنس‌ها</span></div><div class="stat"><div class="ico"><i class="fa-solid fa-circle-check"></i></div><strong id="sActive">0</strong><span>فعال</span></div><div class="stat"><div class="ico"><i class="fa-solid fa-clock"></i></div><strong id="sSoon">0</strong><span>نزدیک انقضا</span></div><div class="stat"><div class="ico"><i class="fa-solid fa-circle-xmark"></i></div><strong id="sExpired">0</strong><span>منقضی</span></div><div class="stat"><div class="ico"><i class="fa-solid fa-desktop"></i></div><strong id="sDevices">0</strong><span>دستگاه‌های متصل</span></div></div>
+<div class="grid">
+<div class="card"><div class="title"><div><h2><i class="fa-solid fa-plus-circle"></i> ایجاد لایسنس</h2><div class="sub">صدور سریع لایسنس برای مشتری جدید</div></div></div><div class="formgrid"><div class="fg"><label>نام مشتری *</label><input id="name" placeholder="نام یا نام کافی‌نت"></div><div class="fg"><label>شماره تماس</label><input id="phone" placeholder="۰۹۱۲..." inputmode="tel"></div><div class="fg"><label>مدت اعتبار (روز)</label><input id="days" type="number" min="1" value="365"></div><div class="fg"><label>دستگاه مجاز</label><input id="max" type="number" min="1" value="1"></div><div class="fg full"><label>یادداشت</label><textarea id="notes" placeholder="یادداشت داخلی مدیر"></textarea></div></div><div class="actions"><button class="btn success" onclick="addLicense()"><i class="fa-solid fa-key"></i> تولید و ثبت</button><button class="btn outline" onclick="setGeneratedKey()"><i class="fa-solid fa-shuffle"></i> ساخت کلید</button></div><div id="generated" class="alert a-ok hidden" style="margin-top:12px">کلید جدید: <strong id="gkey" class="key"></strong> <button class="rowbtn" onclick="copyText(document.getElementById('gkey').textContent)"><i class="fa-solid fa-copy"></i> کپی</button></div></div>
+<div class="card"><div class="title"><div><h2><i class="fa-solid fa-chart-line"></i> وضعیت سریع</h2><div class="sub">هشدارهای مهم لایسنس‌ها</div></div><button class="btn outline" onclick="loadAll(true)"><i class="fa-solid fa-rotate"></i> بروزرسانی</button></div><div id="alerts"></div><div style="display:grid;gap:8px"><button class="btn outline" onclick="filterStatus('soon')"><i class="fa-solid fa-bell"></i> نمایش لایسنس‌های نزدیک انقضا</button><button class="btn outline" onclick="filterStatus('expired')"><i class="fa-solid fa-triangle-exclamation"></i> نمایش منقضی‌ها</button><button class="btn outline" onclick="exportCSV()"><i class="fa-solid fa-file-csv"></i> خروجی CSV</button><button class="btn outline" onclick="openLogs()"><i class="fa-solid fa-clock-rotate-left"></i> گزارش فعالیت مدیر</button></div></div></div>
+<div class="card"><div class="title"><div><h2><i class="fa-solid fa-key"></i> مدیریت لایسنس‌ها</h2><div class="sub">جستجو، تمدید، ویرایش، مدیریت دستگاه و حذف</div></div></div><div class="searchbar"><input id="search" placeholder="جستجو: کلید، نام، شماره تماس..." oninput="render()"><select id="filter" onchange="render()"><option value="all">همه وضعیت‌ها</option><option value="active">فعال</option><option value="disabled">غیرفعال</option><option value="expired">منقضی</option><option value="soon">نزدیک انقضا</option></select><select id="sort" onchange="render()"><option value="new">جدیدترین</option><option value="expiry">نزدیک‌ترین انقضا</option><option value="name">نام مشتری</option></select><button class="btn outline" onclick="resetFilters()"><i class="fa-solid fa-filter-circle-xmark"></i> پاک‌سازی</button></div><div class="tablewrap"><table><thead><tr><th>لایسنس</th><th>مشتری</th><th>تماس</th><th>انقضا</th><th>روز باقی‌مانده</th><th>دستگاه</th><th>وضعیت</th><th>عملیات</th></tr></thead><tbody id="rows"></tbody></table></div></div>
+</main>
+<div id="overlay" class="overlay"><div class="modal"><button class="close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button><div id="modalBody"></div></div></div>
 <script>
-// ========== تنظیمات ==========
-// این آدرس را بعد از دیپلوی اسکریپت گوگل تغییر دهید (همان آدرس فایل مشتری)
-const LICENSE_API = 'https://script.google.com/macros/s/AKfycbwA9gPSmsfbga_uWwPf1w_0k0hbswiP4eRyj2eEPZ-T6Dl4mzZQtsTicbwMylGOl76PJw/exec';
-// رمز عبور ادمین (در اسکریپت گوگل هم باید همین باشد)
-const ADMIN_PASSWORD = 'hamyarnet4428';
-
-let currentKey = '';
-let adminRequestInFlight = false;
-let licenseLoadInFlight = null;
-
-async function apiRequest(payload = null, query = '') {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 8000);
-  try {
-    let url = LICENSE_API;
-    const options = {
-      cache: 'no-store',
-      redirect: 'follow',
-      signal: controller.signal
-    };
-
-    if (payload) {
-      options.method = 'POST';
-      options.headers = { 'Content-Type': 'text/plain;charset=utf-8' };
-      options.body = JSON.stringify(payload);
-    } else {
-      options.method = 'GET';
-      url += query + (query.includes('?') ? '&' : '?') + '_=' + Date.now();
-    }
-
-    const res = await fetch(url, options);
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-
-    const raw = await res.text();
-    try {
-      return JSON.parse(raw);
-    } catch {
-      throw new Error('پاسخ سرور JSON معتبر نیست');
-    }
-  } finally {
-    clearTimeout(timeout);
-  }
-}
-
-async function loginAdmin() {
-  const pass = document.getElementById('adminPass').value;
-  const err = document.getElementById('loginErr');
-  if (pass !== ADMIN_PASSWORD) {
-    err.textContent = 'رمز عبور اشتباه است';
-    return;
-  }
-  document.getElementById('adminLogin').classList.add('hidden');
-  document.getElementById('adminContent').style.display = 'block';
-  loadLicenses(false);
-}
-
-function generateRandomKey() {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let key = 'HN-';
-  for (let i = 0; i < 4; i++) {
-    for (let j = 0; j < 4; j++) key += chars[Math.floor(Math.random() * chars.length)];
-    if (i < 3) key += '-';
-  }
-  currentKey = key;
-  document.getElementById('newKeyText').textContent = key;
-  document.getElementById('newKeyBox').classList.remove('hidden');
-  return key;
-}
-
-function copyKey() {
-  navigator.clipboard.writeText(document.getElementById('newKeyText').textContent);
-  alert('کپی شد!');
-}
-
-async function addLicense() {
-  if (adminRequestInFlight) return;
-  const name = document.getElementById('custName').value.trim();
-  const phone = document.getElementById('custPhone').value.trim();
-  const days = parseInt(document.getElementById('durationDays').value) || 365;
-  const notes = document.getElementById('notes').value.trim();
-  if (!name) { alert('نام مشتری را وارد کنید'); return; }
-  
-  if (!currentKey) generateRandomKey();
-  
-  const start = new Date();
-  const expiry = new Date();
-  expiry.setDate(expiry.getDate() + days);
-  
-  const payload = {
-    action: 'add',
-    adminPass: ADMIN_PASSWORD,
-    key: currentKey,
-    name: name,
-    phone: phone,
-    start: start.toISOString().slice(0,10),
-    expiry: expiry.toISOString().slice(0,10),
-    maxDevices: Math.max(1, parseInt(document.getElementById('maxDevices').value) || 1),
-    notes: notes
-  };
-  
-  adminRequestInFlight = true;
-  try {
-    const data = await apiRequest(payload);
-    if (data.ok) {
-      showMsg('لایسنس با موفقیت ثبت شد', 'success');
-      document.getElementById('custName').value = '';
-      document.getElementById('custPhone').value = '';
-      document.getElementById('notes').value = '';
-      document.getElementById('maxDevices').value = '1';
-      document.getElementById('durationDays').value = '365';
-      currentKey = '';
-      loadLicenses(false);
-    } else {
-      showMsg(data.message || 'خطا در ثبت', 'error');
-    }
-  } catch(e) {
-    showMsg('خطا در اتصال به سرور', 'error');
-  } finally {
-    adminRequestInFlight = false;
-  }
-}
-
-async function loadLicenses(showLoading = false) {
-  // جلوگیری از درخواست‌های همزمان غیرضروری
-  if (licenseLoadInFlight) return licenseLoadInFlight;
-
-  const btn = document.getElementById('refreshBtn');
-  const icon = btn ? btn.querySelector('i') : null;
-
-  licenseLoadInFlight = (async () => {
-    try {
-      if (showLoading && btn) {
-        btn.disabled = true;
-        btn.classList.add('btn-loading');
-        if (icon) icon.classList.add('fa-spin');
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> در حال بروزرسانی...';
-      }
-
-      const data = await apiRequest(
-        null,
-        '?action=list&adminPass=' + encodeURIComponent(ADMIN_PASSWORD)
-      );
-
-      if (!data.ok) {
-        showMsg(data.message || 'خطا در دریافت لیست', 'error');
-        return;
-      }
-
-      renderLicenses(data.licenses || []);
-
-      if (showLoading) showMsg('لیست لایسنس‌ها با موفقیت بروزرسانی شد', 'success');
-
-    } catch(e) {
-      showMsg('بروزرسانی انجام نشد: ' + (e.message || 'خطا در اتصال به سرور'), 'error');
-    } finally {
-      if (showLoading && btn) {
-        btn.disabled = false;
-        btn.classList.remove('btn-loading');
-        btn.innerHTML = '<i class="fa-solid fa-rotate"></i> بروزرسانی';
-      }
-      licenseLoadInFlight = null;
-    }
-  })();
-
-  return licenseLoadInFlight;
-}
-
-function renderLicenses(licenses) {
-  const tbody = document.getElementById('licenseTable');
-  tbody.innerHTML = '';
-
-  let total = 0, active = 0, expired = 0;
-
-  licenses.forEach(lic => {
-    total++;
-    const isExpired = new Date(lic.expiry) < new Date();
-    const status = lic.status === 'Disabled' ? 'disabled' : (isExpired ? 'expired' : 'active');
-    if (status === 'active') active++;
-    else if (status === 'expired') expired++;
-
-    const tr = document.createElement('tr');
-    tr.dataset.key = lic.key || '';
-    tr.innerHTML = `
-      <td style="direction:ltr;font-family:monospace;font-size:12px;">${lic.key || '-'}</td>
-      <td>${lic.name || '-'}</td>
-      <td>${lic.phone || '-'}</td>
-      <td>${lic.start || '-'}</td>
-      <td>${lic.expiry || '-'}</td>
-      <td style="text-align:center;white-space:nowrap;"><strong>${lic.activeDevices || 0}</strong> / ${lic.maxDevices || 1}</td>
-      <td class="status-${status}">${status === 'active' ? 'فعال' : status === 'expired' ? 'منقضی' : 'غیرفعال'}</td>
-      <td>
-        <button class="btn btn-outline" style="padding:4px 8px;font-size:11px;" onclick="toggleStatus('${lic.key}','${lic.status}')">
-          ${lic.status === 'Disabled' ? 'فعال‌سازی' : 'غیرفعال'}
-        </button>
-        <button class="btn btn-danger" style="padding:4px 8px;font-size:11px;" onclick="deleteLicense('${lic.key}')">حذف</button>
-      </td>
-    `;
-    tbody.appendChild(tr);
-  });
-
-  document.getElementById('statTotal').textContent = total;
-  document.getElementById('statActive').textContent = active;
-  document.getElementById('statExpired').textContent = expired;
-}
-
-async function toggleStatus(key, current) {
-  if (adminRequestInFlight) return;
-  const newStatus = current === 'Disabled' ? 'Active' : 'Disabled';
-  adminRequestInFlight = true;
-
-  try {
-    const data = await apiRequest({
-      action: 'updateStatus',
-      adminPass: ADMIN_PASSWORD,
-      key,
-      status: newStatus
-    });
-
-    if (data.ok) {
-      updateLicenseRowStatus(key, newStatus);
-      showMsg('وضعیت لایسنس تغییر کرد', 'success');
-    } else {
-      showMsg(data.message || 'خطا در تغییر وضعیت', 'error');
-    }
-  } catch(e) {
-    showMsg('خطا در تغییر وضعیت: ' + (e.message || ''), 'error');
-  } finally {
-    adminRequestInFlight = false;
-  }
-}
-
-function updateLicenseRowStatus(key, newStatus) {
-  const row = document.querySelector('#licenseTable tr[data-key="' + CSS.escape(key) + '"]');
-  if (!row) return;
-
-  const statusCell = row.children[6];
-  const actionBtn = row.children[7]?.querySelector('.btn-outline');
-
-  const isDisabled = newStatus === 'Disabled';
-  const isExpired = new Date(row.children[4].textContent.trim()) < new Date();
-  const visualStatus = isDisabled ? 'disabled' : (isExpired ? 'expired' : 'active');
-
-  statusCell.className = 'status-' + visualStatus;
-  statusCell.textContent = visualStatus === 'active' ? 'فعال' : visualStatus === 'expired' ? 'منقضی' : 'غیرفعال';
-
-  if (actionBtn) {
-    actionBtn.textContent = isDisabled ? 'فعال‌سازی' : 'غیرفعال';
-    actionBtn.setAttribute('onclick', "toggleStatus('" + key.replace(/'/g, "\\'") + "','" + newStatus + "')");
-  }
-
-  updateStatsFromTable();
-}
-
-async function deleteLicense(key) {
-  if (adminRequestInFlight) return;
-  if (!confirm('آیا از حذف این لایسنس مطمئن هستید؟')) return;
-
-  adminRequestInFlight = true;
-  try {
-    const data = await apiRequest({
-      action: 'delete',
-      adminPass: ADMIN_PASSWORD,
-      key
-    });
-
-    if (data.ok) {
-      const row = document.querySelector('#licenseTable tr[data-key="' + CSS.escape(key) + '"]');
-      if (row) row.remove();
-      updateStatsFromTable();
-      showMsg('لایسنس با موفقیت حذف شد', 'success');
-    } else {
-      showMsg(data.message || 'خطا در حذف', 'error');
-    }
-  } catch(e) {
-    showMsg('خطا در حذف: ' + (e.message || ''), 'error');
-  } finally {
-    adminRequestInFlight = false;
-  }
-}
-
-function updateStatsFromTable() {
-  const rows = document.querySelectorAll('#licenseTable tr');
-  let total = 0, active = 0, expired = 0;
-  rows.forEach(row => {
-    total++;
-    const cls = row.children[6]?.className || '';
-    if (cls.includes('status-active')) active++;
-    else if (cls.includes('status-expired')) expired++;
-  });
-  document.getElementById('statTotal').textContent = total;
-  document.getElementById('statActive').textContent = active;
-  document.getElementById('statExpired').textContent = expired;
-}
-
-function showMsg(text, type) {
-  const box = document.getElementById('msgBox');
-  box.innerHTML = `<div class="alert alert-${type}">${text}</div>`;
-  setTimeout(() => box.innerHTML = '', 4000);
-}
-// گرم‌کردن اتصال به API برای کاهش تأخیر اولین درخواست
-document.addEventListener('DOMContentLoaded', () => {
-  try {
-    fetch(LICENSE_API + '?action=ping&_=' + Date.now(), {
-      method: 'GET',
-      cache: 'no-store',
-      credentials: 'omit',
-      keepalive: true
-    }).catch(() => {});
-  } catch (e) {}
-});
-</script>
-</body>
-</html>
+const API='https://dmvttrdvarysgyuzfhgg.supabase.co/functions/v1/hamyar-api';
+let PASS=sessionStorage.getItem('hamyar_admin_password')||'';let licenses=[];let currentKey='';let busy=false;let filteredMode='all';
+const $=id=>document.getElementById(id);const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+async function api(payload){const c=new AbortController();const t=setTimeout(()=>c.abort(),10000);try{const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),cache:'no-store',credentials:'omit',signal:c.signal});const txt=await r.text();let d;try{d=JSON.parse(txt)}catch{throw Error('پاسخ سرور معتبر نیست')};if(!r.ok){const e=Error(d.message||('HTTP '+r.status));e.status=r.status;throw e}return d}finally{clearTimeout(t)}}
+async function loginAdmin(){const p=$('pass').value.trim();$('loginErr').textContent='';if(!p){$('loginErr').textContent='رمز مدیریت را وارد کنید';return}try{const d=await api({action:'list',adminPass:p});if(!d.ok)throw Error(d.message||'ورود ناموفق بود');PASS=p;sessionStorage.setItem('hamyar_admin_password',p);$('login').classList.add('hidden');$('app').classList.remove('hidden');licenses=d.licenses||[];render();updateDashboard()}catch(e){$('loginErr').textContent=e.message||'خطا در اتصال'}}
+function logout(){PASS='';sessionStorage.removeItem('hamyar_admin_password');$('app').classList.add('hidden');$('login').classList.remove('hidden');$('pass').value='';}
+function toggleDark(){document.body.classList.toggle('dark');localStorage.setItem('hamyar_admin_dark',document.body.classList.contains('dark')?'1':'0')}
+function gen(){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let k='HN-';for(let i=0;i<4;i++){for(let j=0;j<4;j++)k+=c[Math.floor(Math.random()*c.length)];if(i<3)k+='-'}return k}
+function setGeneratedKey(){currentKey=gen();$('gkey').textContent=currentKey;$('generated').classList.remove('hidden')}
+async function copyText(t){try{await navigator.clipboard.writeText(t);toast('کپی شد','ok')}catch{toast('کپی انجام نشد','bad')}}
+async function addLicense(){if(busy)return;const name=$('name').value.trim();if(!name){toast('نام مشتری را وارد کنید','bad');return}if(!currentKey)setGeneratedKey();const days=Math.max(1,parseInt($('days').value)||365),max=Math.max(1,parseInt($('max').value)||1);busy=true;try{const d=await api({action:'add',adminPass:PASS,key:currentKey,name,phone:$('phone').value.trim(),durationDays:days,maxDevices:max,notes:$('notes').value.trim()});if(!d.ok)throw Error(d.message||'ثبت نشد');toast('لایسنس با موفقیت ثبت شد','ok');$('name').value='';$('phone').value='';$('notes').value='';$('max').value='1';$('days').value='365';await loadAll(false);currentKey=''}catch(e){toast(e.message||'خطا در ثبت','bad')}finally{busy=false}}
+function state(l){if(l.status==='Disabled')return'disabled';if(l.expired||!l.expiry)return'expired';if(l.remaining<=7)return'soon';return'active'}
+function stateBadge(s){return s==='active'?'<span class="badge b-ok">فعال</span>':s==='soon'?'<span class="badge b-warn">نزدیک انقضا</span>':s==='expired'?'<span class="badge b-bad">منقضی</span>':'<span class="badge b-gray">غیرفعال</span>'}
+function render(){const q=$('search').value.trim().toLowerCase();let arr=licenses.filter(l=>{const s=state(l);const f=$('filter').value;const text=(l.key+' '+l.name+' '+l.phone).toLowerCase();return(!q||text.includes(q))&&(f==='all'||s===f)});const so=$('sort').value;if(so==='expiry')arr.sort((a,b)=>String(a.expiry).localeCompare(String(b.expiry)));else if(so==='name')arr.sort((a,b)=>String(a.name).localeCompare(String(b.name),'fa'));else arr.sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt)));$('rows').innerHTML=arr.length?arr.map(l=>{const s=state(l);return `<tr><td class="key">${esc(l.key)} <button class="rowbtn" onclick="copyText('${esc(l.key).replace(/'/g,"\\'")}')"><i class="fa-regular fa-copy"></i></button></td><td>${esc(l.name)||'-'}</td><td>${esc(l.phone)||'-'}</td><td>${esc(l.expiry)||'-'}</td><td>${l.expired?'0':esc(l.remaining)}</td><td>${l.activeDevices||0} / ${l.maxDevices||1}</td><td>${stateBadge(s)}</td><td><div class="menu"><button class="rowbtn" onclick="openEdit('${esc(l.key).replace(/'/g,"\\'")}')">ویرایش</button><button class="rowbtn" onclick="renew('${esc(l.key).replace(/'/g,"\\'")}')">تمدید</button><button class="rowbtn" onclick="openDevices('${esc(l.key).replace(/'/g,"\\'")}')">دستگاه</button><button class="rowbtn" onclick="toggleStatus('${esc(l.key).replace(/'/g,"\\'")}','${l.status}')">${l.status==='Disabled'?'فعال‌سازی':'غیرفعال'}</button><button class="rowbtn" style="color:var(--bad)" onclick="del('${esc(l.key).replace(/'/g,"\\'")}")">حذف</button></div></td></tr>`}).join(''):'<tr><td colspan="8" style="text-align:center;padding:35px;color:var(--muted)">موردی پیدا نشد</td></tr>'}
+function updateDashboard(){let total=licenses.length,active=0,soon=0,expired=0,devices=0;licenses.forEach(l=>{const s=state(l);if(s==='active')active++;if(s==='soon')soon++;if(s==='expired')expired++;devices+=Number(l.activeDevices||0)});$('sTotal').textContent=total;$('sActive').textContent=active;$('sSoon').textContent=soon;$('sExpired').textContent=expired;$('sDevices').textContent=devices;const soonNames=licenses.filter(l=>state(l)==='soon').slice(0,5);$('alerts').innerHTML=soonNames.length?'<div class="alert a-bad">⚠️ '+soonNames.length+' لایسنس در آستانه انقضاست: '+soonNames.map(l=>esc(l.name||l.key)).join('، ')+'</div>':'<div class="alert a-ok">✅ هشدار فوری ندارید.</div>'}
+async function loadAll(show){if(!PASS||busy)return;try{if(show)toast('در حال بروزرسانی...','ok');const d=await api({action:'list',adminPass:PASS});if(!d.ok)throw Error(d.message);licenses=d.licenses||[];render();updateDashboard();if(show)toast('لیست بروزرسانی شد','ok')}catch(e){toast(e.message||'بروزرسانی ناموفق بود','bad')}}
+function resetFilters(){$('search').value='';$('filter').value='all';$('sort').value='new';render()}
+function filterStatus(s){$('filter').value=s;render()}
+function findKey(k){return licenses.find(x=>x.key===k)}
+function openModal(html){$('modalBody').innerHTML=html;$('overlay').style.display='flex'}function closeModal(){$('overlay').style.display='none'}
+function openEdit(k){const l=findKey(k);if(!l)return;openModal(`<h3><i class="fa-solid fa-pen-to-square"></i> ویرایش لایسنس</h3><div class="formgrid"><div class="fg"><label>کلید</label><input id="eKey" value="${esc(l.key)}" disabled></div><div class="fg"><label>نام مشتری</label><input id="eName" value="${esc(l.name)}"></div><div class="fg"><label>شماره تماس</label><input id="ePhone" value="${esc(l.phone)}"></div><div class="fg"><label>حداکثر دستگاه</label><input id="eMax" type="number" min="1" value="${esc(l.maxDevices)}"></div><div class="fg"><label>تاریخ انقضا</label><input id="eExpiry" type="date" value="${esc(l.expiry)}"></div><div class="fg full"><label>یادداشت</label><textarea id="eNotes">${esc(l.notes)}</textarea></div></div><div class="actions"><button class="btn primary" onclick="saveEdit('${esc(l.key).replace(/'/g,"\\'")}')">ذخیره تغییرات</button><button class="btn outline" onclick="closeModal()">انصراف</button></div>`)}
+async function saveEdit(k){try{const d=await api({action:'edit',adminPass:PASS,key:k,name:$('eName').value.trim(),phone:$('ePhone').value.trim(),maxDevices:parseInt($('eMax').value)||1,expiry:$('eExpiry').value,notes:$('eNotes').value.trim()});if(!d.ok)throw Error(d.message);closeModal();toast('ویرایش با موفقیت انجام شد','ok');await loadAll(false)}catch(e){toast(e.message||'ویرایش ناموفق بود','bad')}}
+async function renew(k){openModal(`<h3><i class="fa-solid fa-calendar-plus"></i> تمدید لایسنس</h3><p style="font-size:12px;color:var(--muted)">مدت تمدید را وارد کنید. اگر لایسنس منقضی شده باشد، تمدید از امروز محاسبه می‌شود.</p><div class="fg"><label>تعداد روز</label><input id="rDays" type="number" min="1" value="30"></div><div class="actions"><button class="btn success" onclick="doRenew('${esc(k).replace(/'/g,"\\'")}')">تمدید</button><button class="btn outline" onclick="closeModal()">انصراف</button></div>`)}
+async function doRenew(k){try{const days=Math.max(1,parseInt($('rDays').value)||30);const d=await api({action:'renew',adminPass:PASS,key:k,days});if(!d.ok)throw Error(d.message);closeModal();toast(d.message||'تمدید شد','ok');await loadAll(false)}catch(e){toast(e.message||'تمدید ناموفق بود','bad')}}
+async function openDevices(k){try{openModal('<h3><i class="fa-solid fa-desktop"></i> دستگاه‌های متصل</h3><div style="color:var(--muted);font-size:12px">در حال دریافت...</div>');const d=await api({action:'devices',adminPass:PASS,key:k});if(!d.ok)throw Error(d.message);$('modalBody').innerHTML=`<h3><i class="fa-solid fa-desktop"></i> دستگاه‌های متصل</h3><p class="sub">${esc(k)} — ${d.devices.length} از ${d.maxDevices} دستگاه</p>`+(d.devices.length?d.devices.map(x=>`<div class="device"><div><b class="key">${esc(x.device_id)}</b><small>اولین اتصال: ${esc(x.first_seen_at)}<br>آخرین فعالیت: ${esc(x.last_seen_at)}</small></div><button class="btn danger" onclick="removeDevice('${esc(k).replace(/'/g,"\\'")}','${esc(x.device_id).replace(/'/g,"\\'")}')">قطع دستگاه</button></div>`).join(''):'<div class="alert a-ok">دستگاهی برای این لایسنس ثبت نشده است.</div>')}catch(e){toast(e.message||'خطا در دریافت دستگاه‌ها','bad')}}
+async function removeDevice(k,did){if(!confirm('این دستگاه از لایسنس جدا شود؟'))return;try{const d=await api({action:'removeDevice',adminPass:PASS,key:k,deviceId:did});if(!d.ok)throw Error(d.message);toast('دستگاه جدا شد','ok');await openDevices(k);await loadAll(false)}catch(e){toast(e.message||'حذف دستگاه ناموفق بود','bad')}}
+async function toggleStatus(k,current){if(!confirm(current==='Disabled'?'لایسنس فعال شود؟':'لایسنس غیرفعال شود؟'))return;try{const d=await api({action:'updateStatus',adminPass:PASS,key:k,status:current==='Disabled'?'Active':'Disabled'});if(!d.ok)throw Error(d.message);toast(d.message||'انجام شد','ok');await loadAll(false)}catch(e){toast(e.message||'خطا','bad')}}
+async function del(k){if(!confirm('حذف این لایسنس قطعی است؟ دستگاه‌های ثبت‌شده آن نیز حذف می‌شوند.'))return;try{const d=await api({action:'delete',adminPass:PASS,key:k});if(!d.ok)throw Error(d.message);toast('لایسنس حذف شد','ok');await loadAll(false)}catch(e){toast(e.message||'حذف ناموفق بود','bad')}}
+function exportCSV(){const head=['کلید','مشتری','تماس','شروع','انقضا','روز باقی‌مانده','دستگاه فعال','حداکثر دستگاه','وضعیت','یادداشت'];const lines=[head,...licenses.map(l=>[l.key,l.name,l.phone,l.start,l.expiry,l.expired?0:l.remaining,l.activeDevices,l.maxDevices,state(l),l.notes])].map(r=>r.map(v=>'"'+String(v??'').replaceAll('"','""')+'"').join(','));const blob=new Blob(['\ufeff'+lines.join('\n')],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hamyar-licenses.csv';a.click();URL.revokeObjectURL(a.href)}
+async function openLogs(){try{openModal('<h3><i class="fa-solid fa-clock-rotate-left"></i> گزارش فعالیت مدیر</h3><div style="color:var(--muted)">در حال دریافت...</div>');const d=await api({action:'logs',adminPass:PASS});if(!d.ok)throw Error(d.message);const labels={add:'ایجاد لایسنس',edit:'ویرایش',renew:'تمدید',enable:'فعال‌سازی',disable:'غیرفعال‌سازی',delete:'حذف لایسنس',remove_device:'قطع دستگاه'};$('modalBody').innerHTML='<h3><i class="fa-solid fa-clock-rotate-left"></i> گزارش فعالیت مدیر</h3>'+(d.logs.length?d.logs.map(x=>`<div class="log"><b>${esc(labels[x.action]||x.action)}</b> <span class="sub">${esc(x.license_key||'')}</span><div class="sub">${esc(x.created_at)}</div></div>`).join(''):'<div class="alert a-ok">هنوز فعالیتی ثبت نشده است.</div>')}catch(e){toast(e.message||'گزارش در دسترس نیست','bad')}}
+function toast(t,type){$('msg').innerHTML='<div class="alert '+(type==='bad'?'a-bad':'a-ok')+'">'+esc(t)+'</div>';clearTimeout(window.__toast);window.__toast=setTimeout(()=>$('msg').innerHTML='',3500)}
+window.addEventListener('DOMContentLoaded',async()=>{if(localStorage.getItem('hamyar_admin_dark')==='1')document.body.classList.add('dark');fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'ping'}),cache:'no-store'}).catch(()=>{});if(PASS){try{const d=await api({action:'list',adminPass:PASS});if(d.ok){$('login').classList.add('hidden');$('app').classList.remove('hidden');licenses=d.licenses||[];render();updateDashboard()}else logout()}catch{logout()}}});
+</script></body></html>
