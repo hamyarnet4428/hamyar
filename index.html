@@ -8,9 +8,6 @@
   </title>
   <link href="https://fonts.googleapis.com" rel="preconnect"/>
   <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-  <link href="https://dmvttrdvarysgyuzfhgg.supabase.co" rel="preconnect"/>
-  <link crossorigin="" href="https://dmvttrdvarysgyuzfhgg.supabase.co" rel="preconnect"/>
-  <link href="https://script.googleusercontent.com" rel="dns-prefetch"/>
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;900&amp;display=swap" rel="stylesheet"/>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet"/>
   <style>
@@ -2586,18 +2583,57 @@ footer { text-align:center; color:var(--muted); font-size:12px; margin-top:40px;
    </section>
   </div>
 <script>
-// ========== تنظیمات لایسنس (Supabase Edge Function) ==========
+// ========== تنظیمات لایسنس امن همیار نت (Supabase) ==========
+// اعتبارسنجی فقط از طریق API سمت سرور انجام می‌شود
 const LICENSE_API = 'https://dmvttrdvarysgyuzfhgg.supabase.co/functions/v1/hamyar-api';
 
-function getDeviceId() {
-  const storageKey = 'hamyar_device_id';
-  let id = localStorage.getItem(storageKey);
-  if (!id) {
-    if (window.crypto && crypto.randomUUID) id = crypto.randomUUID();
-    else id = 'HN-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 12);
-    localStorage.setItem(storageKey, id);
-  }
-  return id;
+// شناسه پایدارِ مبتنی بر مشخصات محیط/دستگاه؛ به localStorage وابسته نیست.
+// نام و نسخه مرورگر عمداً وارد شناسه نمی‌شود تا تغییر Chrome/Edge/Firefox
+// به‌تنهایی دستگاه جدید حساب نشود. این شناسه «شناسه سخت‌افزاری واقعی» نیست،
+// اما برای نسخه بدون نصب، پایدارتر از UUID ذخیره‌شده در مرورگر است.
+async function getDeviceId() {
+  const nav = navigator;
+  const scr = screen || {};
+  let gpuVendor = '', gpuRenderer = '';
+  try {
+    const c = document.createElement('canvas');
+    const gl = c.getContext('webgl') || c.getContext('experimental-webgl');
+    if (gl) {
+      const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+      if (dbg) {
+        gpuVendor = gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) || '';
+        gpuRenderer = gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) || '';
+      }
+    }
+  } catch (_) {}
+
+  let ch = {};
+  try {
+    if (nav.userAgentData && nav.userAgentData.getHighEntropyValues) {
+      ch = await nav.userAgentData.getHighEntropyValues([
+        'platform','platformVersion','architecture','bitness','model','mobile'
+      ]);
+    }
+  } catch (_) {}
+
+  const parts = [
+    'HN-PC-V6',
+    nav.platform || '',
+    String(nav.hardwareConcurrency || ''),
+    String(nav.deviceMemory || ''),
+    String(nav.maxTouchPoints || 0),
+    String(scr.width || ''), String(scr.height || ''),
+    String(scr.colorDepth || ''), String(scr.pixelDepth || ''),
+    Intl.DateTimeFormat().resolvedOptions().timeZone || '',
+    ch.platform || '', ch.platformVersion || '', ch.architecture || '',
+    ch.bitness || '', ch.model || '', String(!!ch.mobile),
+    gpuVendor, gpuRenderer
+  ];
+  const raw = parts.map(v => String(v).trim()).join('\x1f');
+  const bytes = new TextEncoder().encode(raw);
+  const hash = await crypto.subtle.digest('SHA-256', bytes);
+  const hex = Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
+  return 'HN-PC-V6-' + hex;
 }
 
 function setLicenseButtonLoading(loading) {
@@ -2608,41 +2644,6 @@ function setLicenseButtonLoading(loading) {
   btn.innerHTML = loading ? '<span class="btn-spinner" style="display:inline-block"></span> در حال بررسی و فعال‌سازی...' : '<i class="fa-solid fa-key"></i> فعال‌سازی و ورود';
 }
 
-const LICENSE_DAILY_CACHE_KEY = 'hamyar_license_daily_v1';
-
-function getLicenseDayKey() {
-  const d = new Date();
-  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-}
-
-function getDailyLicenseCache(key) {
-  try {
-    const cached = JSON.parse(localStorage.getItem(LICENSE_DAILY_CACHE_KEY) || 'null');
-    if (cached && cached.day === getLicenseDayKey() && cached.key === key && cached.data) return cached.data;
-  } catch (e) {}
-  return null;
-}
-
-function saveDailyLicenseCache(key, data) {
-  try {
-    localStorage.setItem(LICENSE_DAILY_CACHE_KEY, JSON.stringify({ key:key, day:getLicenseDayKey(), data:data }));
-  } catch (e) {}
-}
-
-let licenseRequestInFlight = null;
-
-// گرم‌کردن اتصال به سرور لایسنس در پس‌زمینه؛ بدون ارسال هیچ درخواست لایسنس.
-// این کار زمان برقراری اتصال را هنگام اولین ورود کمتر می‌کند.
-function warmLicenseConnection() {
-  try {
-    const link = document.createElement('link');
-    link.rel = 'preconnect';
-    link.href = 'https://dmvttrdvarysgyuzfhgg.supabase.co';
-    link.crossOrigin = '';
-    document.head.appendChild(link);
-  } catch (e) {}
-}
-
 async function checkLicense() {
   const key = document.getElementById('pass').value.trim();
   const err = document.getElementById('err');
@@ -2650,71 +2651,34 @@ async function checkLicense() {
   if (err) err.textContent = '';
   if (info) info.textContent = '';
   if (!key) { if (err) err.textContent = 'کد لایسنس را وارد کنید'; return; }
-
-  // ورود فوری در همان روز، بدون هیچ درخواست شبکه
-  const cachedData = getDailyLicenseCache(key);
-  if (cachedData) {
-    showMain(cachedData);
-    return;
-  }
-
-  // جلوگیری از چند درخواست همزمان با چند بار لمس دکمه
-  if (licenseRequestInFlight) return licenseRequestInFlight;
-
   setLicenseButtonLoading(true);
-  if (info) info.textContent = 'در حال بررسی لایسنس...';
-
-  licenseRequestInFlight = (async () => {
-    try {
-      const deviceId = getDeviceId();
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 20000);
-      let res;
-      try {
-        res = await fetch(LICENSE_API, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'check', key: key, deviceId: deviceId }),
-          cache: 'no-store',
-          credentials: 'omit',
-          signal: controller.signal
-        });
-      } finally {
-        clearTimeout(timeout);
-      }
-      const raw = await res.text();
-      let data;
-      try {
-        data = JSON.parse(raw);
-      } catch (_) {
-        throw new Error('پاسخ سرور JSON معتبر نیست');
-      }
-      if (data.ok) {
-        localStorage.setItem('hamyar_license', key);
-        localStorage.setItem('hamyar_license_data', JSON.stringify(data));
-        saveDailyLicenseCache(key, data);
-        if (info) info.textContent = '✓ لایسنس با موفقیت فعال شد';
-        showMain(data);
-      } else {
-        localStorage.removeItem(LICENSE_DAILY_CACHE_KEY);
-        if (err) err.textContent = data.message || 'لایسنس نامعتبر یا منقضی شده است';
-        if (info) info.textContent = '';
-        const pass = document.getElementById('pass');
-        if (pass) { pass.classList.remove('shake'); void pass.offsetWidth; pass.classList.add('shake'); }
-      }
-    } catch (e) {
-      if (err) err.textContent = e && e.name === 'AbortError'
-        ? 'سرور لایسنس دیر پاسخ داد. لطفاً چند لحظه صبر کنید و دوباره تلاش کنید.'
-        : 'خطا در اتصال به سرور لایسنس. اینترنت و آدرس API را چک کنید.';
+  if (info) info.textContent = 'در حال بررسی لایسنس و ظرفیت دستگاه...';
+  try {
+    const deviceId = await getDeviceId();
+    const res = await fetch(LICENSE_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'check', key, deviceId }),
+      cache: 'no-store',
+      credentials: 'omit'
+    });
+    const data = await res.json();
+    if (data.ok) {
+      localStorage.setItem('hamyar_license', key);
+      localStorage.setItem('hamyar_license_data', JSON.stringify(data));
+      if (info) info.textContent = '✓ لایسنس با موفقیت فعال شد';
+      showMain(data);
+    } else {
+      if (err) err.textContent = data.message || 'لایسنس نامعتبر یا منقضی شده است';
       if (info) info.textContent = '';
-      console.error(e);
-    } finally {
-      licenseRequestInFlight = null;
-      setLicenseButtonLoading(false);
+      const pass = document.getElementById('pass');
+      if (pass) { pass.classList.remove('shake'); void pass.offsetWidth; pass.classList.add('shake'); }
     }
-  })();
-
-  return licenseRequestInFlight;
+  } catch (e) {
+    if (err) err.textContent = 'خطا در اتصال به سرور لایسنس. اینترنت و آدرس API را چک کنید.';
+    if (info) info.textContent = '';
+    console.error(e);
+  } finally { setLicenseButtonLoading(false); }
 }
 
 function showMain(data) {
@@ -2743,50 +2707,13 @@ function showMain(data) {
   }
 }
 
-// ========== بازیابی مطمئن صفحه بعد از Back / Forward / برگشت از سایت‌های دیگر ==========
-// اگر مرورگر صفحه را از حافظه (BFCache) برگرداند، دوباره رابط کاربری را در وضعیت درست قرار می‌دهیم.
-let sessionRestoreRunning = false;
-
-async function restoreSession() {
-  if (sessionRestoreRunning) return;
-  sessionRestoreRunning = true;
-
-  try {
-    warmLicenseConnection();
-
-    const saved = localStorage.getItem('hamyar_license');
-    if (!saved) return;
-
+// بررسی خودکار لایسنس ذخیره‌شده هنگام بارگذاری صفحه
+window.addEventListener('DOMContentLoaded', async () => {
+  const saved = localStorage.getItem('hamyar_license');
+  if (saved) {
     const passInput = document.getElementById('pass');
     if (passInput) passInput.value = saved;
-
-    // در همان روز: نمایش فوری و بدون درخواست شبکه
-    const cachedData = getDailyLicenseCache(saved);
-    if (cachedData) {
-      showMain(cachedData);
-      return;
-    }
-
-    // اگر کش روز جاری وجود ندارد، بررسی آنلاین انجام شود.
     await checkLicense();
-  } finally {
-    sessionRestoreRunning = false;
-  }
-}
-
-// اجرای اولیه
-window.addEventListener('DOMContentLoaded', restoreSession);
-
-// هنگام برگشت با دکمه Back/Forward مرورگر (BFCache)
-window.addEventListener('pageshow', function () {
-  // یک تأخیر بسیار کوتاه اجازه می‌دهد مرورگر ابتدا صفحه ذخیره‌شده را restore کند.
-  setTimeout(restoreSession, 0);
-});
-
-// اگر صفحه از حالت مخفی دوباره فعال شد، رابط کاربری را بازیابی کن.
-document.addEventListener('visibilitychange', function () {
-  if (document.visibilityState === 'visible') {
-    setTimeout(restoreSession, 0);
   }
 });
 
