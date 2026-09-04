@@ -846,53 +846,25 @@ async function sha256(text) {
 }
 
 async function getDeviceId() {
-  // V8: browser-independent device signature.
-  // Deliberately excludes browser version, user-agent string and
-  // screen.available dimensions because those can differ between
-  // Chrome/Kiwi on the same physical device.
+  // V9 FINAL: stable cross-browser device signature.
+  // Uses only broadly available device/environment characteristics.
+  // Deliberately excludes user-agent, browser version, UA-CH model/architecture,
+  // WebGL and available-screen dimensions because these can vary by browser.
   const nav = navigator;
   const scr = window.screen || {};
-  let ch = {};
-  try {
-    if (nav.userAgentData && nav.userAgentData.getHighEntropyValues) {
-      ch = await nav.userAgentData.getHighEntropyValues([
-        'platform','architecture','bitness','model','mobile'
-      ]);
-    }
-  } catch (_) {}
 
   const parts = [
-    String(ch.platform || nav.platform || '').trim().toLowerCase(),
-    String(ch.architecture || '').trim().toLowerCase(),
-    String(ch.bitness || '').trim(),
-    String(ch.model || '').trim().toLowerCase(),
-    String(!!ch.mobile),
-    String(nav.hardwareConcurrency || ''),
-    String(nav.deviceMemory || ''),
-    String(nav.maxTouchPoints || 0),
-    String(scr.width || ''),
-    String(scr.height || ''),
-    String(scr.colorDepth || ''),
-    String(scr.pixelDepth || ''),
-    String(window.devicePixelRatio || 1),
-    Intl.DateTimeFormat().resolvedOptions().timeZone || ''
+    String(nav.platform || '').trim().toLowerCase(),
+    String(nav.hardwareConcurrency || '').trim(),
+    String(nav.deviceMemory || '').trim(),
+    String(nav.maxTouchPoints || 0).trim(),
+    String(scr.width || '').trim(),
+    String(scr.height || '').trim(),
+    String(scr.colorDepth || '').trim(),
+    String(scr.pixelDepth || '').trim(),
+    String(window.devicePixelRatio || 1).trim(),
+    String(Intl.DateTimeFormat().resolvedOptions().timeZone || '').trim()
   ];
-
-  // WebGL is useful because the renderer is normally tied to the
-  // physical graphics hardware, but we do not include browser identity.
-  try {
-    const c = document.createElement('canvas');
-    const g = c.getContext('webgl') || c.getContext('experimental-webgl');
-    if (g) {
-      const ext = g.getExtension('WEBGL_debug_renderer_info');
-      parts.push(ext ? String(g.getParameter(ext.UNMASKED_VENDOR_WEBGL) || '').trim().toLowerCase() : '');
-      parts.push(ext ? String(g.getParameter(ext.UNMASKED_RENDERER_WEBGL) || '').trim().toLowerCase() : '');
-    } else {
-      parts.push('', '');
-    }
-  } catch (_) {
-    parts.push('', '');
-  }
 
   const raw = parts.join('\x1f');
   const hash = await crypto.subtle.digest(
@@ -902,7 +874,7 @@ async function getDeviceId() {
   const hex = Array.from(new Uint8Array(hash))
     .map(b => b.toString(16).padStart(2,'0'))
     .join('');
-  return 'HN-PC-V8-' + hex;
+  return 'HN-PC-V9-' + hex;
 }
 
 function setLicenseButtonLoading(loading) {
