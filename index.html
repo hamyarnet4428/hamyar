@@ -2591,16 +2591,22 @@ const LICENSE_API = 'https://dmvttrdvarysgyuzfhgg.supabase.co/functions/v1/hamya
 // نام و نسخه مرورگر عمداً وارد شناسه نمی‌شود تا تغییر Chrome/Edge/Firefox
 // به‌تنهایی دستگاه جدید حساب نشود. این شناسه «شناسه سخت‌افزاری واقعی» نیست،
 // اما برای نسخه بدون نصب، پایدارتر از UUID ذخیره‌شده در مرورگر است.
-async function getDeviceId() {
-  // اولویت با شناسه‌ای که از نسخه‌های قبلی در همین مرورگر ذخیره شده است.
-  // این کار باعث می‌شود بعد از جایگزینی index.html، همان دستگاه دوباره
-  // به‌عنوان دستگاه جدید ثبت نشود.
+async function sha256Hex(text) {
+  const bytes = new TextEncoder().encode(text);
+  const hash = await crypto.subtle.digest('SHA-256', bytes);
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+async function getDeviceIdCandidates() {
+  const candidates = [];
+
+  // شناسه‌های ذخیره‌شده قبلی همیشه اولویت دارند.
   try {
     const oldId = localStorage.getItem('hamyar_device_id');
-    if (oldId && String(oldId).trim()) return String(oldId).trim();
+    if (oldId && String(oldId).trim()) candidates.push(String(oldId).trim());
 
-    const savedStable = localStorage.getItem('hamyar_stable_device_id');
-    if (savedStable && String(savedStable).trim()) return String(savedStable).trim();
+    const stable = localStorage.getItem('hamyar_stable_device_id');
+    if (stable && String(stable).trim()) candidates.push(String(stable).trim());
   } catch (_) {}
 
   const nav = navigator;
@@ -2610,39 +2616,112 @@ async function getDeviceId() {
     catch (_) { return ''; }
   })();
 
-  // فقط مشخصات نسبتاً پایدار محیط استفاده می‌شود.
-  // GPU، User-Agent و مشخصات وابسته به مرورگر عمداً حذف شده‌اند تا
-  // تغییر Chrome/Edge/Firefox تا حد امکان شناسه را عوض نکند.
-  const parts = [
+  const add = (arr, name, value) => {
+    if (value !== undefined && value !== null && String(value) !== '') {
+      arr.push(name + '=' + String(value));
+    }
+  };
+
+  // V6 فعلی: فقط مشخصات نسبتاً پایدار محیط، بدون نام/نسخه مرورگر.
+  const v6parts = [];
+  add(v6parts,'platform',nav.platform || '');
+  add(v6parts,'cores',nav.hardwareConcurrency || '');
+  add(v6parts,'memory',nav.deviceMemory || '');
+  add(v6parts,'touch',nav.maxTouchPoints || 0);
+  add(v6parts,'screenW',scr.width || 0);
+  add(v6parts,'screenH',scr.height || 0);
+  add(v6parts,'color',scr.colorDepth || 0);
+  add(v6parts,'pixel',scr.pixelDepth || 0);
+  add(v6parts,'tz',tz);
+  candidates.push('HN-PC-V6-' + await sha256Hex('HAMYAR_DEVICE_V6|' + v6parts.join('|')));
+
+  // V5: فرمت شناسه‌ای که در نسخه‌های قبلی همیارنت استفاده می‌شد.
+  const v5parts = [];
+  add(v5parts,'platform',nav.platform || '');
+  add(v5parts,'cores',nav.hardwareConcurrency || '');
+  add(v5parts,'memory',nav.deviceMemory || '');
+  add(v5parts,'touch',nav.maxTouchPoints || 0);
+  add(v5parts,'screenW',scr.width || 0);
+  add(v5parts,'screenH',scr.height || 0);
+  add(v5parts,'color',scr.colorDepth || 0);
+  add(v5parts,'pixel',scr.pixelDepth || 0);
+  add(v5parts,'tz',tz);
+
+  try {
+    if (nav.userAgentData && nav.userAgentData.getHighEntropyValues) {
+      const h = await nav.userAgentData.getHighEntropyValues([
+        'platform','platformVersion','architecture','bitness','model','mobile'
+      ]);
+      add(v5parts,'uaplatform',h.platform || '');
+      add(v5parts,'uapv',h.platformVersion || '');
+      add(v5parts,'arch',h.architecture || '');
+      add(v5parts,'bits',h.bitness || '');
+      add(v5parts,'model',h.model || '');
+      add(v5parts,'mobile',h.mobile ? '1' : '0');
+    }
+  } catch (_) {}
+
+  try {
+    const c = document.createElement('canvas');
+    const gl = c.getContext('webgl') || c.getContext('experimental-webgl');
+    if (gl) {
+      const ext = gl.getExtension('WEBGL_debug_renderer_info');
+      if (ext) {
+        add(v5parts,'gpuv',gl.getParameter(ext.UNMASKED_VENDOR_WEBGL) || '');
+        add(v5parts,'gpur',gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) || '');
+      }
+    }
+  } catch (_) {}
+
+  candidates.push('HN-PC-V5-' + await sha256Hex('HAMYAR_DEVICE_V5|' + v5parts.join('|')));
+
+  // V6 قدیمی‌تر: همان ساختار نسخه‌ای که قبل از این اصلاح روی دستگاه‌ها ثبت شده بود.
+  const legacy = [
     'HN-PC-V6',
-    String(nav.platform || ''),
+    nav.platform || '',
     String(nav.hardwareConcurrency || ''),
     String(nav.deviceMemory || ''),
     String(nav.maxTouchPoints || 0),
-    String(scr.width || ''),
-    String(scr.height || ''),
-    String(scr.colorDepth || ''),
-    String(scr.pixelDepth || ''),
+    String(scr.width || ''), String(scr.height || ''),
+    String(scr.colorDepth || ''), String(scr.pixelDepth || ''),
     tz
   ];
-
-  const raw = parts.map(v => String(v).trim()).join('\x1f');
-  const bytes = new TextEncoder().encode(raw);
-  const hash = await crypto.subtle.digest('SHA-256', bytes);
-  const hex = Array.from(new Uint8Array(hash))
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('');
-
-  const id = 'HN-PC-V6-' + hex;
-
   try {
-    // شناسه جدید را محلی نگه می‌داریم تا reload و ورودهای بعدی
-    // در همان مرورگر هرگز شناسه تازه نسازند.
-    localStorage.setItem('hamyar_stable_device_id', id);
+    if (nav.userAgentData && nav.userAgentData.getHighEntropyValues) {
+      const h = await nav.userAgentData.getHighEntropyValues([
+        'platform','platformVersion','architecture','bitness','model','mobile'
+      ]);
+      legacy.push(
+        h.platform || '', h.platformVersion || '', h.architecture || '',
+        h.bitness || '', h.model || '', String(!!h.mobile)
+      );
+    }
   } catch (_) {}
+  try {
+    const c = document.createElement('canvas');
+    const gl = c.getContext('webgl') || c.getContext('experimental-webgl');
+    if (gl) {
+      const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+      if (dbg) {
+        legacy.push(
+          gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) || '',
+          gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) || ''
+        );
+      }
+    }
+  } catch (_) {}
+  candidates.push('HN-PC-V6-' + await sha256Hex(legacy.map(v => String(v).trim()).join('\x1f')));
 
-  return id;
+  // حذف تکراری‌ها بدون تغییر ترتیب اولویت.
+  return [...new Set(candidates.filter(Boolean))];
 }
+
+// سازگاری با کدهای قبلی.
+async function getDeviceId() {
+  const list = await getDeviceIdCandidates();
+  return list[0];
+}
+
 
 function setLicenseButtonLoading(loading) {
   const btn = document.getElementById('activateBtn');
@@ -2662,22 +2741,41 @@ async function checkLicense() {
   setLicenseButtonLoading(true);
   if (info) info.textContent = 'در حال بررسی لایسنس و ظرفیت دستگاه...';
   try {
-    const deviceId = await getDeviceId();
-    const res = await fetch(LICENSE_API, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'check', key, deviceId }),
-      cache: 'no-store',
-      credentials: 'omit'
-    });
-    const data = await res.json();
-    if (data.ok) {
-      localStorage.setItem('hamyar_license', key);
-      localStorage.setItem('hamyar_license_data', JSON.stringify(data));
+    const deviceIds = await getDeviceIdCandidates();
+    let data = null;
+    let usedDeviceId = deviceIds[0];
+
+    // اگر شناسه فعلی روی سرور قبلاً ثبت شده باشد ولی شناسه محلی تغییر کرده باشد،
+    // چند شناسه سازگار با نسخه‌های قبلی را امتحان می‌کنیم. فقط شناسه‌ای که
+    // سرور قبول کند ذخیره می‌شود؛ بنابراین دستگاه جدید بی‌دلیل ثبت نمی‌شود.
+    for (const deviceId of deviceIds) {
+      usedDeviceId = deviceId;
+      const res = await fetch(LICENSE_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'check', key, deviceId }),
+        cache: 'no-store',
+        credentials: 'omit'
+      });
+      data = await res.json();
+
+      if (data && data.ok) break;
+
+      const msg = String(data && data.message || '');
+      const capacityError = /ظرفیت|دستگاه|device|capacity/i.test(msg);
+      if (!capacityError) break;
+    }
+
+    if (data && data.ok) {
+      try {
+        localStorage.setItem('hamyar_license', key);
+        localStorage.setItem('hamyar_license_data', JSON.stringify(data));
+        localStorage.setItem('hamyar_stable_device_id', usedDeviceId);
+      } catch (_) {}
       if (info) info.textContent = '✓ لایسنس با موفقیت فعال شد';
       showMain(data);
     } else {
-      if (err) err.textContent = data.message || 'لایسنس نامعتبر یا منقضی شده است';
+      if (err) err.textContent = (data && data.message) || 'لایسنس نامعتبر یا منقضی شده است';
       if (info) info.textContent = '';
       const pass = document.getElementById('pass');
       if (pass) { pass.classList.remove('shake'); void pass.offsetWidth; pass.classList.add('shake'); }
