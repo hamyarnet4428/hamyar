@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link rel="preconnect" href="https://script.google.com" crossorigin>
+<link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
+<link rel="dns-prefetch" href="//script.google.com">
+<title>🔐 پنل مدیریت لایسنس - همیار نت</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;900&display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet"/>
+<style>
+:root { --primary:#0d6efd; --bg:#f4f7fb; --card:#fff; --text:#2c3345; --muted:#8a93a5; --radius:14px; --success:#198754; --danger:#dc3545; }
+* { box-sizing:border-box; }
+body { font-family:'Vazirmatn',Tahoma,sans-serif; background:var(--bg); margin:0; color:var(--text); min-height:100vh; }
+.header { background:linear-gradient(135deg,#0d6efd,#6f42c1); color:#fff; text-align:center; padding:24px 16px; }
+.header h1 { margin:0; font-size:22px; }
+.container { max-width:1100px; margin:0 auto; padding:20px 14px; }
+.login-box { background:var(--card); max-width:400px; margin:60px auto; padding:36px; border-radius:20px; box-shadow:0 10px 40px rgba(0,0,0,.1); text-align:center; }
+.login-box input { width:100%; padding:12px; border:2px solid #e3e8f0; border-radius:12px; font-family:inherit; font-size:15px; margin:10px 0; text-align:center; }
+.btn { display:inline-flex; align-items:center; gap:8px; padding:11px 20px; border:none; border-radius:12px; cursor:pointer; font-family:inherit; font-weight:700; font-size:14px; transition:.2s; }
+.btn-primary { background:var(--primary); color:#fff; }
+.btn-success { background:var(--success); color:#fff; }
+.btn-danger { background:var(--danger); color:#fff; }
+.btn-outline { background:#fff; border:2px solid #e3e8f0; color:var(--text); }
+.btn:hover { filter:brightness(1.08); transform:translateY(-1px); }
+.card { background:var(--card); border-radius:var(--radius); padding:20px; margin-bottom:16px; box-shadow:0 2px 10px rgba(0,0,0,.05); }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+@media(max-width:600px){ .grid-2 { grid-template-columns:1fr; } }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th, td { padding:10px 8px; text-align:right; border-bottom:1px solid #eef1f6; }
+th { background:#f8fafc; font-weight:700; position:sticky; top:0; }
+tr:hover { background:#f8fafc; }
+.status-active { color:var(--success); font-weight:700; }
+.status-expired { color:var(--danger); font-weight:700; }
+.status-disabled { color:#6c757d; font-weight:700; }
+.form-group { margin-bottom:12px; }
+.form-group label { display:block; font-size:13px; font-weight:600; margin-bottom:4px; color:#596273; }
+.form-group input, .form-group select { width:100%; padding:10px 12px; border:2px solid #e3e8f0; border-radius:10px; font-family:inherit; font-size:14px; }
+.actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:16px; }
+.hidden { display:none !important; }
+.btn-loading { opacity:.75; pointer-events:none; }
+.alert { padding:12px 16px; border-radius:10px; margin-bottom:14px; font-size:13px; }
+.alert-success { background:#e9f7ef; color:#198754; }
+.alert-error { background:#fdebec; color:#dc3545; }
+.stats { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:20px; }
+.stat { background:#fff; padding:14px 18px; border-radius:12px; min-width:120px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,.05); }
+.stat strong { display:block; font-size:22px; color:var(--primary); }
+.stat span { font-size:12px; color:var(--muted); }
+#adminContent { display:none; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1><i class="fa-solid fa-shield-halved"></i> پنل مدیریت لایسنس همیار نت</h1>
+  <p style="margin:6px 0 0;opacity:.85;font-size:13px;">طراحی و پشتیبانی: ۰۹۰۳۳۷۶۴۴۲۸ - ۰۹۹۹۹۹۳۰۷۱۹</p>
+</div>
+
+<!-- صفحه ورود ادمین -->
+<div id="adminLogin" class="login-box">
+  <i class="fa-solid fa-user-shield" style="font-size:42px;color:var(--primary);margin-bottom:12px;"></i>
+  <h2 style="margin:0 0 8px;">ورود مدیر</h2>
+  <p style="color:var(--muted);font-size:13px;">رمز عبور مدیریت را وارد کنید</p>
+  <input type="password" id="adminPass" placeholder="رمز عبور ادمین" onkeydown="if(event.key==='Enter') loginAdmin()"/>
+  <div id="loginErr" style="color:var(--danger);font-size:12px;min-height:18px;margin:8px 0;"></div>
+  <button class="btn btn-primary" style="width:100%;" onclick="loginAdmin()"><i class="fa-solid fa-right-to-bracket"></i> ورود</button>
+</div>
+
+<!-- محتوای اصلی ادمین -->
+<div id="adminContent" class="container">
+  <div class="stats" id="statsBox">
+    <div class="stat"><strong id="statTotal">0</strong><span>کل لایسنس‌ها</span></div>
+    <div class="stat"><strong id="statActive">0</strong><span>فعال</span></div>
+    <div class="stat"><strong id="statExpired">0</strong><span>منقضی</span></div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin:0 0 14px;"><i class="fa-solid fa-plus-circle"></i> افزودن لایسنس جدید</h3>
+    <div class="grid-2">
+      <div class="form-group">
+        <label>نام مشتری</label>
+        <input type="text" id="custName" placeholder="نام یا نام کافی‌نت"/>
+      </div>
+      <div class="form-group">
+        <label>شماره تماس</label>
+        <input type="text" id="custPhone" placeholder="۰۹۱۲..."/>
+      </div>
+      <div class="form-group">
+        <label>مدت اعتبار (روز)</label>
+        <input type="number" id="durationDays" value="365" min="1"/>
+      </div>
+      <div class="form-group">
+        <label>تعداد دستگاه مجاز</label>
+        <input type="number" id="maxDevices" value="1" min="1" max="999"/>
+      </div>
+      <div class="form-group">
+        <label>یادداشت</label>
+        <input type="text" id="notes" placeholder="اختیاری"/>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-success" onclick="addLicense()"><i class="fa-solid fa-key"></i> تولید و ثبت لایسنس</button>
+      <button class="btn btn-outline" onclick="generateRandomKey()"><i class="fa-solid fa-shuffle"></i> تولید کلید تصادفی</button>
+    </div>
+    <div id="newKeyBox" class="alert alert-success hidden" style="margin-top:14px;">
+      لایسنس جدید: <strong id="newKeyText" style="direction:ltr;letter-spacing:1px;"></strong>
+      <button class="btn btn-outline" style="margin-right:10px;padding:4px 10px;font-size:12px;" onclick="copyKey()"><i class="fa-solid fa-copy"></i> کپی</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+      <h3 style="margin:0;"><i class="fa-solid fa-list"></i> لیست لایسنس‌ها</h3>
+      <button id="refreshBtn" class="btn btn-outline" onclick="loadLicenses(true)"><i class="fa-solid fa-rotate"></i> بروزرسانی</button>
+    </div>
+    <div id="msgBox"></div>
+    <div style="overflow-x:auto;max-height:500px;">
+      <table>
+        <thead>
+          <tr>
+            <th>کلید لایسنس</th>
+            <th>مشتری</th>
+            <th>تماس</th>
+            <th>شروع</th>
+            <th>انقضا</th>
+            <th>دستگاه‌ها</th>
+            <th>وضعیت</th>
+            <th>عملیات</th>
+          </tr>
+        </thead>
+        <tbody id="licenseTable"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+// ========== تنظیمات ==========
+// این آدرس را بعد از دیپلوی اسکریپت گوگل تغییر دهید (همان آدرس فایل مشتری)
+const LICENSE_API = 'https://script.google.com/macros/s/AKfycbwA9gPSmsfbga_uWwPf1w_0k0hbswiP4eRyj2eEPZ-T6Dl4mzZQtsTicbwMylGOl76PJw/exec';
+// رمز عبور ادمین (در اسکریپت گوگل هم باید همین باشد)
+const ADMIN_PASSWORD = 'hamyarnet4428';
+
+let currentKey = '';
+let adminRequestInFlight = false;
+let licenseLoadInFlight = null;
+
+async function apiRequest(payload = null, query = '') {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 8000);
+  try {
+    let url = LICENSE_API;
+    const options = {
+      cache: 'no-store',
+      redirect: 'follow',
+      signal: controller.signal
+    };
+
+    if (payload) {
+      options.method = 'POST';
+      options.headers = { 'Content-Type': 'text/plain;charset=utf-8' };
+      options.body = JSON.stringify(payload);
+    } else {
+      options.method = 'GET';
+      url += query + (query.includes('?') ? '&' : '?') + '_=' + Date.now();
+    }
+
+    const res = await fetch(url, options);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+
+    const raw = await res.text();
+    try {
+      return JSON.parse(raw);
+    } catch {
+      throw new Error('پاسخ سرور JSON معتبر نیست');
+    }
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function loginAdmin() {
+  const pass = document.getElementById('adminPass').value;
+  const err = document.getElementById('loginErr');
+  if (pass !== ADMIN_PASSWORD) {
+    err.textContent = 'رمز عبور اشتباه است';
+    return;
+  }
+  document.getElementById('adminLogin').classList.add('hidden');
+  document.getElementById('adminContent').style.display = 'block';
+  loadLicenses(false);
+}
+
+function generateRandomKey() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let key = 'HN-';
+  for (let i = 0; i < 4; i++) {
+    for (let j = 0; j < 4; j++) key += chars[Math.floor(Math.random() * chars.length)];
+    if (i < 3) key += '-';
+  }
+  currentKey = key;
+  document.getElementById('newKeyText').textContent = key;
+  document.getElementById('newKeyBox').classList.remove('hidden');
+  return key;
+}
+
+function copyKey() {
+  navigator.clipboard.writeText(document.getElementById('newKeyText').textContent);
+  alert('کپی شد!');
+}
+
+async function addLicense() {
+  if (adminRequestInFlight) return;
+  const name = document.getElementById('custName').value.trim();
+  const phone = document.getElementById('custPhone').value.trim();
+  const days = parseInt(document.getElementById('durationDays').value) || 365;
+  const notes = document.getElementById('notes').value.trim();
+  if (!name) { alert('نام مشتری را وارد کنید'); return; }
+  
+  if (!currentKey) generateRandomKey();
+  
+  const start = new Date();
+  const expiry = new Date();
+  expiry.setDate(expiry.getDate() + days);
+  
+  const payload = {
+    action: 'add',
+    adminPass: ADMIN_PASSWORD,
+    key: currentKey,
+    name: name,
+    phone: phone,
+    start: start.toISOString().slice(0,10),
+    expiry: expiry.toISOString().slice(0,10),
+    maxDevices: Math.max(1, parseInt(document.getElementById('maxDevices').value) || 1),
+    notes: notes
+  };
+  
+  adminRequestInFlight = true;
+  try {
+    const data = await apiRequest(payload);
+    if (data.ok) {
+      showMsg('لایسنس با موفقیت ثبت شد', 'success');
+      document.getElementById('custName').value = '';
+      document.getElementById('custPhone').value = '';
+      document.getElementById('notes').value = '';
+      document.getElementById('maxDevices').value = '1';
+      document.getElementById('durationDays').value = '365';
+      currentKey = '';
+      loadLicenses(false);
+    } else {
+      showMsg(data.message || 'خطا در ثبت', 'error');
+    }
+  } catch(e) {
+    showMsg('خطا در اتصال به سرور', 'error');
+  } finally {
+    adminRequestInFlight = false;
+  }
+}
+
+async function loadLicenses(showLoading = false) {
+  // جلوگیری از درخواست‌های همزمان غیرضروری
+  if (licenseLoadInFlight) return licenseLoadInFlight;
+
+  const btn = document.getElementById('refreshBtn');
+  const icon = btn ? btn.querySelector('i') : null;
+
+  licenseLoadInFlight = (async () => {
+    try {
+      if (showLoading && btn) {
+        btn.disabled = true;
+        btn.classList.add('btn-loading');
+        if (icon) icon.classList.add('fa-spin');
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> در حال بروزرسانی...';
+      }
+
+      const data = await apiRequest(
+        null,
+        '?action=list&adminPass=' + encodeURIComponent(ADMIN_PASSWORD)
+      );
+
+      if (!data.ok) {
+        showMsg(data.message || 'خطا در دریافت لیست', 'error');
+        return;
+      }
+
+      renderLicenses(data.licenses || []);
+
+      if (showLoading) showMsg('لیست لایسنس‌ها با موفقیت بروزرسانی شد', 'success');
+
+    } catch(e) {
+      showMsg('بروزرسانی انجام نشد: ' + (e.message || 'خطا در اتصال به سرور'), 'error');
+    } finally {
+      if (showLoading && btn) {
+        btn.disabled = false;
+        btn.classList.remove('btn-loading');
+        btn.innerHTML = '<i class="fa-solid fa-rotate"></i> بروزرسانی';
+      }
+      licenseLoadInFlight = null;
+    }
+  })();
+
+  return licenseLoadInFlight;
+}
+
+function renderLicenses(licenses) {
+  const tbody = document.getElementById('licenseTable');
+  tbody.innerHTML = '';
+
+  let total = 0, active = 0, expired = 0;
+
+  licenses.forEach(lic => {
+    total++;
+    const isExpired = new Date(lic.expiry) < new Date();
+    const status = lic.status === 'Disabled' ? 'disabled' : (isExpired ? 'expired' : 'active');
+    if (status === 'active') active++;
+    else if (status === 'expired') expired++;
+
+    const tr = document.createElement('tr');
+    tr.dataset.key = lic.key || '';
+    tr.innerHTML = `
+      <td style="direction:ltr;font-family:monospace;font-size:12px;">${lic.key || '-'}</td>
+      <td>${lic.name || '-'}</td>
+      <td>${lic.phone || '-'}</td>
+      <td>${lic.start || '-'}</td>
+      <td>${lic.expiry || '-'}</td>
+      <td style="text-align:center;white-space:nowrap;"><strong>${lic.activeDevices || 0}</strong> / ${lic.maxDevices || 1}</td>
+      <td class="status-${status}">${status === 'active' ? 'فعال' : status === 'expired' ? 'منقضی' : 'غیرفعال'}</td>
+      <td>
+        <button class="btn btn-outline" style="padding:4px 8px;font-size:11px;" onclick="toggleStatus('${lic.key}','${lic.status}')">
+          ${lic.status === 'Disabled' ? 'فعال‌سازی' : 'غیرفعال'}
+        </button>
+        <button class="btn btn-danger" style="padding:4px 8px;font-size:11px;" onclick="deleteLicense('${lic.key}')">حذف</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statActive').textContent = active;
+  document.getElementById('statExpired').textContent = expired;
+}
+
+async function toggleStatus(key, current) {
+  if (adminRequestInFlight) return;
+  const newStatus = current === 'Disabled' ? 'Active' : 'Disabled';
+  adminRequestInFlight = true;
+
+  try {
+    const data = await apiRequest({
+      action: 'updateStatus',
+      adminPass: ADMIN_PASSWORD,
+      key,
+      status: newStatus
+    });
+
+    if (data.ok) {
+      updateLicenseRowStatus(key, newStatus);
+      showMsg('وضعیت لایسنس تغییر کرد', 'success');
+    } else {
+      showMsg(data.message || 'خطا در تغییر وضعیت', 'error');
+    }
+  } catch(e) {
+    showMsg('خطا در تغییر وضعیت: ' + (e.message || ''), 'error');
+  } finally {
+    adminRequestInFlight = false;
+  }
+}
+
+function updateLicenseRowStatus(key, newStatus) {
+  const row = document.querySelector('#licenseTable tr[data-key="' + CSS.escape(key) + '"]');
+  if (!row) return;
+
+  const statusCell = row.children[6];
+  const actionBtn = row.children[7]?.querySelector('.btn-outline');
+
+  const isDisabled = newStatus === 'Disabled';
+  const isExpired = new Date(row.children[4].textContent.trim()) < new Date();
+  const visualStatus = isDisabled ? 'disabled' : (isExpired ? 'expired' : 'active');
+
+  statusCell.className = 'status-' + visualStatus;
+  statusCell.textContent = visualStatus === 'active' ? 'فعال' : visualStatus === 'expired' ? 'منقضی' : 'غیرفعال';
+
+  if (actionBtn) {
+    actionBtn.textContent = isDisabled ? 'فعال‌سازی' : 'غیرفعال';
+    actionBtn.setAttribute('onclick', "toggleStatus('" + key.replace(/'/g, "\\'") + "','" + newStatus + "')");
+  }
+
+  updateStatsFromTable();
+}
+
+async function deleteLicense(key) {
+  if (adminRequestInFlight) return;
+  if (!confirm('آیا از حذف این لایسنس مطمئن هستید؟')) return;
+
+  adminRequestInFlight = true;
+  try {
+    const data = await apiRequest({
+      action: 'delete',
+      adminPass: ADMIN_PASSWORD,
+      key
+    });
+
+    if (data.ok) {
+      const row = document.querySelector('#licenseTable tr[data-key="' + CSS.escape(key) + '"]');
+      if (row) row.remove();
+      updateStatsFromTable();
+      showMsg('لایسنس با موفقیت حذف شد', 'success');
+    } else {
+      showMsg(data.message || 'خطا در حذف', 'error');
+    }
+  } catch(e) {
+    showMsg('خطا در حذف: ' + (e.message || ''), 'error');
+  } finally {
+    adminRequestInFlight = false;
+  }
+}
+
+function updateStatsFromTable() {
+  const rows = document.querySelectorAll('#licenseTable tr');
+  let total = 0, active = 0, expired = 0;
+  rows.forEach(row => {
+    total++;
+    const cls = row.children[6]?.className || '';
+    if (cls.includes('status-active')) active++;
+    else if (cls.includes('status-expired')) expired++;
+  });
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statActive').textContent = active;
+  document.getElementById('statExpired').textContent = expired;
+}
+
+function showMsg(text, type) {
+  const box = document.getElementById('msgBox');
+  box.innerHTML = `<div class="alert alert-${type}">${text}</div>`;
+  setTimeout(() => box.innerHTML = '', 4000);
+}
+// گرم‌کردن اتصال به API برای کاهش تأخیر اولین درخواست
+document.addEventListener('DOMContentLoaded', () => {
+  try {
+    fetch(LICENSE_API + '?action=ping&_=' + Date.now(), {
+      method: 'GET',
+      cache: 'no-store',
+      credentials: 'omit',
+      keepalive: true
+    }).catch(() => {});
+  } catch (e) {}
+});
+</script>
+</body>
+</html>
