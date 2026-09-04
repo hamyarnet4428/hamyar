@@ -8,8 +8,8 @@
   </title>
   <link href="https://fonts.googleapis.com" rel="preconnect"/>
   <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-  <link href="https://script.google.com" rel="preconnect"/>
-  <link crossorigin="" href="https://script.google.com" rel="preconnect"/>
+  <link href="https://dmvttrdvarysgyuzfhgg.supabase.co" rel="preconnect"/>
+  <link crossorigin="" href="https://dmvttrdvarysgyuzfhgg.supabase.co" rel="preconnect"/>
   <link href="https://script.googleusercontent.com" rel="dns-prefetch"/>
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;900&amp;display=swap" rel="stylesheet"/>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet"/>
@@ -2586,9 +2586,8 @@ footer { text-align:center; color:var(--muted); font-size:12px; margin-top:40px;
    </section>
   </div>
 <script>
-// ========== تنظیمات لایسنس (گوگل شیت) ==========
-// آدرس Web App که از Google Apps Script کپی کردید را اینجا قرار دهید
-const LICENSE_API = 'https://script.google.com/macros/s/AKfycbwA9gPSmsfbga_uWwPf1w_0k0hbswiP4eRyj2eEPZ-T6Dl4mzZQtsTicbwMylGOl76PJw/exec';
+// ========== تنظیمات لایسنس (Supabase Edge Function) ==========
+const LICENSE_API = 'https://dmvttrdvarysgyuzfhgg.supabase.co/functions/v1/hamyar-api';
 
 function getDeviceId() {
   const storageKey = 'hamyar_device_id';
@@ -2638,7 +2637,7 @@ function warmLicenseConnection() {
   try {
     const link = document.createElement('link');
     link.rel = 'preconnect';
-    link.href = 'https://script.google.com';
+    link.href = 'https://dmvttrdvarysgyuzfhgg.supabase.co';
     link.crossOrigin = '';
     document.head.appendChild(link);
   } catch (e) {}
@@ -2668,16 +2667,28 @@ async function checkLicense() {
   licenseRequestInFlight = (async () => {
     try {
       const deviceId = getDeviceId();
-      const url = LICENSE_API + '?action=check&key=' + encodeURIComponent(key) + '&deviceId=' + encodeURIComponent(deviceId);
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 20000);
       let res;
       try {
-        res = await fetch(url, { cache: 'no-store', signal: controller.signal });
+        res = await fetch(LICENSE_API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'check', key: key, deviceId: deviceId }),
+          cache: 'no-store',
+          credentials: 'omit',
+          signal: controller.signal
+        });
       } finally {
         clearTimeout(timeout);
       }
-      const data = await res.json();
+      const raw = await res.text();
+      let data;
+      try {
+        data = JSON.parse(raw);
+      } catch (_) {
+        throw new Error('پاسخ سرور JSON معتبر نیست');
+      }
       if (data.ok) {
         localStorage.setItem('hamyar_license', key);
         localStorage.setItem('hamyar_license_data', JSON.stringify(data));
