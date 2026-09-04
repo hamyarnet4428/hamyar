@@ -846,38 +846,63 @@ async function sha256(text) {
 }
 
 async function getDeviceId() {
+  // V8: browser-independent device signature.
+  // Deliberately excludes browser version, user-agent string and
+  // screen.available dimensions because those can differ between
+  // Chrome/Kiwi on the same physical device.
   const nav = navigator;
   const scr = window.screen || {};
   let ch = {};
   try {
     if (nav.userAgentData && nav.userAgentData.getHighEntropyValues) {
       ch = await nav.userAgentData.getHighEntropyValues([
-        'platform','platformVersion','architecture','bitness','model','mobile'
+        'platform','architecture','bitness','model','mobile'
       ]);
     }
   } catch (_) {}
+
   const parts = [
-    nav.platform || '', String(nav.hardwareConcurrency || ''),
-    String(nav.deviceMemory || ''), String(nav.maxTouchPoints || 0),
-    String(scr.availWidth || scr.width || ''), String(scr.availHeight || scr.height || ''),
-    String(scr.colorDepth || ''), String(scr.pixelDepth || ''),
-    Intl.DateTimeFormat().resolvedOptions().timeZone || '',
-    ch.platform || '', ch.architecture || '', ch.bitness || '',
-    ch.model || '', String(!!ch.mobile)
+    String(ch.platform || nav.platform || '').trim().toLowerCase(),
+    String(ch.architecture || '').trim().toLowerCase(),
+    String(ch.bitness || '').trim(),
+    String(ch.model || '').trim().toLowerCase(),
+    String(!!ch.mobile),
+    String(nav.hardwareConcurrency || ''),
+    String(nav.deviceMemory || ''),
+    String(nav.maxTouchPoints || 0),
+    String(scr.width || ''),
+    String(scr.height || ''),
+    String(scr.colorDepth || ''),
+    String(scr.pixelDepth || ''),
+    String(window.devicePixelRatio || 1),
+    Intl.DateTimeFormat().resolvedOptions().timeZone || ''
   ];
+
+  // WebGL is useful because the renderer is normally tied to the
+  // physical graphics hardware, but we do not include browser identity.
   try {
-    const c=document.createElement('canvas');
-    const g=c.getContext('webgl') || c.getContext('experimental-webgl');
-    if(g){ const ext=g.getExtension('WEBGL_debug_renderer_info');
-      parts.push(ext ? String(g.getParameter(ext.UNMASKED_VENDOR_WEBGL)||'') : '');
-      parts.push(ext ? String(g.getParameter(ext.UNMASKED_RENDERER_WEBGL)||'') : '');
+    const c = document.createElement('canvas');
+    const g = c.getContext('webgl') || c.getContext('experimental-webgl');
+    if (g) {
+      const ext = g.getExtension('WEBGL_debug_renderer_info');
+      parts.push(ext ? String(g.getParameter(ext.UNMASKED_VENDOR_WEBGL) || '').trim().toLowerCase() : '');
+      parts.push(ext ? String(g.getParameter(ext.UNMASKED_RENDERER_WEBGL) || '').trim().toLowerCase() : '');
+    } else {
+      parts.push('', '');
     }
-  } catch (_) { parts.push('',''); }
-  const raw=parts.map(v=>String(v).trim()).join('\x1f');
-  const bytes=new TextEncoder().encode(raw);
-  const hash=await crypto.subtle.digest('SHA-256',bytes);
-  const hex=Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
-  return 'HN-PC-V7-' + hex;
+  } catch (_) {
+    parts.push('', '');
+  }
+
+  const raw = parts.join('\x1f');
+  const hash = await crypto.subtle.digest(
+    'SHA-256',
+    new TextEncoder().encode(raw)
+  );
+  const hex = Array.from(new Uint8Array(hash))
+    .map(b => b.toString(16).padStart(2,'0'))
+    .join('');
+  return 'HN-PC-V8-' + hex;
 }
 
 function setLicenseButtonLoading(loading) {
