@@ -833,8 +833,7 @@ footer { text-align:center; color:var(--muted); font-size:12px; margin-top:40px;
 </div></section></div>
 
 
-<script>
-const LICENSE_API = 'https://dmvttrdvarysgyuzfhgg.supabase.co/functions/v1/hamyar-api';
+<script>const LICENSE_API = 'https://dmvttrdvarysgyuzfhgg.supabase.co/functions/v1/hamyar-api';
 
 async function sha256(text) {
   if (window.crypto && crypto.subtle) {
@@ -846,13 +845,6 @@ async function sha256(text) {
   return ('00000000'+(h>>>0).toString(16)).slice(-8).repeat(8);
 }
 
-/*
-  Browser-only device binding.
-  This intentionally avoids userAgent/browser version and localStorage so that
-  clearing cache or changing browser is less likely to create a new device ID.
-  A browser cannot read a true hardware serial/MachineGuid, so this is not a
-  mathematically perfect hardware lock.
-*/
 async function getDeviceId() {
   const nav = navigator;
   const scr = window.screen || {};
@@ -864,41 +856,28 @@ async function getDeviceId() {
       ]);
     }
   } catch (_) {}
-
-  let gl = {};
-  try {
-    const c = document.createElement('canvas');
-    const g = c.getContext('webgl') || c.getContext('experimental-webgl');
-    if (g) {
-      const ext = g.getExtension('WEBGL_debug_renderer_info');
-      gl.vendor = ext ? g.getParameter(ext.UNMASKED_VENDOR_WEBGL) : '';
-      gl.renderer = ext ? g.getParameter(ext.UNMASKED_RENDERER_WEBGL) : '';
-    }
-  } catch (_) {}
-
   const parts = [
-    nav.platform || '',
-    nav.hardwareConcurrency || '',
-    nav.deviceMemory || '',
-    nav.maxTouchPoints || '',
-    scr.width || '',
-    scr.height || '',
-    scr.availWidth || '',
-    scr.availHeight || '',
-    scr.colorDepth || '',
-    scr.pixelDepth || '',
+    nav.platform || '', String(nav.hardwareConcurrency || ''),
+    String(nav.deviceMemory || ''), String(nav.maxTouchPoints || 0),
+    String(scr.availWidth || scr.width || ''), String(scr.availHeight || scr.height || ''),
+    String(scr.colorDepth || ''), String(scr.pixelDepth || ''),
     Intl.DateTimeFormat().resolvedOptions().timeZone || '',
-    ch.platform || '',
-    ch.platformVersion || '',
-    ch.architecture || '',
-    ch.bitness || '',
-    ch.model || '',
-    String(!!ch.mobile),
-    gl.vendor || '',
-    gl.renderer || ''
+    ch.platform || '', ch.architecture || '', ch.bitness || '',
+    ch.model || '', String(!!ch.mobile)
   ];
-
-  return 'HN-PC-V2-' + await sha256(parts.join('|'));
+  try {
+    const c=document.createElement('canvas');
+    const g=c.getContext('webgl') || c.getContext('experimental-webgl');
+    if(g){ const ext=g.getExtension('WEBGL_debug_renderer_info');
+      parts.push(ext ? String(g.getParameter(ext.UNMASKED_VENDOR_WEBGL)||'') : '');
+      parts.push(ext ? String(g.getParameter(ext.UNMASKED_RENDERER_WEBGL)||'') : '');
+    }
+  } catch (_) { parts.push('',''); }
+  const raw=parts.map(v=>String(v).trim()).join('\x1f');
+  const bytes=new TextEncoder().encode(raw);
+  const hash=await crypto.subtle.digest('SHA-256',bytes);
+  const hex=Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  return 'HN-PC-V7-' + hex;
 }
 
 function setLicenseButtonLoading(loading) {
@@ -906,29 +885,42 @@ function setLicenseButtonLoading(loading) {
   if (!btn) return;
   btn.classList.toggle('loading', loading);
   btn.disabled = loading;
-  btn.innerHTML = loading
-    ? '<span class="btn-spinner" style="display:inline-block"></span> در حال بررسی و فعال‌سازی...'
-    : '<i class="fa-solid fa-key"></i> فعال‌سازی و ورود';
+  btn.innerHTML = loading ? '<span class="btn-spinner" style="display:inline-block"></span> در حال بررسی و فعال‌سازی...' : '<i class="fa-solid fa-key"></i> فعال‌سازی و ورود';
 }
 
-function formatDate(value) {
-  if (!value) return '---';
-  const d = new Date(value);
-  if (Number.isNaN(d.getTime())) return String(value);
+async function checkLicense() {
+  const key = document.getElementById('pass').value.trim();
+  const err = document.getElementById('err');
+  const info = document.getElementById('licenseInfo');
+  if (err) err.textContent = '';
+  if (info) info.textContent = '';
+  if (!key) { if (err) err.textContent = 'کد لایسنس را وارد کنید'; return; }
+  setLicenseButtonLoading(true);
+  if (info) info.textContent = 'در حال بررسی لایسنس و ظرفیت دستگاه...';
   try {
-    return new Intl.DateTimeFormat('fa-IR', {
-      year: 'numeric', month: '2-digit', day: '2-digit'
-    }).format(d);
-  } catch (_) {
-    return d.toLocaleDateString('fa-IR');
-  }
-}
-
-function getRemainingDays(expiresAt) {
-  if (!expiresAt) return '---';
-  const diff = new Date(expiresAt).getTime() - Date.now();
-  if (!Number.isFinite(diff)) return '---';
-  return Math.max(0, Math.ceil(diff / 86400000)).toLocaleString('fa-IR') + ' روز';
+    const deviceId = await getDeviceId();
+    const res = await fetch(LICENSE_API, {
+      method: 'POST', cache: 'no-store', credentials: 'omit',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({action:'check', key, deviceId})
+    });
+    const data = await res.json();
+    if (data.ok) {
+      localStorage.setItem('hamyar_license', key);
+      localStorage.setItem('hamyar_license_data', JSON.stringify(data));
+      if (info) info.textContent = '✓ لایسنس با موفقیت فعال شد';
+      showMain(data);
+    } else {
+      if (err) err.textContent = data.message || 'لایسنس نامعتبر یا منقضی شده است';
+      if (info) info.textContent = '';
+      const pass = document.getElementById('pass');
+      if (pass) { pass.classList.remove('shake'); void pass.offsetWidth; pass.classList.add('shake'); }
+    }
+  } catch (e) {
+    if (err) err.textContent = 'خطا در اتصال به سرور لایسنس. اینترنت و آدرس API را چک کنید.';
+    if (info) info.textContent = '';
+    console.error(e);
+  } finally { setLicenseButtonLoading(false); }
 }
 
 function showMain(data) {
@@ -936,117 +928,26 @@ function showMain(data) {
   const main = document.getElementById('main-content');
   if (auth) auth.style.display = 'none';
   if (main) main.style.display = 'block';
-
-  const license = data && data.license ? data.license : data || {};
-  const key = license.license_key || data.key || '---';
-  const start = license.start_at || data.start || '';
-  const expiry = license.expires_at || data.expiry || '';
-  const duration = license.duration_days ?? data.duration ?? '---';
-  const activeDevices = license.active_devices ?? data.activeDevices ?? 0;
-  const maxDevices = license.max_devices ?? data.maxDevices ?? 1;
-
-  const setText = (id, value) => {
-    const el = document.getElementById(id);
-    if (el) el.textContent = value;
-  };
-
-  setText('customerLicenseKey', key);
-  setText('licenseStartDate', formatDate(start));
-  setText('licenseExpiryDate', formatDate(expiry));
-  setText('licenseDuration',
-    duration === '---' ? '---' : Number(duration).toLocaleString('fa-IR') + ' روز');
-  setText('licenseRemaining', getRemainingDays(expiry));
-  setText('licenseDevices',
-    Number(activeDevices).toLocaleString('fa-IR') + ' / ' +
-    Number(maxDevices).toLocaleString('fa-IR'));
-
-  const box = document.getElementById('licenseRemainingBox');
-  if (box) {
-    const expired = expiry && new Date(expiry).getTime() < Date.now();
-    box.className = 'license-stat ' + (expired ? 'expired' : 'remaining');
+  if (document.getElementById('customerLicenseKey')) {
+    document.getElementById('customerLicenseKey').textContent = data.key || '---';
+    document.getElementById('licenseStartDate').textContent = data.start || '---';
+    document.getElementById('licenseExpiryDate').textContent = data.expiry || '---';
+    document.getElementById('licenseDuration').textContent = data.duration || '---';
+    document.getElementById('licenseRemaining').textContent = data.remaining || '---';
+    if (document.getElementById('licenseDevices')) {
+      document.getElementById('licenseDevices').textContent = Number(data.activeDevices || 0) + ' / ' + Number(data.maxDevices || 1);
+    }
+    const box = document.getElementById('licenseRemainingBox');
+    if (box) box.className = 'license-stat ' + (data.expired ? 'expired' : 'remaining');
   }
-
   filterCat(-1);
-}
-
-async function checkLicense() {
-  const pass = document.getElementById('pass');
-  const err = document.getElementById('err');
-  const info = document.getElementById('licenseInfo');
-  const key = pass ? pass.value.trim() : '';
-
-  if (err) err.textContent = '';
-  if (info) info.textContent = '';
-
-  if (!key) {
-    if (err) err.textContent = 'کد لایسنس را وارد کنید';
-    return false;
-  }
-
-  setLicenseButtonLoading(true);
-  if (info) info.textContent = 'در حال بررسی لایسنس و دستگاه...';
-
-  try {
-    const deviceId = await getDeviceId();
-
-    const res = await fetch(LICENSE_API, {
-      method: 'POST',
-      cache: 'no-store',
-      credentials: 'omit',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        action: 'check',
-        licenseKey: key,
-        deviceId
-      })
-    });
-
-    let data = {};
-    try { data = await res.json(); } catch (_) {}
-
-    if (res.ok && data.ok) {
-      localStorage.setItem('hamyar_license', key);
-      localStorage.setItem('hamyar_license_data', JSON.stringify(data));
-
-      if (info) info.textContent = '✓ لایسنس با موفقیت فعال شد';
-      showMain(data);
-      return true;
-    }
-
-    const message =
-      data.error ||
-      data.message ||
-      'لایسنس نامعتبر، غیرفعال یا منقضی شده است';
-
-    if (err) err.textContent = message;
-    if (info) info.textContent = '';
-
-    if (pass) {
-      pass.classList.remove('shake');
-      void pass.offsetWidth;
-      pass.classList.add('shake');
-    }
-
-    return false;
-  } catch (e) {
-    if (err) {
-      err.textContent =
-        'خطا در اتصال به سرور لایسنس. اینترنت و آدرس API را بررسی کنید.';
-    }
-    if (info) info.textContent = '';
-    console.error('Hamyar license error:', e);
-    return false;
-  } finally {
-    setLicenseButtonLoading(false);
-  }
 }
 
 window.addEventListener('DOMContentLoaded', async () => {
   const saved = localStorage.getItem('hamyar_license');
-  const pass = document.getElementById('pass');
-
-  if (saved && pass) {
-    pass.value = saved;
+  if (saved) {
+    const passInput = document.getElementById('pass');
+    if (passInput) passInput.value = saved;
     await checkLicense();
   }
 });
@@ -1054,85 +955,45 @@ window.addEventListener('DOMContentLoaded', async () => {
 let activeCat = -1;
 
 function normalizeSearchText(value) {
-  return String(value || '')
-    .toLocaleLowerCase('fa-IR')
-    .replace(/ي/g,'ی')
-    .replace(/ى/g,'ی')
-    .replace(/ك/g,'ک')
-    .replace(/ۀ/g,'ه')
-    .trim();
+  return String(value || '').toLocaleLowerCase('fa-IR').replace(/ي/g,'ی').replace(/ك/g,'ک').replace(/ۀ/g,'ه').trim();
 }
 
 function filterCat(n) {
   activeCat = Number(n);
-
   document.querySelectorAll('.tab-btn').forEach(b => {
-    b.classList.toggle(
-      'active',
-      String(b.dataset.tab) === String(activeCat)
-    );
+    b.classList.toggle('active', String(b.dataset.tab) === String(activeCat));
   });
-
   search();
 }
 
 function search() {
   const input = document.getElementById('searchInput');
   const q = normalizeSearchText(input ? input.value : '');
-
   let count = 0;
   let catsFound = 0;
-
   document.querySelectorAll('.cat').forEach(sec => {
-    const visibleCat =
-      activeCat < 0 ||
-      Number(sec.dataset.cat) === activeCat;
-
+    const visibleCat = activeCat < 0 || Number(sec.dataset.cat) === activeCat;
     let any = false;
-
     sec.querySelectorAll('.card').forEach(card => {
       const nameEl = card.querySelector('.name');
-
-      const hay = normalizeSearchText(
-        (nameEl ? nameEl.textContent : '') +
-        ' ' +
-        card.textContent +
-        ' ' +
-        (card.getAttribute('href') || '')
-      );
-
+      const hay = normalizeSearchText((nameEl ? nameEl.textContent : '') + ' ' + card.textContent + ' ' + (card.getAttribute('href') || ''));
       const ok = visibleCat && (!q || hay.includes(q));
-
       card.style.display = ok ? '' : 'none';
-
-      if (ok) {
-        any = true;
-        count++;
-      }
+      if (ok) { any = true; count++; }
     });
-
     sec.style.display = any ? 'block' : 'none';
-
     if (any) catsFound++;
   });
-
   const cnt = document.getElementById('count');
-
-  if (cnt) {
-    cnt.textContent = q
-      ? `${count.toLocaleString('fa-IR')} لینک یافت شد`
-      : `${count.toLocaleString('fa-IR')} لینک در ${catsFound.toLocaleString('fa-IR')} دسته`;
-  }
+  if (cnt) cnt.textContent = q ? `${count.toLocaleString('fa-IR')} لینک یافت شد` : `${count.toLocaleString('fa-IR')} لینک در ${catsFound.toLocaleString('fa-IR')} دسته`;
 }
 
 window.addEventListener('DOMContentLoaded', () => {
   const input = document.getElementById('searchInput');
-
   if (input) {
     input.addEventListener('input', search);
     input.addEventListener('keyup', search);
   }
-
   filterCat(-1);
 });
 </script>
