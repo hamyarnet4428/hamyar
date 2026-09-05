@@ -177,6 +177,22 @@ footer { text-align:center; color:var(--muted); font-size:12px; margin-top:40px;
 <div class="license-stats">
 <div class="license-stat">
 <span>
+         نام کافی‌نت
+        </span>
+<strong id="licenseCafeName">
+         ---
+        </strong>
+</div>
+<div class="license-stat">
+<span>
+         شماره تماس
+        </span>
+<strong id="licensePhone">
+         ---
+        </strong>
+</div>
+<div class="license-stat">
+<span>
          تاریخ شروع
         </span>
 <strong id="licenseStartDate">
@@ -975,23 +991,29 @@ async function checkLicense() {
 }
 
 function showMain(data) {
+  // پاسخ ثبت/تأیید دستگاه، اطلاعات لایسنس را داخل data.license برمی‌گرداند؛
+  // پاسخ check ممکن است خود اطلاعات لایسنس را در data داشته باشد.
+  const license = (data && data.license) ? data.license : (data || {});
+
   const auth = document.getElementById('auth-screen');
   const main = document.getElementById('main-content');
   if (auth) auth.style.display = 'none';
   if (main) main.style.display = 'block';
 
   if (document.getElementById('customerLicenseKey')) {
-    document.getElementById('customerLicenseKey').textContent = data.key || '---';
-    document.getElementById('licenseStartDate').textContent = data.start || '---';
-    document.getElementById('licenseExpiryDate').textContent = data.expiry || '---';
-    document.getElementById('licenseDuration').textContent = data.duration || '---';
-    document.getElementById('licenseRemaining').textContent = data.remaining || '---';
+    document.getElementById('customerLicenseKey').textContent = license.key || '---';
+    document.getElementById('licenseCafeName').textContent = license.name || '---';
+    document.getElementById('licensePhone').textContent = license.phone || '---';
+    document.getElementById('licenseStartDate').textContent = license.start || '---';
+    document.getElementById('licenseExpiryDate').textContent = license.expiry || '---';
+    document.getElementById('licenseDuration').textContent = license.duration ? (Number(license.duration).toLocaleString('fa-IR') + ' روز') : '---';
+    document.getElementById('licenseRemaining').textContent = license.expired ? 'منقضی شده' : (license.remaining != null ? (Number(license.remaining).toLocaleString('fa-IR') + ' روز') : '---');
 
     const devices = document.getElementById('licenseDevices');
-    if (devices) devices.textContent = Number(data.activeDevices || 1) > 0 ? 'فعال' : '---';
+    if (devices) devices.textContent = Number(license.activeDevices || 1) > 0 ? 'فعال' : '---';
 
     const box = document.getElementById('licenseRemainingBox');
-    if (box) box.className = 'license-stat ' + (data.expired ? 'expired' : 'remaining');
+    if (box) box.className = 'license-stat ' + (license.expired ? 'expired' : 'remaining');
   }
 
   filterCat(-1);
