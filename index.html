@@ -71,7 +71,7 @@ body { font-family:'Vazirmatn',Tahoma,sans-serif; background:var(--bg); margin:0
 @media (max-width:900px) { .license-stats-all { grid-template-columns:repeat(3,minmax(0,1fr)); } }
 @media (max-width:600px) { .license-card { align-items:stretch; } .license-card-heading { align-items:flex-start; flex-direction:column; } .license-stats { width:100%; } .license-stats-all { grid-template-columns:repeat(2,minmax(0,1fr)); } .license-stat { min-width:0; } }
 
-.search-wrap { max-width:640px; margin:-45px auto 0; padding:0 14px; position:sticky; top:10px; z-index:100; }
+.search-wrap { max-width:640px; margin:16px auto 0; padding:0 14px; position:relative; top:auto; z-index:5; }
 .search-box { width:100%; padding:15px 48px 15px 20px; border-radius:32px; border:none; outline:none;
   font-family:inherit; font-size:15px; box-shadow:0 10px 30px rgba(13,110,253,.25); }
 .search-wrap .fa-magnifying-glass { position:absolute; top:50%; right:20px; transform:translateY(-50%); color:var(--muted); }
@@ -117,6 +117,9 @@ footer { text-align:center; color:var(--muted); font-size:12px; margin-top:40px;
 .tab-btn:nth-child(2) i{color:#0d6efd}.tab-btn:nth-child(3) i{color:#6f42c1}.tab-btn:nth-child(4) i{color:#e83e8c}.tab-btn:nth-child(5) i{color:#fd7e14}.tab-btn:nth-child(6) i{color:#20c997}.tab-btn:nth-child(7) i{color:#198754}.tab-btn:nth-child(8) i{color:#0dcaf0}.tab-btn:nth-child(9) i{color:#dc3545}.tab-btn:nth-child(10) i{color:#6610f2}.tab-btn:nth-child(11) i{color:#d63384}.tab-btn:nth-child(12) i{color:#198754}.tab-btn:nth-child(13) i{color:#0d6efd}.tab-btn:nth-child(14) i{color:#6f42c1}.tab-btn:nth-child(15) i{color:#fd7e14}.tab-btn:nth-child(16) i{color:#dc3545}.tab-btn:nth-child(17) i{color:#795548}.tab-btn:nth-child(18) i{color:#ffc107}.tab-btn:nth-child(19) i{color:#198754}.tab-btn:nth-child(20) i{color:#20c997}.tab-btn:nth-child(21) i{color:#6f42c1}.tab-btn:nth-child(22) i{color:#0d6efd}.tab-btn:nth-child(23) i{color:#6610f2}.tab-btn:nth-child(24) i{color:#dc3545}.tab-btn:nth-child(25) i{color:#20c997}.tab-btn:nth-child(26) i{color:#198754}.tab-btn:nth-child(27) i{color:#fd7e14}.tab-btn:nth-child(28) i{color:#0dcaf0}
 .tab-btn.active i{color:inherit!important}
 .cat h2>i{opacity:.95}
+</style>
+<style id="documents-main-tab-styles">
+.main-section-tabs{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:20px 14px 10px;padding:8px;background:rgba(255,255,255,.55);border-radius:18px;position:relative;z-index:30}.main-section-btn{border:1px solid #e4e9f2;background:#fff;color:#4d5668;border-radius:14px;padding:11px 20px;font-family:inherit;font-weight:900;font-size:13px;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.06);transition:.2s}.main-section-btn:hover{transform:translateY(-2px)}.main-section-btn.active{background:linear-gradient(135deg,#0d6efd,#6f42c1);color:#fff;border-color:transparent;box-shadow:0 8px 20px rgba(13,110,253,.22)}.main-panel{display:none}.main-panel.active{display:block}.documents-box{max-width:1100px;margin:14px auto 0;padding:0 14px}.documents-header{background:linear-gradient(135deg,rgba(13,110,253,.08),rgba(111,66,193,.08));border:1px solid #e7ebf3;border-radius:18px;padding:16px;margin-bottom:12px;text-align:center}.documents-header h2{margin:0 0 5px;font-size:18px;color:#283248}.documents-header p{margin:0;color:#6b7280;font-size:12px}.documents-subtabs{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:12px 0;padding:10px;background:#f7f9fc;border-radius:16px}.documents-subtab{border:1px solid #e3e8f1;background:#fff;border-radius:12px;padding:8px 14px;font-family:inherit;font-weight:800;font-size:12px;color:#596273;cursor:pointer;transition:.2s}.documents-subtab:hover{transform:translateY(-2px)}.documents-subtab.active{background:#0d6efd;color:#fff;border-color:#0d6efd}.documents-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}.document-card{background:#fff;border:1px solid #e7ebf2;border-right:5px solid #6f42c1;border-radius:16px;padding:15px;box-shadow:0 3px 9px rgba(0,0,0,.05);display:flex;flex-direction:column;gap:9px}.document-card h3{margin:0;color:#283248;font-size:14px;line-height:1.8}.document-card p{margin:0;color:#747d8d;font-size:11px;line-height:1.8;min-height:38px}.document-meta{display:flex;justify-content:space-between;align-items:center;gap:8px;color:#8a93a3;font-size:10px}.document-download{border:0;background:linear-gradient(135deg,#0d6efd,#6f42c1);color:#fff;border-radius:11px;padding:9px 12px;font-family:inherit;font-weight:800;cursor:pointer}.document-download:disabled{opacity:.65;cursor:wait}.documents-status{text-align:center;color:#6b7280;font-size:12px;padding:22px}.documents-error{color:#dc3545}.documents-empty{color:#6b7280}@media(max-width:600px){.main-section-btn{flex:1;min-width:150px}.documents-grid{grid-template-columns:1fr}.documents-header h2{font-size:16px}}
 </style>
 </head>
 <body>
@@ -204,6 +207,11 @@ footer { text-align:center; color:var(--muted); font-size:12px; margin-top:40px;
 </div>
 </div>
 </div>
+<div class="main-section-tabs" id="mainSectionTabs">
+<button class="main-section-btn active" id="linksMainBtn" onclick="switchMainSection('links')"><i class="fa-solid fa-globe"></i> لینک‌های سایت‌ها</button>
+<button class="main-section-btn" id="docsMainBtn" onclick="switchMainSection('docs')"><i class="fa-solid fa-folder-open"></i> فایل‌های اداری و فرم‌ها</button>
+</div>
+<div id="linksPanel" class="main-panel active">
 <div class="search-wrap">
 <i class="fa-solid fa-magnifying-glass">
 </i>
@@ -825,6 +833,20 @@ footer { text-align:center; color:var(--muted); font-size:12px; margin-top:40px;
 <a class="card" href="https://medu.gov.ir/?q=اخبار" rel="noopener" target="_blank"><i class="fa-regular fa-newspaper icon" style="color:#fd7e14"></i><span class="name">medu.gov.ir — جستجوی اخبار</span></a>
 </div></section></div>
 
+</div>
+<div id="docsPanel" class="main-panel">
+  <div class="documents-box">
+    <div class="documents-header"><h2><i class="fa-solid fa-folder-open" style="margin-left:7px"></i> فایل‌های اداری و فرم‌ها</h2><p>فایل‌های آماده استفاده را از این بخش مشاهده و دریافت کنید.</p></div>
+    <div class="documents-subtabs" id="documentsSubtabs">
+      <button class="documents-subtab active" data-doc-cat="all" onclick="filterDocuments('all')">همه فایل‌ها</button>
+      <button class="documents-subtab" data-doc-cat="letter" onclick="filterDocuments('letter')">نامه‌های اداری</button>
+      <button class="documents-subtab" data-doc-cat="form" onclick="filterDocuments('form')">فرم‌ها</button>
+      <button class="documents-subtab" data-doc-cat="contract" onclick="filterDocuments('contract')">قراردادها</button>
+      <button class="documents-subtab" data-doc-cat="resume" onclick="filterDocuments('resume')">رزومه</button>
+    </div>
+    <div id="documentsStatus" class="documents-status">در حال دریافت فهرست فایل‌ها...</div><div id="documentsGrid" class="documents-grid"></div>
+  </div>
+</div>
 
 <script>
 const LICENSE_API = 'https://dmvttrdvarysgyuzfhgg.supabase.co/functions/v1/hamyar-api';
@@ -834,6 +856,14 @@ async function checkLicense(){const pass=document.getElementById('pass'),key=pas
 function showMain(data){const auth=document.getElementById('auth-screen'),main=document.getElementById('main-content');if(auth)auth.style.display='none';if(main)main.style.display='block';const set=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=value==null||value===''?'---':value};set('customerLicenseKey',data.key);set('licenseCafeName',data.name||data.cafe_name||data.customer_name);set('licenseCafePhone',data.phone||data.mobile||data.tel);set('licenseStartDate',data.start);set('licenseExpiryDate',data.expiry);set('licenseDuration',data.duration);set('licenseRemaining',data.remaining);set('licenseDevices','نامحدود');const box=document.getElementById('licenseRemainingBox');if(box)box.className='license-stat '+(data.expired?'expired':'remaining');filterCat(-1)}
 window.addEventListener('DOMContentLoaded',async()=>{const saved=localStorage.getItem('hamyar_license');if(saved){const passInput=document.getElementById('pass');if(passInput)passInput.value=saved;try{await checkLicense()}catch(_){}}});
 let activeCat=-1;
+const DOCUMENTS_API='https://dmvttrdvarysgyuzfhgg.supabase.co/functions/v1/hamyar-documents-test';
+let documentsCache=[];let activeDocumentCat='all';
+function switchMainSection(section){const links=document.getElementById('linksPanel'),docs=document.getElementById('docsPanel'),lb=document.getElementById('linksMainBtn'),db=document.getElementById('docsMainBtn'),isDocs=section==='docs';if(links)links.classList.toggle('active',!isDocs);if(docs)docs.classList.toggle('active',isDocs);if(lb)lb.classList.toggle('active',!isDocs);if(db)db.classList.toggle('active',isDocs);if(isDocs&&!documentsCache.length)loadDocuments();if(!isDocs)search()}
+function documentCategory(doc){const t=String((doc&&doc.title)||'').toLowerCase();if(t.includes('رزومه'))return'resume';if(t.includes('نامه'))return'letter';if(t.includes('قرارداد'))return'contract';return'form'}
+function renderDocuments(){const grid=document.getElementById('documentsGrid'),status=document.getElementById('documentsStatus');if(!grid)return;const list=activeDocumentCat==='all'?documentsCache:documentsCache.filter(d=>documentCategory(d)===activeDocumentCat);grid.innerHTML='';if(!list.length){if(status){status.textContent='فایلی در این بخش وجود ندارد';status.className='documents-status documents-empty'}return}if(status)status.textContent='';list.forEach(doc=>{const card=document.createElement('div');card.className='document-card';const h=document.createElement('h3');h.textContent=doc.title||'فایل اداری';const p=document.createElement('p');p.textContent=doc.description||'فایل آماده استفاده';const meta=document.createElement('div');meta.className='document-meta';const type=document.createElement('span');type.textContent=doc.file_type||'FILE';const btn=document.createElement('button');btn.className='document-download';btn.innerHTML='<i class="fa-solid fa-download"></i> دریافت فایل';btn.onclick=()=>downloadDocument(doc,btn);meta.append(type,btn);card.append(h,p,meta);grid.appendChild(card)})}
+function filterDocuments(cat){activeDocumentCat=cat;document.querySelectorAll('.documents-subtab').forEach(b=>b.classList.toggle('active',b.dataset.docCat===cat));renderDocuments()}
+async function loadDocuments(){const status=document.getElementById('documentsStatus');try{const res=await fetch(DOCUMENTS_API+'?action=list',{cache:'no-store'}),data=await res.json();if(!res.ok||!data.ok)throw new Error(data.message||'خطا در دریافت فایل‌ها');documentsCache=Array.isArray(data.documents)?data.documents:[];renderDocuments()}catch(e){console.error(e);if(status){status.textContent='خطا در دریافت فهرست فایل‌ها';status.className='documents-status documents-error'}}}
+async function downloadDocument(doc,btn){if(!doc||!doc.file_url)return;const old=btn.innerHTML;btn.disabled=true;btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> آماده‌سازی...';try{const res=await fetch(DOCUMENTS_API+'?action=download&file='+encodeURIComponent(doc.file_url),{cache:'no-store'}),data=await res.json();if(!res.ok||!data.ok||!data.url)throw new Error(data.message||'خطا در ساخت لینک دانلود');window.open(data.url,'_blank','noopener')}catch(e){alert(e.message||'خطا در دریافت فایل')}finally{btn.disabled=false;btn.innerHTML=old}}
 function normalizeSearchText(value){return String(value||'').toLocaleLowerCase('fa-IR').replace(/ي/g,'ی').replace(/ك/g,'ک').replace(/ۀ/g,'ه').trim()}
 function filterCat(n){activeCat=Number(n);document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',String(b.dataset.tab)===String(activeCat)));search()}
 function search(){const input=document.getElementById('searchInput'),q=normalizeSearchText(input?input.value:'');let count=0,catsFound=0;document.querySelectorAll('.cat').forEach(sec=>{const visibleCat=activeCat<0||Number(sec.dataset.cat)===activeCat;let any=false;sec.querySelectorAll('.card').forEach(card=>{const nameEl=card.querySelector('.name'),hay=normalizeSearchText((nameEl?nameEl.textContent:'')+' '+card.textContent+' '+(card.getAttribute('href')||'')),ok=visibleCat&&(!q||hay.includes(q));card.style.display=ok?'':'none';if(ok){any=true;count++}});sec.style.display=any?'block':'none';if(any)catsFound++});const cnt=document.getElementById('count');if(cnt)cnt.textContent=q?`${count.toLocaleString('fa-IR')} لینک یافت شد`:`${count.toLocaleString('fa-IR')} لینک در ${catsFound.toLocaleString('fa-IR')} دسته`}
