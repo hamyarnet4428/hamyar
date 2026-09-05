@@ -66,6 +66,28 @@ body { font-family:'Vazirmatn',Tahoma,sans-serif; background:var(--bg); margin:0
 .license-stat.expired strong { color:#dc3545; }
 @media (max-width:600px) { .license-card { align-items:stretch; } .license-stats { width:100%; } .license-stat { flex:1; min-width:105px; } }
 
+.documents-cat .grid{margin-top:12px;}
+.documents-loading,.documents-empty,.documents-error{grid-column:1/-1;text-align:center;padding:24px;border-radius:16px;background:#fff;box-shadow:0 4px 16px rgba(0,0,0,.06);color:var(--muted);}
+.document-card{display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;cursor:pointer;border:0;font-family:inherit;text-align:right;}
+.document-card .icon{font-size:28px;}
+.document-card .name{font-weight:800;}
+.document-card .desc{display:block;font-size:11px;color:var(--muted);margin-top:5px;line-height:1.7;}
+.document-card .download-label{margin-right:auto;background:#0d6efd;color:#fff;padding:7px 10px;border-radius:10px;font-size:11px;white-space:nowrap;}
+.main-tabs-title{text-align:center;font-weight:900;font-size:14px;color:#374151;margin:16px 14px 0;}
+.main-tabs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 14px 14px;padding:8px;background:rgba(13,110,253,.06);border:1px solid rgba(13,110,253,.12);border-radius:18px;position:relative;z-index:5;}
+.main-tab{display:flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:11px 12px;border:1px solid #e6eaf2;background:#fff;color:#374151;border-radius:14px;cursor:pointer;font-family:inherit;font-weight:900;font-size:13px;box-shadow:0 4px 12px rgba(0,0,0,.05);transition:.2s;}
+.main-tab:hover{transform:translateY(-2px);}
+.main-tab.active{background:#0d6efd;color:#fff;border-color:#0d6efd;box-shadow:0 6px 16px rgba(13,110,253,.20);}
+.main-tab i{font-size:1.05em;}
+#documentsSection{width:100%;padding-top:4px;}
+body.documents-mode .search-wrap{display:none!important;}
+body.documents-mode .tabs{display:none!important;}
+body.documents-mode .cat:not(#documentsSection){display:none!important;}
+body.documents-mode #documentsSection{display:block!important;}
+#documentsSection h2{background:#fff;border:1px solid #e6eaf2;border-radius:16px;padding:14px 16px;margin:18px 14px 10px;box-shadow:0 4px 14px rgba(0,0,0,.05);font-size:17px;}
+#documentsGrid{padding:0 14px;}
+@media(max-width:600px){.main-tabs{grid-template-columns:1fr 1fr;margin:14px 10px 12px;gap:8px}.main-tab{min-height:50px;padding:10px 7px;font-size:12px}.main-tab i{font-size:1em}#documentsSection h2{margin:14px 10px 10px;font-size:15px}#documentsGrid{padding:0 10px}}
+
 .search-wrap { max-width:640px; margin:-45px auto 0; padding:0 14px; position:sticky; top:10px; z-index:100; }
 .search-box { width:100%; padding:15px 48px 15px 20px; border-radius:32px; border:none; outline:none;
   font-family:inherit; font-size:15px; box-shadow:0 10px 30px rgba(13,110,253,.25); }
@@ -248,7 +270,16 @@ footer { text-align:center; color:var(--muted); font-size:12px; margin-top:40px;
 <button class="tab-btn" data-tab="24" onclick="filterCat(24)"><i class="fa-solid fa-map-location-dot"></i> استان‌ها و خدمات استانی</button>
 <button class="tab-btn" data-tab="25" onclick="filterCat(25)"><i class="fa-solid fa-layer-group"></i> سایر خدمات کاربردی</button>
 <button class="tab-btn" data-tab="26" onclick="filterCat(26)"><i class="fa-solid fa-chalkboard-user"></i> آموزش</button>
-</div><section class="cat" data-cat="0"><h2><i class="fa-solid fa-landmark" style="margin-left:8px"></i> دولت و خدمات عمومی <span>38</span></h2><div class="grid">
+</div><div class="main-tabs-title">بخش اصلی پنل</div>
+<div class="main-tabs" id="mainTabs">
+<button class="main-tab active" id="mainLinksTab" type="button" onclick="showMainTab('links')"><i class="fa-solid fa-globe"></i> سایت‌ها و لینک‌ها</button>
+<button class="main-tab" id="mainDocumentsTab" type="button" onclick="showMainTab('documents')"><i class="fa-solid fa-folder-open"></i> فایل‌ها و نامه‌های اداری</button>
+</div>
+<section class="cat documents-cat" data-cat="documents" id="documentsSection" style="display:none;">
+<h2><i class="fa-solid fa-folder-open" style="margin-left:8px"></i> فایل‌ها و نامه‌های اداری <span id="documentsCount">۰</span></h2>
+<div class="grid" id="documentsGrid"><div class="documents-loading">در حال دریافت فایل‌ها...</div></div>
+</section>
+<section class="cat" data-cat="0"><h2><i class="fa-solid fa-landmark" style="margin-left:8px"></i> دولت و خدمات عمومی <span>38</span></h2><div class="grid">
 <a class="card" href="https://my.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#0d6efd"></i><span class="name">پنجره ملی خدمات دولت هوشمند</span></a>
 <a class="card" href="https://mojavez.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#0d6efd"></i><span class="name">درگاه ملی مجوزها</span></a>
 <a class="card" href="https://sabteahval.ir" rel="noopener" target="_blank"><i class="fa-solid fa-address-card icon" style="color:#0d6efd"></i><span class="name">سامانه ثبت احوال</span></a>
@@ -833,25 +864,99 @@ footer { text-align:center; color:var(--muted); font-size:12px; margin-top:40px;
 </div></section></div>
 
 
-<script src="https://unpkg.com/@simplewebauthn/browser@13.3.0/dist/bundle/index.umd.min.js"></script>
 <script>
-const LICENSE_API='https://dmvttrdvarysgyuzfhgg.supabase.co/functions/v1/hamyar-api';
-const SESSION_API='https://dmvttrdvarysgyuzfhgg.supabase.co/functions/v1/hamyar-session';
-const SESSION_TTL=90;
-let licenseSessionToken=localStorage.getItem('hamyar_license_session')||crypto.randomUUID();
-localStorage.setItem('hamyar_license_session',licenseSessionToken);
-let sessionTimer=null;
-function setLicenseButtonLoading(loading,text){const btn=document.getElementById('activateBtn');if(!btn)return;btn.classList.toggle('loading',loading);btn.disabled=loading;btn.innerHTML=loading?'<span class="btn-spinner" style="display:inline-block"></span> '+(text||'در حال بررسی...'):'<i class="fa-solid fa-key"></i> فعال‌سازی و ورود'}
-async function callApi(url,action,payload={}){const c=new AbortController(),t=setTimeout(()=>c.abort(),15000);try{const r=await fetch(url,{method:'POST',cache:'no-store',credentials:'omit',signal:c.signal,headers:{'Content-Type':'application/json'},body:JSON.stringify({action,...payload})});let d;try{d=await r.json()}catch{throw Error('پاسخ نامعتبر از سرور دریافت شد')}if(!r.ok)throw Error(d.message||('HTTP '+r.status));return d}catch(e){if(e.name==='AbortError')throw Error('ارتباط با سرور بیش از حد طول کشید؛ دوباره تلاش کنید.');if(e instanceof TypeError)throw Error('ارتباط با سرور برقرار نشد؛ اینترنت را بررسی کنید.');throw e}finally{clearTimeout(t)}}
-const licenseApi=(a,p={})=>callApi(LICENSE_API,a,p); const sessionApi=(a,p={})=>callApi(SESSION_API,a,p);
-async function startSession(key){const d=await sessionApi('claim',{key,sessionToken:licenseSessionToken,deviceId:(navigator.userAgent||'browser').slice(0,180),ttl:SESSION_TTL});if(!d.ok)throw Error(d.message||'این لایسنس هم‌اکنون در حال استفاده است');startHeartbeat(key);return d}
-function startHeartbeat(key){clearInterval(sessionTimer);sessionTimer=setInterval(async()=>{try{const d=await sessionApi('heartbeat',{key,sessionToken:licenseSessionToken,ttl:SESSION_TTL});if(!d.ok){clearInterval(sessionTimer);localStorage.removeItem('hamyar_license');location.reload()}}catch{}},30000)}
-async function releaseSession(){try{await sessionApi('release',{sessionToken:licenseSessionToken})}catch{}}
-async function activateLicense(key){const data=await licenseApi('check',{key});if(!data.ok)throw Error(data.message||'لایسنس نامعتبر یا منقضی شده است');await startSession(key);return data}
-async function checkLicense(){const key=document.getElementById('pass').value.trim(),err=document.getElementById('err'),info=document.getElementById('licenseInfo');if(err)err.textContent='';if(info)info.textContent='';if(!key){if(err)err.textContent='کد لایسنس را وارد کنید';return}setLicenseButtonLoading(true,'در حال اتصال...');if(info)info.textContent='در حال بررسی لایسنس...';try{const data=await activateLicense(key);localStorage.setItem('hamyar_license',key);if(info)info.textContent='✓ لایسنس فعال شد';showMain(data)}catch(e){if(err)err.textContent=e.message||'خطا در فعال‌سازی لایسنس';const pass=document.getElementById('pass');if(pass){pass.classList.remove('shake');void pass.offsetWidth;pass.classList.add('shake')}}finally{setLicenseButtonLoading(false)}}
-function showMain(data){const auth=document.getElementById('auth-screen'),main=document.getElementById('main-content');if(auth)auth.style.display='none';if(main)main.style.display='block';if(document.getElementById('customerLicenseKey')){document.getElementById('customerLicenseKey').textContent=data.key||'---';document.getElementById('licenseStartDate').textContent=data.start||'---';document.getElementById('licenseExpiryDate').textContent=data.expiry||'---';document.getElementById('licenseDuration').textContent=data.duration||'---';document.getElementById('licenseRemaining').textContent=data.remaining??'---';const devices=document.getElementById('licenseDevices');if(devices)devices.textContent='۱ اتصال همزمان';const box=document.getElementById('licenseRemainingBox');if(box)box.className='license-stat '+(data.expired?'expired':'remaining')}filterCat(-1)}
-window.addEventListener('beforeunload',()=>{try{navigator.sendBeacon(SESSION_API,new Blob([JSON.stringify({action:'release',sessionToken:licenseSessionToken})],{type:'application/json'}))}catch{}});
-window.addEventListener('DOMContentLoaded',async()=>{const saved=localStorage.getItem('hamyar_license');if(saved){const passInput=document.getElementById('pass');if(passInput)passInput.value=saved;try{const data=await licenseApi('check',{key:saved});if(data.ok){await startSession(saved);showMain(data)}else localStorage.removeItem('hamyar_license')}catch(e){const err=document.getElementById('err');if(err)err.textContent=e.message||''}}});
+const LICENSE_API = 'https://dmvttrdvarysgyuzfhgg.supabase.co/functions/v1/hamyar-api';
+
+function setLicenseButtonLoading(loading, text) {
+  const btn = document.getElementById('activateBtn');
+  if (!btn) return;
+  btn.classList.toggle('loading', loading);
+  btn.disabled = loading;
+  btn.innerHTML = loading
+    ? '<span class="btn-spinner" style="display:inline-block"></span> ' + (text || 'در حال بررسی...')
+    : '<i class="fa-solid fa-key"></i> فعال‌سازی و ورود';
+}
+
+async function licenseApi(action, payload = {}) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 15000);
+  try {
+    const res = await fetch(LICENSE_API, {
+      method: 'POST', cache: 'no-store', credentials: 'omit', signal: controller.signal,
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({action, ...payload})
+    });
+    let data;
+    try { data = await res.json(); } catch (_) { throw new Error('پاسخ نامعتبر از سرور دریافت شد'); }
+    if (!res.ok) { const e = new Error(data.message || ('HTTP ' + res.status)); e.status = res.status; throw e; }
+    return data;
+  } catch (e) {
+    if (e && e.name === 'AbortError') throw new Error('ارتباط با سرور بیش از حد طول کشید؛ دوباره تلاش کنید.');
+    if (e instanceof TypeError) throw new Error('ارتباط با سرور برقرار نشد؛ اینترنت و فیلترشکن را بررسی کنید.');
+    throw e;
+  } finally { clearTimeout(timer); }
+}
+
+async function activateLicense(key) {
+  const data = await licenseApi('check', {key});
+  if (!data.ok) throw new Error(data.message || 'لایسنس نامعتبر یا منقضی شده است');
+  return data;
+}
+
+async function checkLicense() {
+  const key = document.getElementById('pass').value.trim();
+  const err = document.getElementById('err');
+  const info = document.getElementById('licenseInfo');
+  if (err) err.textContent = '';
+  if (info) info.textContent = '';
+  if (!key) { if (err) err.textContent = 'کد لایسنس را وارد کنید'; return; }
+  setLicenseButtonLoading(true, 'در حال بررسی لایسنس...');
+  if (info) info.textContent = 'در حال بررسی لایسنس...';
+  try {
+    const data = await activateLicense(key);
+    localStorage.setItem('hamyar_license', key);
+    if (info) info.textContent = '✓ لایسنس با موفقیت فعال شد';
+    showMain(data);
+  } catch (e) {
+    console.error(e);
+    if (err) err.textContent = e.message || 'خطا در فعال‌سازی لایسنس';
+    if (info) info.textContent = '';
+    const pass = document.getElementById('pass');
+    if (pass) { pass.classList.remove('shake'); void pass.offsetWidth; pass.classList.add('shake'); }
+  } finally { setLicenseButtonLoading(false); }
+}
+
+function showMain(data) {
+  const auth = document.getElementById('auth-screen');
+  const main = document.getElementById('main-content');
+  if (auth) auth.style.display = 'none';
+  if (main) main.style.display = 'block';
+  if (document.getElementById('customerLicenseKey')) {
+    document.getElementById('customerLicenseKey').textContent = data.key || '---';
+    document.getElementById('licenseStartDate').textContent = data.start || '---';
+    document.getElementById('licenseExpiryDate').textContent = data.expiry || '---';
+    document.getElementById('licenseDuration').textContent = data.duration || '---';
+    document.getElementById('licenseRemaining').textContent = data.remaining ?? '---';
+    const devices = document.getElementById('licenseDevices');
+    if (devices) devices.textContent = 'بدون محدودیت دستگاه';
+    const box = document.getElementById('licenseRemainingBox');
+    if (box) box.className = 'license-stat ' + (data.expired ? 'expired' : 'remaining');
+  }
+  filterCat(-1);
+}
+
+window.addEventListener('DOMContentLoaded', async () => {
+  const saved = localStorage.getItem('hamyar_license');
+  if (!saved) return;
+  const passInput = document.getElementById('pass');
+  if (passInput) passInput.value = saved;
+  try {
+    const data = await licenseApi('check', {key:saved});
+    if (data.ok) showMain(data);
+    else localStorage.removeItem('hamyar_license');
+  } catch (_) {}
+});
+
 let activeCat = -1;
 
 function normalizeSearchText(value) {
@@ -886,6 +991,67 @@ function search() {
   });
   const cnt = document.getElementById('count');
   if (cnt) cnt.textContent = q ? `${count.toLocaleString('fa-IR')} لینک یافت شد` : `${count.toLocaleString('fa-IR')} لینک در ${catsFound.toLocaleString('fa-IR')} دسته`;
+}
+
+function showMainTab(tab){
+  const docs=document.getElementById('documentsSection');
+  const linksBtn=document.getElementById('mainLinksTab');
+  const docsBtn=document.getElementById('mainDocumentsTab');
+  const searchInput=document.getElementById('searchInput');
+  if(tab==='documents'){
+    document.body.classList.add('documents-mode');
+    if(docs) docs.style.display='block';
+    if(linksBtn) linksBtn.classList.remove('active');
+    if(docsBtn) docsBtn.classList.add('active');
+    if(searchInput) searchInput.value='';
+    loadDocuments();
+  }else{
+    document.body.classList.remove('documents-mode');
+    if(docs) docs.style.display='none';
+    if(linksBtn) linksBtn.classList.add('active');
+    if(docsBtn) docsBtn.classList.remove('active');
+    filterCat(-1);
+  }
+}
+
+const DOCUMENTS_API = 'https://dmvttrdvarysgyuzfhgg.supabase.co/functions/v1/hamyar-documents-test';
+const STORAGE_BASE = 'https://dmvttrdvarysgyuzfhgg.supabase.co/storage/v1';
+
+async function loadDocuments() {
+  const grid=document.getElementById('documentsGrid');
+  const countEl=document.getElementById('documentsCount');
+  if(!grid) return;
+  try{
+    const res=await fetch(DOCUMENTS_API+'?action=list',{cache:'no-store'});
+    const data=await res.json();
+    if(!res.ok || !data.ok) throw new Error(data.message||'خطا در دریافت فایل‌ها');
+    const docs=Array.isArray(data.documents)?data.documents:[];
+    if(countEl) countEl.textContent=docs.length.toLocaleString('fa-IR');
+    if(!docs.length){grid.innerHTML='<div class="documents-empty">هنوز فایلی برای نمایش ثبت نشده است.</div>';return;}
+    grid.innerHTML=docs.map(doc=>`
+      <button class="card document-card" type="button" onclick="downloadDocument('${encodeURIComponent(String(doc.file_url||''))}')">
+        <i class="fa-solid fa-file-archive icon" style="color:#0d6efd"></i>
+        <span><span class="name">${escapeHtml(doc.title||'فایل بدون عنوان')}</span><span class="desc">${escapeHtml(doc.description||'')}</span></span>
+        <span class="download-label">دریافت</span>
+      </button>`).join('');
+  }catch(e){
+    console.error(e);
+    grid.innerHTML='<div class="documents-error">خطا در دریافت فایل‌ها. لطفاً دوباره تلاش کنید.</div>';
+  }
+}
+
+function escapeHtml(value){return String(value||'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;',"\"":'&quot;'}[c]));}
+
+async function downloadDocument(encodedFile){
+  try{
+    const file=decodeURIComponent(encodedFile||'');
+    if(!file) return;
+    const res=await fetch(DOCUMENTS_API+'?action=download&file='+encodeURIComponent(file),{cache:'no-store'});
+    const data=await res.json();
+    if(!res.ok || !data.ok || !data.url) throw new Error(data.message||'لینک دانلود ساخته نشد');
+    const signedUrl=data.url.startsWith('http')?data.url:STORAGE_BASE+data.url;
+    window.open(signedUrl,'_blank','noopener');
+  }catch(e){alert(e.message||'خطا در دریافت فایل');}
 }
 
 window.addEventListener('DOMContentLoaded', () => {
