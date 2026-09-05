@@ -177,22 +177,6 @@ footer { text-align:center; color:var(--muted); font-size:12px; margin-top:40px;
 <div class="license-stats">
 <div class="license-stat">
 <span>
-         نام کافی‌نت
-        </span>
-<strong id="licenseCafeName">
-         ---
-        </strong>
-</div>
-<div class="license-stat">
-<span>
-         شماره تماس
-        </span>
-<strong id="licensePhone">
-         ---
-        </strong>
-</div>
-<div class="license-stat">
-<span>
          تاریخ شروع
         </span>
 <strong id="licenseStartDate">
@@ -851,184 +835,23 @@ footer { text-align:center; color:var(--muted); font-size:12px; margin-top:40px;
 
 <script src="https://unpkg.com/@simplewebauthn/browser@13.3.0/dist/bundle/index.umd.min.js"></script>
 <script>
-const LICENSE_API = 'https://dmvttrdvarysgyuzfhgg.supabase.co/functions/v1/hamyar-api';
-
-function setLicenseButtonLoading(loading, text) {
-  const btn = document.getElementById('activateBtn');
-  if (!btn) return;
-  btn.classList.toggle('loading', loading);
-  btn.disabled = loading;
-  btn.innerHTML = loading
-    ? '<span class="btn-spinner" style="display:inline-block"></span> ' + (text || 'در حال فعال‌سازی...')
-    : '<i class="fa-solid fa-key"></i> فعال‌سازی و ورود';
-}
-
-async function api(action, payload = {}) {
-  const res = await fetch(LICENSE_API, {
-    method: 'POST',
-    cache: 'no-store',
-    credentials: 'omit',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({action, ...payload})
-  });
-  let data;
-  try { data = await res.json(); }
-  catch (_) { throw new Error('پاسخ نامعتبر از سرور دریافت شد'); }
-  if (!res.ok) throw new Error(data.message || 'خطا در ارتباط با سرور');
-  return data;
-}
-
-async function activateWithWebAuthn(key) {
-  if (!window.SimpleWebAuthnBrowser) {
-    throw new Error('ابزار امنیتی ورود در مرورگر بارگذاری نشد. صفحه را دوباره باز کنید.');
-  }
-
-  const check = await api('check', {key});
-
-  if (!check.ok) {
-    const err = new Error(check.message || 'لایسنس نامعتبر یا منقضی شده است');
-    err.code = 'LICENSE';
-    throw err;
-  }
-
-  if (check.needsRegistration) {
-    setLicenseButtonLoading(true, 'در حال ثبت دستگاه امن...');
-    const optionsData = await api('deviceRegisterOptions', {key});
-    const registrationResponse =
-      await window.SimpleWebAuthnBrowser.startRegistration({
-        optionsJSON: optionsData.options || optionsData
-      });
-
-    const verified = await api('deviceRegisterVerify', {
-      key,
-      response: registrationResponse
-    });
-
-    if (!verified.ok) {
-      const err = new Error(verified.message || 'ثبت دستگاه انجام نشد');
-      err.code = 'AUTH';
-      throw err;
-    }
-
-    return verified;
-  }
-
-  if (check.needsAuthentication) {
-    setLicenseButtonLoading(true, 'در حال تأیید دستگاه...');
-    const optionsData = await api('deviceAuthOptions', {key});
-    const authenticationResponse =
-      await window.SimpleWebAuthnBrowser.startAuthentication({
-        optionsJSON: optionsData.options || optionsData
-      });
-
-    const verified = await api('deviceAuthVerify', {
-      key,
-      response: authenticationResponse
-    });
-
-    if (!verified.ok) {
-      const err = new Error(verified.message || 'تأیید دستگاه انجام نشد');
-      err.code = 'AUTH';
-      throw err;
-    }
-
-    return verified;
-  }
-
-  return check;
-}
-
-async function checkLicense() {
-  const key = document.getElementById('pass').value.trim();
-  const err = document.getElementById('err');
-  const info = document.getElementById('licenseInfo');
-  if (err) err.textContent = '';
-  if (info) info.textContent = '';
-
-  if (!key) {
-    if (err) err.textContent = 'کد لایسنس را وارد کنید';
-    return;
-  }
-
-  setLicenseButtonLoading(true, 'در حال بررسی لایسنس...');
-  if (info) info.textContent = 'در حال بررسی و تأیید امن دستگاه...';
-
-  try {
-    const data = await activateWithWebAuthn(key);
-
-    if (data.ok) {
-      localStorage.setItem('hamyar_license', key);
-      localStorage.setItem('hamyar_license_data', JSON.stringify(data));
-      if (info) info.textContent = '✓ لایسنس با موفقیت فعال شد';
-      showMain(data);
-    } else {
-      if (err) err.textContent = data.message || 'لایسنس نامعتبر یا منقضی شده است';
-      if (info) info.textContent = '';
-    }
-  } catch (e) {
-    console.error(e);
-
-    if (e && e.name === 'NotAllowedError') {
-      if (err) err.textContent = 'تأیید دستگاه لغو شد یا مرورگر اجازه دسترسی نداد.';
-    } else if (e && e.name === 'InvalidStateError') {
-      if (err) err.textContent = 'این دستگاه قبلاً برای این لایسنس ثبت شده است.';
-    } else if (e && e.code === 'LICENSE') {
-      if (err) err.textContent = e.message;
-    } else {
-      if (err) err.textContent = e.message || 'خطا در فعال‌سازی امن لایسنس';
-    }
-
-    if (info) info.textContent = '';
-    const pass = document.getElementById('pass');
-    if (pass) {
-      pass.classList.remove('shake');
-      void pass.offsetWidth;
-      pass.classList.add('shake');
-    }
-  } finally {
-    setLicenseButtonLoading(false);
-  }
-}
-
-function showMain(data) {
-  // پاسخ ثبت/تأیید دستگاه، اطلاعات لایسنس را داخل data.license برمی‌گرداند؛
-  // پاسخ check ممکن است خود اطلاعات لایسنس را در data داشته باشد.
-  const license = (data && data.license) ? data.license : (data || {});
-
-  const auth = document.getElementById('auth-screen');
-  const main = document.getElementById('main-content');
-  if (auth) auth.style.display = 'none';
-  if (main) main.style.display = 'block';
-
-  if (document.getElementById('customerLicenseKey')) {
-    document.getElementById('customerLicenseKey').textContent = license.key || '---';
-    document.getElementById('licenseCafeName').textContent = license.name || '---';
-    document.getElementById('licensePhone').textContent = license.phone || '---';
-    document.getElementById('licenseStartDate').textContent = license.start || '---';
-    document.getElementById('licenseExpiryDate').textContent = license.expiry || '---';
-    document.getElementById('licenseDuration').textContent = license.duration ? (Number(license.duration).toLocaleString('fa-IR') + ' روز') : '---';
-    document.getElementById('licenseRemaining').textContent = license.expired ? 'منقضی شده' : (license.remaining != null ? (Number(license.remaining).toLocaleString('fa-IR') + ' روز') : '---');
-
-    const devices = document.getElementById('licenseDevices');
-    if (devices) devices.textContent = Number(license.activeDevices || 1) > 0 ? 'فعال' : '---';
-
-    const box = document.getElementById('licenseRemainingBox');
-    if (box) box.className = 'license-stat ' + (license.expired ? 'expired' : 'remaining');
-  }
-
-  filterCat(-1);
-}
-
-window.addEventListener('DOMContentLoaded', async () => {
-  const saved = localStorage.getItem('hamyar_license');
-  if (saved) {
-    const passInput = document.getElementById('pass');
-    if (passInput) passInput.value = saved;
-    try {
-      await checkLicense();
-    } catch (_) {}
-  }
-});
+const LICENSE_API='https://dmvttrdvarysgyuzfhgg.supabase.co/functions/v1/hamyar-api';
+const SESSION_API='https://dmvttrdvarysgyuzfhgg.supabase.co/functions/v1/hamyar-session';
+const SESSION_TTL=90;
+let licenseSessionToken=localStorage.getItem('hamyar_license_session')||crypto.randomUUID();
+localStorage.setItem('hamyar_license_session',licenseSessionToken);
+let sessionTimer=null;
+function setLicenseButtonLoading(loading,text){const btn=document.getElementById('activateBtn');if(!btn)return;btn.classList.toggle('loading',loading);btn.disabled=loading;btn.innerHTML=loading?'<span class="btn-spinner" style="display:inline-block"></span> '+(text||'در حال بررسی...'):'<i class="fa-solid fa-key"></i> فعال‌سازی و ورود'}
+async function callApi(url,action,payload={}){const c=new AbortController(),t=setTimeout(()=>c.abort(),15000);try{const r=await fetch(url,{method:'POST',cache:'no-store',credentials:'omit',signal:c.signal,headers:{'Content-Type':'application/json'},body:JSON.stringify({action,...payload})});let d;try{d=await r.json()}catch{throw Error('پاسخ نامعتبر از سرور دریافت شد')}if(!r.ok)throw Error(d.message||('HTTP '+r.status));return d}catch(e){if(e.name==='AbortError')throw Error('ارتباط با سرور بیش از حد طول کشید؛ دوباره تلاش کنید.');if(e instanceof TypeError)throw Error('ارتباط با سرور برقرار نشد؛ اینترنت را بررسی کنید.');throw e}finally{clearTimeout(t)}}
+const licenseApi=(a,p={})=>callApi(LICENSE_API,a,p); const sessionApi=(a,p={})=>callApi(SESSION_API,a,p);
+async function startSession(key){const d=await sessionApi('claim',{key,sessionToken:licenseSessionToken,deviceId:(navigator.userAgent||'browser').slice(0,180),ttl:SESSION_TTL});if(!d.ok)throw Error(d.message||'این لایسنس هم‌اکنون در حال استفاده است');startHeartbeat(key);return d}
+function startHeartbeat(key){clearInterval(sessionTimer);sessionTimer=setInterval(async()=>{try{const d=await sessionApi('heartbeat',{key,sessionToken:licenseSessionToken,ttl:SESSION_TTL});if(!d.ok){clearInterval(sessionTimer);localStorage.removeItem('hamyar_license');location.reload()}}catch{}},30000)}
+async function releaseSession(){try{await sessionApi('release',{sessionToken:licenseSessionToken})}catch{}}
+async function activateLicense(key){const data=await licenseApi('check',{key});if(!data.ok)throw Error(data.message||'لایسنس نامعتبر یا منقضی شده است');await startSession(key);return data}
+async function checkLicense(){const key=document.getElementById('pass').value.trim(),err=document.getElementById('err'),info=document.getElementById('licenseInfo');if(err)err.textContent='';if(info)info.textContent='';if(!key){if(err)err.textContent='کد لایسنس را وارد کنید';return}setLicenseButtonLoading(true,'در حال اتصال...');if(info)info.textContent='در حال بررسی لایسنس...';try{const data=await activateLicense(key);localStorage.setItem('hamyar_license',key);if(info)info.textContent='✓ لایسنس فعال شد';showMain(data)}catch(e){if(err)err.textContent=e.message||'خطا در فعال‌سازی لایسنس';const pass=document.getElementById('pass');if(pass){pass.classList.remove('shake');void pass.offsetWidth;pass.classList.add('shake')}}finally{setLicenseButtonLoading(false)}}
+function showMain(data){const auth=document.getElementById('auth-screen'),main=document.getElementById('main-content');if(auth)auth.style.display='none';if(main)main.style.display='block';if(document.getElementById('customerLicenseKey')){document.getElementById('customerLicenseKey').textContent=data.key||'---';document.getElementById('licenseStartDate').textContent=data.start||'---';document.getElementById('licenseExpiryDate').textContent=data.expiry||'---';document.getElementById('licenseDuration').textContent=data.duration||'---';document.getElementById('licenseRemaining').textContent=data.remaining??'---';const devices=document.getElementById('licenseDevices');if(devices)devices.textContent='۱ اتصال همزمان';const box=document.getElementById('licenseRemainingBox');if(box)box.className='license-stat '+(data.expired?'expired':'remaining')}filterCat(-1)}
+window.addEventListener('beforeunload',()=>{try{navigator.sendBeacon(SESSION_API,new Blob([JSON.stringify({action:'release',sessionToken:licenseSessionToken})],{type:'application/json'}))}catch{}});
+window.addEventListener('DOMContentLoaded',async()=>{const saved=localStorage.getItem('hamyar_license');if(saved){const passInput=document.getElementById('pass');if(passInput)passInput.value=saved;try{const data=await licenseApi('check',{key:saved});if(data.ok){await startSession(saved);showMain(data)}else localStorage.removeItem('hamyar_license')}catch(e){const err=document.getElementById('err');if(err)err.textContent=e.message||''}}});
 let activeCat = -1;
 
 function normalizeSearchText(value) {
