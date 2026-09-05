@@ -64,7 +64,12 @@ body { font-family:'Vazirmatn',Tahoma,sans-serif; background:var(--bg); margin:0
 .license-stat.remaining strong { color:#198754; }
 .license-stat.expired { background:#fdebec; color:#dc3545; }
 .license-stat.expired strong { color:#dc3545; }
-@media (max-width:600px) { .license-card { align-items:stretch; } .license-stats { width:100%; } .license-stat { flex:1; min-width:105px; } }
+.license-card-single { display:block; }
+.license-card-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; width:100%; }
+.license-stats-all { width:100%; margin-top:10px; display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:8px; }
+.license-customer strong { word-break:break-word; }
+@media (max-width:900px) { .license-stats-all { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+@media (max-width:600px) { .license-card { align-items:stretch; } .license-card-heading { align-items:flex-start; flex-direction:column; } .license-stats { width:100%; } .license-stats-all { grid-template-columns:repeat(2,minmax(0,1fr)); } .license-stat { min-width:0; } }
 
 .search-wrap { max-width:640px; margin:-45px auto 0; padding:0 14px; position:sticky; top:10px; z-index:100; }
 .search-box { width:100%; padding:15px 48px 15px 20px; border-radius:32px; border:none; outline:none;
@@ -165,49 +170,37 @@ footer { text-align:center; color:var(--muted); font-size:12px; margin-top:40px;
      📞 پشتیبانی و هماهنگی همیارنت🖥️ : 09033764428-09999930719
     </div>
 <div class="license-panel header-license">
-<div class="license-card">
-<div>
-<div class="license-title">
-        🔐 اطلاعات لایسنس شما
-       </div>
-<span class="license-key" id="customerLicenseKey">
-        ---
-       </span>
-</div>
-<div class="license-stats">
-<div class="license-stat">
-<span>
-         تاریخ شروع
-        </span>
-<strong id="licenseStartDate">
-         ---
-        </strong>
-</div>
-<div class="license-stat">
-<span>
-         تاریخ انقضا
-        </span>
-<strong id="licenseExpiryDate">
-         ---
-        </strong>
-</div>
-<div class="license-stat">
-<span>
-         مدت اعتبار
-        </span>
-<strong id="licenseDuration">
-         ---
-        </strong>
-</div>
-<div class="license-stat remaining" id="licenseRemainingBox">
-<span>
-         مدت باقی‌مانده
-        </span>
-<strong id="licenseRemaining">
-         ---
-        </strong>
-</div>
-</div>
+<div class="license-card license-card-single">
+  <div class="license-card-heading">
+    <div class="license-title">🔐 اطلاعات کامل لایسنس</div>
+    <span class="license-key" id="customerLicenseKey">---</span>
+  </div>
+  <div class="license-stats license-stats-all">
+    <div class="license-stat license-customer">
+      <span>نام کافینت</span>
+      <strong id="licenseCafeName">---</strong>
+    </div>
+    <div class="license-stat license-customer">
+      <span>شماره تماس</span>
+      <strong id="licenseCafePhone">---</strong>
+    </div>
+    <div class="license-stat">
+      <span>تاریخ شروع</span>
+      <strong id="licenseStartDate">---</strong>
+    </div>
+    <div class="license-stat">
+      <span>تاریخ انقضا</span>
+      <strong id="licenseExpiryDate">---</strong>
+    </div>
+    <div class="license-stat">
+      <span>مدت اعتبار</span>
+      <strong id="licenseDuration">---</strong>
+    </div>
+    <div class="license-stat remaining" id="licenseRemainingBox">
+      <span>مدت باقی‌مانده</span>
+      <strong id="licenseRemaining">---</strong>
+    </div>
+  </div>
 </div>
 </div>
 </div>
@@ -838,7 +831,7 @@ const LICENSE_API = 'https://dmvttrdvarysgyuzfhgg.supabase.co/functions/v1/hamya
 function setLicenseButtonLoading(loading,text){const btn=document.getElementById('activateBtn');if(!btn)return;btn.classList.toggle('loading',loading);btn.disabled=loading;btn.innerHTML=loading?'<span class="btn-spinner" style="display:inline-block"></span> '+(text||'در حال بررسی...'):'<i class="fa-solid fa-key"></i> فعال‌سازی و ورود'}
 async function api(action,payload={}){const res=await fetch(LICENSE_API,{method:'POST',cache:'no-store',credentials:'omit',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,...payload})});let data;try{data=await res.json()}catch(_){throw new Error('پاسخ نامعتبر از سرور دریافت شد')}if(!res.ok)throw new Error(data.message||'خطا در ارتباط با سرور');return data}
 async function checkLicense(){const pass=document.getElementById('pass'),key=pass?pass.value.trim():'';const err=document.getElementById('err'),info=document.getElementById('licenseInfo');if(err)err.textContent='';if(info)info.textContent='';if(!key){if(err)err.textContent='کد لایسنس را وارد کنید';return}setLicenseButtonLoading(true,'در حال بررسی لایسنس...');if(info)info.textContent='در حال بررسی اعتبار لایسنس...';try{const data=await api('check',{key});if(data&&data.ok){localStorage.setItem('hamyar_license',key);localStorage.setItem('hamyar_license_data',JSON.stringify(data));if(info)info.textContent='✓ لایسنس با موفقیت تأیید شد';showMain(data)}else{if(err)err.textContent=(data&&data.message)||'لایسنس نامعتبر یا منقضی شده است';if(info)info.textContent=''}}catch(e){console.error(e);if(err)err.textContent=e.message||'خطا در بررسی لایسنس';if(info)info.textContent='';if(pass){pass.classList.remove('shake');void pass.offsetWidth;pass.classList.add('shake')}}finally{setLicenseButtonLoading(false)}}
-function showMain(data){const auth=document.getElementById('auth-screen'),main=document.getElementById('main-content');if(auth)auth.style.display='none';if(main)main.style.display='block';const set=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=value==null||value===''?'---':value};set('customerLicenseKey',data.key);set('licenseStartDate',data.start);set('licenseExpiryDate',data.expiry);set('licenseDuration',data.duration);set('licenseRemaining',data.remaining);set('licenseDevices','نامحدود');const box=document.getElementById('licenseRemainingBox');if(box)box.className='license-stat '+(data.expired?'expired':'remaining');filterCat(-1)}
+function showMain(data){const auth=document.getElementById('auth-screen'),main=document.getElementById('main-content');if(auth)auth.style.display='none';if(main)main.style.display='block';const set=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=value==null||value===''?'---':value};set('customerLicenseKey',data.key);set('licenseCafeName',data.name||data.cafe_name||data.customer_name);set('licenseCafePhone',data.phone||data.mobile||data.tel);set('licenseStartDate',data.start);set('licenseExpiryDate',data.expiry);set('licenseDuration',data.duration);set('licenseRemaining',data.remaining);set('licenseDevices','نامحدود');const box=document.getElementById('licenseRemainingBox');if(box)box.className='license-stat '+(data.expired?'expired':'remaining');filterCat(-1)}
 window.addEventListener('DOMContentLoaded',async()=>{const saved=localStorage.getItem('hamyar_license');if(saved){const passInput=document.getElementById('pass');if(passInput)passInput.value=saved;try{await checkLicense()}catch(_){}}});
 let activeCat=-1;
 function normalizeSearchText(value){return String(value||'').toLocaleLowerCase('fa-IR').replace(/ي/g,'ی').replace(/ك/g,'ک').replace(/ۀ/g,'ه').trim()}
