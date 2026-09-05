@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="fa">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>
+   🌐همیار کافینت ها🌐
+  </title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet"/>
+<style>
+   :root { --primary:#0d6efd; --bg:#f4f7fb; --card:#fff; --text:#2c3345; --muted:#8a93a5; --radius:14px; }
+* { box-sizing:border-box; }
+body { font-family:'Vazirmatn',Tahoma,sans-serif; background:var(--bg); margin:0; color:var(--text); }
+
+/* ---------- صفحه ورود ---------- */
+#auth-screen { position:fixed; inset:0; z-index:9999; display:flex; align-items:center; justify-content:center;
+  background:linear-gradient(135deg,#0d6efd 0%,#6f42c1 100%); }
+.login-box { background:rgba(255,255,255,.97); padding:40px 36px; border-radius:24px; text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,.3); width:min(92vw,380px); animation:pop .4s ease; }
+@keyframes pop { from { transform:scale(.9); opacity:0; } to { transform:scale(1); opacity:1; } }
+.login-box .fa-lock { font-size:44px; color:var(--primary); margin-bottom:10px; }
+.login-box h2 { margin:0 0 4px; }
+.designer-credit { color:#6f42c1; font-size:13px; font-weight:700; line-height:1.9; margin-bottom:14px; }
+.designer-credit span { direction:ltr; display:inline-block; }
+.main-credit { color:#fff; margin:0 auto 12px; font-size:14px; font-weight:700; }
+
+.login-box p { color:var(--muted); font-size:13px; margin:0 0 18px; }
+#pass { width:100%; padding:12px 14px; border:2px solid #e3e8f0; border-radius:12px; text-align:center;
+  font-family:inherit; font-size:16px; letter-spacing:6px; outline:none; transition:.2s; }
+#pass:focus { border-color:var(--primary); }
+#pass.shake { animation:shake .3s; border-color:#dc3545; }
+@keyframes shake { 25% { transform:translateX(6px); } 75% { transform:translateX(-6px); } }
+#activateBtn.loading { opacity:.75; pointer-events:none; }
+.btn-spinner { display:none; width:16px; height:16px; border:2px solid currentColor; border-top-color:transparent; border-radius:50%; animation:spin .7s linear infinite; vertical-align:-3px; margin-left:6px; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.login-btn { width:100%; margin-top:12px; padding:12px; border:none; border-radius:12px; cursor:pointer;
+  background:var(--primary); color:#fff; font-family:inherit; font-size:15px; font-weight:700; transition:.2s; }
+.login-btn:hover { filter:brightness(1.1); }
+.err { color:#dc3545; font-size:12px; min-height:16px; margin-top:8px; }
+
+/* ---------- هدر ---------- */
+#main-content { display:none; padding-bottom:60px; }
+.header { background:linear-gradient(135deg,#0d6efd,#6f42c1); color:#fff; text-align:center;
+  padding:28px 16px 70px; border-radius:0 0 26px 26px; }
+.header h1 { margin:0; font-size:24px; font-weight:900; }
+.header p { margin:6px 0 0; opacity:.85; font-size:13px; }
+.contact-info { display:inline-block; margin-top:12px; padding:6px 16px; border-radius:16px;
+  border:1px dashed rgba(255,255,255,.5); background:rgba(255,255,255,.15); font-size:13px; }
+
+.license-panel { max-width:1100px; margin:14px auto 0; padding:0 14px; position:relative; z-index:20; }
+.header-license { width:100%; margin-top:14px; }
+.header-license .license-card { border:1px solid rgba(255,255,255,.65); box-shadow:0 8px 24px rgba(0,0,0,.12); }
+.license-card { background:rgba(255,255,255,.98); border-radius:18px; box-shadow:0 10px 30px rgba(0,0,0,.10); padding:14px 16px; display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; border:1px solid #e8edf5; }
+.license-card .license-title { font-weight:900; color:#2c3345; font-size:14px; margin-bottom:7px; }
+.license-card .license-key { direction:ltr; display:inline-block; font-family:monospace; letter-spacing:1px; color:#0d6efd; font-weight:800; font-size:13px; }
+.license-stats { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+.license-stat { background:#f4f7fb; border-radius:12px; padding:8px 11px; font-size:12px; color:#596273; min-width:120px; text-align:center; }
+.license-stat strong { display:block; color:#263248; margin-top:2px; font-size:12px; }
+.license-stat.remaining { background:#e9f7ef; color:#198754; }
+.license-stat.remaining strong { color:#198754; }
+.license-stat.expired { background:#fdebec; color:#dc3545; }
+.license-stat.expired strong { color:#dc3545; }
+@media (max-width:600px) { .license-card { align-items:stretch; } .license-stats { width:100%; } .license-stat { flex:1; min-width:105px; } }
+
+.search-wrap { max-width:640px; margin:-45px auto 0; padding:0 14px; position:sticky; top:10px; z-index:100; }
+.search-box { width:100%; padding:15px 48px 15px 20px; border-radius:32px; border:none; outline:none;
+  font-family:inherit; font-size:15px; box-shadow:0 10px 30px rgba(13,110,253,.25); }
+.search-wrap .fa-magnifying-glass { position:absolute; top:50%; right:20px; transform:translateY(-50%); color:var(--muted); }
+.count { text-align:center; color:var(--muted); font-size:12px; margin-top:14px; }
+
+/* ---------- تب‌ها ---------- */
+.tabs { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin:20px 14px 6px; }
+.tab-btn { display:inline-flex; align-items:center; gap:7px; padding:9px 16px; border:none; background:#fff;
+  border-bottom:3px solid transparent; border-radius:14px; cursor:pointer; font-family:inherit;
+  font-weight:700; font-size:13px; box-shadow:0 2px 6px rgba(0,0,0,.06); transition:.2s; }
+.tab-btn:hover { transform:translateY(-2px); }
+.tab-btn.active { background:var(--primary); color:#fff; }
+.tab-btn.active i { color:#fff; }
+#btn-all { border-bottom-color:#0d6efd; }
+
+/* ---------- دسته‌ها ---------- */
+.cat { max-width:1100px; margin:10px auto 0; padding:0 14px; }
+.cat h2 { font-size:17px; margin:26px 0 4px; padding-bottom:8px; border-bottom:2px solid #e6eaf2; }
+.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:12px; }
+.card { display:flex; align-items:center; gap:11px; background:var(--card); padding:14px 15px;
+  border-radius:var(--radius); border-right:5px solid var(--primary); text-decoration:none; color:var(--text);
+  font-size:13.5px; font-weight:700; box-shadow:0 2px 6px rgba(0,0,0,.05); transition:.2s; }
+.card:hover { transform:translateY(-3px); box-shadow:0 8px 18px rgba(0,0,0,.1); border-right-width:9px; }
+.card .icon { font-size:19px; min-width:22px; text-align:center; }
+footer { text-align:center; color:var(--muted); font-size:12px; margin-top:40px; }
+@media (max-width:480px) { .grid { grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); } .card { font-size:12.5px; } }
+
+/* زیرتب‌های سایت‌های مورد نیاز؛ چیدمان و دسته‌بندی قبلی حفظ شده است */
+.subtabs{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:14px 14px 10px;padding:10px;background:rgba(13,110,253,.05);border-radius:16px;}
+.subtab-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border:1px solid #e6eaf2;background:#fff;border-radius:12px;cursor:pointer;font-family:inherit;font-weight:700;font-size:12px;color:#596273;transition:.2s;}
+.subtab-btn:hover{transform:translateY(-2px);}
+.subtab-btn.active{background:#0d6efd;color:#fff;border-color:#0d6efd;}
+.site-subcat{display:none;}
+.site-subcat.active{display:block;}
+  </style>
+<style>
+   /* پنل لایسنس پس از ورود همیشه قابل مشاهده باشد */
+#main-content .license-panel { display:block !important; visibility:visible !important; opacity:1 !important; }
+  </style>
+
+<style id="hamyar-tab-icons">
+.tab-btn i{margin-left:7px;font-size:1.08em;vertical-align:-1px;transition:.2s}
+.tab-btn:nth-child(2) i{color:#0d6efd}.tab-btn:nth-child(3) i{color:#6f42c1}.tab-btn:nth-child(4) i{color:#e83e8c}.tab-btn:nth-child(5) i{color:#fd7e14}.tab-btn:nth-child(6) i{color:#20c997}.tab-btn:nth-child(7) i{color:#198754}.tab-btn:nth-child(8) i{color:#0dcaf0}.tab-btn:nth-child(9) i{color:#dc3545}.tab-btn:nth-child(10) i{color:#6610f2}.tab-btn:nth-child(11) i{color:#d63384}.tab-btn:nth-child(12) i{color:#198754}.tab-btn:nth-child(13) i{color:#0d6efd}.tab-btn:nth-child(14) i{color:#6f42c1}.tab-btn:nth-child(15) i{color:#fd7e14}.tab-btn:nth-child(16) i{color:#dc3545}.tab-btn:nth-child(17) i{color:#795548}.tab-btn:nth-child(18) i{color:#ffc107}.tab-btn:nth-child(19) i{color:#198754}.tab-btn:nth-child(20) i{color:#20c997}.tab-btn:nth-child(21) i{color:#6f42c1}.tab-btn:nth-child(22) i{color:#0d6efd}.tab-btn:nth-child(23) i{color:#6610f2}.tab-btn:nth-child(24) i{color:#dc3545}.tab-btn:nth-child(25) i{color:#20c997}.tab-btn:nth-child(26) i{color:#198754}.tab-btn:nth-child(27) i{color:#fd7e14}.tab-btn:nth-child(28) i{color:#0dcaf0}
+.tab-btn.active i{color:inherit!important}
+.cat h2>i{opacity:.95}
+</style>
+</head>
+<body>
+<div id="auth-screen" style="position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0d6efd 0%,#6f42c1 100%);">
+<div class="login-box" style="background:rgba(255,255,255,.97);padding:40px 36px;border-radius:24px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.3);width:min(92vw,380px);">
+<div style="color:#6f42c1;font-size:13px;font-weight:700;line-height:1.9;margin-bottom:14px;">
+     🌐طراحی و ساخت همیار نت🌐
+     <br/>
+<span style="direction:ltr;display:inline-block;">
+      09999930719-09033764428
+     </span>
+</div>
+<i class="fa-solid fa-lock" style="font-size:44px;color:#0d6efd;margin-bottom:10px;">
+</i>
+<h2 style="margin:0 0 4px;">
+     🖥️ همیار کافی نت ها🖥️
+    </h2>
+<p style="color:#8a93a5;font-size:13px;margin:0 0 18px;">
+     برای ورود، کد لایسنس معتبر را وارد کنید
+    </p>
+<input id="pass" onkeydown="if(event.key==='Enter') checkLicense()" placeholder="کد لایسنس را وارد کنید" style="width:100%;padding:12px 14px;border:2px solid #e3e8f0;border-radius:12px;text-align:center;font-family:inherit;font-size:16px;letter-spacing:6px;outline:none;" type="text"/>
+<div id="err" style="color:#dc3545;font-size:12px;min-height:16px;margin-top:8px;">
+</div>
+<button id="activateBtn" onclick="checkLicense()" style="width:100%;margin-top:12px;padding:12px;border:none;border-radius:12px;cursor:pointer;background:#0d6efd;color:#fff;font-family:inherit;font-size:15px;font-weight:700;"><span class="btn-spinner"></span>
+<i class="fa-solid fa-key">
+</i>
+     فعال‌سازی و ورود
+    </button>
+<div id="licenseInfo" style="margin-top:10px;color:#198754;font-size:12px">
+</div>
+</div>
+</div>
+<div id="main-content" style="display:none;">
+<div class="header">
+<div class="designer-credit main-credit">
+     🌐طراحی و ساخت همیار نت🌐
+     <br/>
+<span>
+      09999930719-09033764428
+     </span>
+</div>
+<h1>
+<i class="fa-solid fa-globe">
+</i>
+     سامانه جامع کافی نت های ایران
+    </h1>
+<p>
+     همیار نت همیار همیشگی شما در تمام لحضات
+    </p>
+<div class="contact-info">
+     📞 پشتیبانی و هماهنگی همیارنت🖥️ : 09033764428-09999930719
+    </div>
+<div class="license-panel header-license">
+<div class="license-card">
+<div>
+<div class="license-title">
+        🔐 اطلاعات لایسنس شما
+       </div>
+<span class="license-key" id="customerLicenseKey">
+        ---
+       </span>
+</div>
+<div class="license-stats">
+<div class="license-stat">
+<span>
+         نام کافی‌نت
+        </span>
+<strong id="licenseCafeName">
+         ---
+        </strong>
+</div>
+<div class="license-stat">
+<span>
+         شماره تماس
+        </span>
+<strong id="licensePhone">
+         ---
+        </strong>
+</div>
+<div class="license-stat">
+<span>
+         تاریخ شروع
+        </span>
+<strong id="licenseStartDate">
+         ---
+        </strong>
+</div>
+<div class="license-stat">
+<span>
+         تاریخ انقضا
+        </span>
+<strong id="licenseExpiryDate">
+         ---
+        </strong>
+</div>
+<div class="license-stat">
+<span>
+         مدت اعتبار
+        </span>
+<strong id="licenseDuration">
+         ---
+        </strong>
+</div>
+<div class="license-stat remaining" id="licenseRemainingBox">
+<span>
+         مدت باقی‌مانده
+        </span>
+<strong id="licenseRemaining">
+         ---
+        </strong>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="search-wrap">
+<i class="fa-solid fa-magnifying-glass">
+</i>
+<input class="search-box" id="searchInput" placeholder="جستجوی سریع در تمامی دسته‌ها..." type="text"/>
+</div>
+<div class="count" id="count">۵۷۶ لینک در ۲۷ دسته</div>
+
+
+<div class="tabs" id="tabBar">
+<button class="tab-btn active" data-tab="-1" onclick="filterCat(-1)"><i class="fa-solid fa-layer-group"></i> همه</button>
+<button class="tab-btn" data-tab="0" onclick="filterCat(0)"><i class="fa-solid fa-landmark"></i> دولت و خدمات عمومی</button>
+<button class="tab-btn" data-tab="1" onclick="filterCat(1)"><i class="fa-solid fa-scale-balanced"></i> قضایی و ثبتی</button>
+<button class="tab-btn" data-tab="2" onclick="filterCat(2)"><i class="fa-solid fa-school"></i> مدارس و آموزش و پرورش</button>
+<button class="tab-btn" data-tab="3" onclick="filterCat(3)"><i class="fa-solid fa-graduation-cap"></i> دانشگاه و کنکور</button>
+<button class="tab-btn" data-tab="4" onclick="filterCat(4)"><i class="fa-solid fa-screwdriver-wrench"></i> فنی و حرفه‌ای و مهارت</button>
+<button class="tab-btn" data-tab="5" onclick="filterCat(5)"><i class="fa-solid fa-briefcase"></i> کار، بیمه و تأمین اجتماعی</button>
+<button class="tab-btn" data-tab="6" onclick="filterCat(6)"><i class="fa-solid fa-file-invoice-dollar"></i> مالیات، حسابداری و مالی</button>
+<button class="tab-btn" data-tab="7" onclick="filterCat(7)"><i class="fa-solid fa-building-columns"></i> بانک‌ها</button>
+<button class="tab-btn" data-tab="8" onclick="filterCat(8)"><i class="fa-solid fa-car"></i> خودرو، پلیس و حمل‌ونقل</button>
+<button class="tab-btn" data-tab="9" onclick="filterCat(9)"><i class="fa-solid fa-truck-fast"></i> پست و مرسولات</button>
+<button class="tab-btn" data-tab="10" onclick="filterCat(10)"><i class="fa-solid fa-heart-pulse"></i> سلامت و درمان</button>
+<button class="tab-btn" data-tab="11" onclick="filterCat(11)"><i class="fa-solid fa-city"></i> خدمات شهری و عمومی</button>
+<button class="tab-btn" data-tab="12" onclick="filterCat(12)"><i class="fa-solid fa-wifi"></i> اینترنت، اپراتورها و فناوری</button>
+<button class="tab-btn" data-tab="13" onclick="filterCat(13)"><i class="fa-solid fa-toolbox"></i> ابزارهای آنلاین</button>
+<button class="tab-btn" data-tab="14" onclick="filterCat(14)"><i class="fa-solid fa-cart-shopping"></i> خرید، آگهی و خدمات آنلاین</button>
+<button class="tab-btn" data-tab="15" onclick="filterCat(15)"><i class="fa-solid fa-newspaper"></i> خبر و رسانه</button>
+<button class="tab-btn" data-tab="16" onclick="filterCat(16)"><i class="fa-solid fa-book-open"></i> فرهنگی و کتاب</button>
+<button class="tab-btn" data-tab="17" onclick="filterCat(17)"><i class="fa-solid fa-futbol"></i> ورزش</button>
+<button class="tab-btn" data-tab="18" onclick="filterCat(18)"><i class="fa-solid fa-leaf"></i> کشاورزی، منابع طبیعی و محیط زیست</button>
+<button class="tab-btn" data-tab="19" onclick="filterCat(19)"><i class="fa-solid fa-house"></i> مسکن و املاک</button>
+<button class="tab-btn" data-tab="20" onclick="filterCat(20)"><i class="fa-solid fa-chart-line"></i> بازار سرمایه و بورس</button>
+<button class="tab-btn" data-tab="21" onclick="filterCat(21)"><i class="fa-solid fa-building"></i> ثبت شرکت، کسب‌وکار و مجوز</button>
+<button class="tab-btn" data-tab="22" onclick="filterCat(22)"><i class="fa-solid fa-plane-departure"></i> سفر و گردشگری</button>
+<button class="tab-btn" data-tab="23" onclick="filterCat(23)"><i class="fa-solid fa-mosque"></i> دینی و اوقات شرعی</button>
+<button class="tab-btn" data-tab="24" onclick="filterCat(24)"><i class="fa-solid fa-map-location-dot"></i> استان‌ها و خدمات استانی</button>
+<button class="tab-btn" data-tab="25" onclick="filterCat(25)"><i class="fa-solid fa-layer-group"></i> سایر خدمات کاربردی</button>
+<button class="tab-btn" data-tab="26" onclick="filterCat(26)"><i class="fa-solid fa-chalkboard-user"></i> آموزش</button>
+</div><section class="cat" data-cat="0"><h2><i class="fa-solid fa-landmark" style="margin-left:8px"></i> دولت و خدمات عمومی <span>38</span></h2><div class="grid">
+<a class="card" href="https://my.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#0d6efd"></i><span class="name">پنجره ملی خدمات دولت هوشمند</span></a>
+<a class="card" href="https://mojavez.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#0d6efd"></i><span class="name">درگاه ملی مجوزها</span></a>
+<a class="card" href="https://sabteahval.ir" rel="noopener" target="_blank"><i class="fa-solid fa-address-card icon" style="color:#0d6efd"></i><span class="name">سامانه ثبت احوال</span></a>
+<a class="card" href="https://ssaa.ir" rel="noopener" target="_blank"><i class="fa-solid fa-file-signature icon" style="color:#0d6efd"></i><span class="name">ثبت اسناد و املاک</span></a>
+<a class="card" href="https://eadl.ir" rel="noopener" target="_blank"><i class="fa-solid fa-gavel icon" style="color:#0d6efd"></i><span class="name">درگاه قوه قضاییه</span></a>
+<a class="card" href="https://adliran.ir" rel="noopener" target="_blank"><i class="fa-solid fa-gavel icon" style="color:#0d6efd"></i><span class="name">عدل ایران</span></a>
+<a class="card" href="https://sana.adliran.ir" rel="noopener" target="_blank"><i class="fa-solid fa-fingerprint icon" style="color:#0d6efd"></i><span class="name">ثنا</span></a>
+<a class="card" href="https://epolice.ir" rel="noopener" target="_blank"><i class="fa-solid fa-shield-halved icon" style="color:#0d6efd"></i><span class="name">خدمات الکترونیک پلیس</span></a>
+<a class="card" href="https://police-man.ir" rel="noopener" target="_blank"><i class="fa-solid fa-user-police icon" style="color:#0d6efd"></i><span class="name">پلیس من</span></a>
+<a class="card" href="https://sakha.epolice.ir" rel="noopener" target="_blank"><i class="fa-solid fa-car icon" style="color:#0d6efd"></i><span class="name">سخا</span></a>
+<a class="card" href="https://moi.ir" rel="noopener" target="_blank"><i class="fa-solid fa-building icon" style="color:#0d6efd"></i><span class="name">وزارت کشور</span></a>
+<a class="card" href="https://ict.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-satellite-dish icon" style="color:#0d6efd"></i><span class="name">وزارت ارتباطات</span></a>
+<a class="card" href="https://mefa.ir" rel="noopener" target="_blank"><i class="fa-solid fa-coins icon" style="color:#0d6efd"></i><span class="name">وزارت اقتصاد</span></a>
+<a class="card" href="https://mrud.ir" rel="noopener" target="_blank"><i class="fa-solid fa-road icon" style="color:#0d6efd"></i><span class="name">وزارت راه و شهرسازی</span></a>
+<a class="card" href="https://moe.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-bolt icon" style="color:#0d6efd"></i><span class="name">وزارت نیرو</span></a>
+<a class="card" href="https://mimt.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-industry icon" style="color:#0d6efd"></i><span class="name">وزارت صمت</span></a>
+<a class="card" href="https://mcls.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-briefcase icon" style="color:#0d6efd"></i><span class="name">وزارت تعاون، کار و رفاه</span></a>
+<a class="card" href="https://maj.ir" rel="noopener" target="_blank"><i class="fa-solid fa-seedling icon" style="color:#0d6efd"></i><span class="name">وزارت جهاد کشاورزی</span></a>
+<a class="card" href="https://behdasht.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-heart-pulse icon" style="color:#0d6efd"></i><span class="name">وزارت بهداشت</span></a>
+<a class="card" href="https://msrt.ir" rel="noopener" target="_blank"><i class="fa-solid fa-graduation-cap icon" style="color:#0d6efd"></i><span class="name">وزارت علوم</span></a>
+<a class="card" href="https://farhang.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-music icon" style="color:#0d6efd"></i><span class="name">وزارت فرهنگ و ارشاد</span></a>
+<a class="card" href="https://mfa.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-globe icon" style="color:#0d6efd"></i><span class="name">وزارت امور خارجه</span></a>
+<a class="card" href="https://msy.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-running icon" style="color:#0d6efd"></i><span class="name">وزارت ورزش و جوانان</span></a>
+<a class="card" href="https://moj.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-scale-balanced icon" style="color:#0d6efd"></i><span class="name">وزارت دادگستری</span></a>
+<a class="card" href="https://amar.org.ir" rel="noopener" target="_blank"><i class="fa-solid fa-chart-simple icon" style="color:#0d6efd"></i><span class="name">مرکز آمار ایران</span></a>
+<a class="card" href="https://mporg.ir" rel="noopener" target="_blank"><i class="fa-solid fa-calculator icon" style="color:#0d6efd"></i><span class="name">سازمان برنامه و بودجه</span></a>
+<a class="card" href="https://inso.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-certificate icon" style="color:#0d6efd"></i><span class="name">سازمان استاندارد</span></a>
+<a class="card" href="https://irimo.ir" rel="noopener" target="_blank"><i class="fa-solid fa-cloud-sun icon" style="color:#0d6efd"></i><span class="name">سازمان هواشناسی</span></a>
+<a class="card" href="https://ncc.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-map icon" style="color:#0d6efd"></i><span class="name">سازمان نقشه‌برداری</span></a>
+<a class="card" href="https://doe.ir" rel="noopener" target="_blank"><i class="fa-solid fa-tree icon" style="color:#0d6efd"></i><span class="name">سازمان محیط زیست</span></a>
+<a class="card" href="https://g-b.ir" rel="noopener" target="_blank"><i class="fa-solid fa-magnifying-glass icon" style="color:#0d6efd"></i><span class="name">سازمان بازرسی کل کشور</span></a>
+<a class="card" href="https://lmo.ir" rel="noopener" target="_blank"><i class="fa-solid fa-user-doctor icon" style="color:#0d6efd"></i><span class="name">سازمان پزشکی قانونی</span></a>
+<a class="card" href="https://tazirat.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-handcuffs icon" style="color:#0d6efd"></i><span class="name">سازمان تعزیرات حکومتی</span></a>
+<a class="card" href="https://rrk.ir" rel="noopener" target="_blank"><i class="fa-solid fa-newspaper icon" style="color:#0d6efd"></i><span class="name">روزنامه رسمی</span></a>
+<a class="card" href="https://cadastre.ir" rel="noopener" target="_blank"><i class="fa-solid fa-map-location-dot icon" style="color:#0d6efd"></i><span class="name">سامانه کاداستر</span></a>
+<a class="card" href="https://amlak.mrud.ir" rel="noopener" target="_blank"><i class="fa-solid fa-house icon" style="color:#0d6efd"></i><span class="name">سامانه املاک و اسکان</span></a>
+<a class="card" href="https://my.tehran.ir" rel="noopener" target="_blank"><i class="fa-solid fa-city icon" style="color:#0d6efd"></i><span class="name">درگاه خدمات شهری تهران</span></a>
+<a class="card" href="https://137.tehran.ir" rel="noopener" target="_blank"><i class="fa-solid fa-phone icon" style="color:#0d6efd"></i><span class="name">سامانه ۱۳۷ تهران</span></a>
+</div></section><section class="cat" data-cat="1"><h2><i class="fa-solid fa-scale-balanced" style="margin-left:8px"></i> قضایی و ثبتی <span>8</span></h2><div class="grid">
+<a class="card" href="https://eblagh.adliran.ir" rel="noopener" target="_blank"><i class="fa-solid fa-envelope icon" style="color:#6f42c1"></i><span class="name">ابلاغ الکترونیک</span></a>
+<a class="card" href="https://nobat.adliran.ir" rel="noopener" target="_blank"><i class="fa-solid fa-clock icon" style="color:#6f42c1"></i><span class="name">سامانه نوبت‌دهی قضایی</span></a>
+<a class="card" href="https://my.ssaa.ir" rel="noopener" target="_blank"><i class="fa-solid fa-user icon" style="color:#6f42c1"></i><span class="name">ثبت من</span></a>
+<a class="card" href="https://divan-edalat.ir" rel="noopener" target="_blank"><i class="fa-solid fa-building-columns icon" style="color:#6f42c1"></i><span class="name">دیوان عدالت اداری</span></a>
+<a class="card" href="https://23055.ir" rel="noopener" target="_blank"><i class="fa-solid fa-scale-balanced icon" style="color:#6f42c1"></i><span class="name">مرکز وکلا</span></a>
+<a class="card" href="https://kanoon-kr.ir" rel="noopener" target="_blank"><i class="fa-solid fa-users icon" style="color:#6f42c1"></i><span class="name">مرکز کارشناسان رسمی</span></a>
+<a class="card" href="https://shorayehall.ir" rel="noopener" target="_blank"><i class="fa-solid fa-handshake icon" style="color:#6f42c1"></i><span class="name">مرکز توسعه حل اختلاف</span></a>
+<a class="card" href="https://ara.jri.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-file-lines icon" style="color:#6f42c1"></i><span class="name">سامانه ملی آرای قضایی</span></a>
+</div></section><section class="cat" data-cat="2"><h2><i class="fa-solid fa-school" style="margin-left:8px"></i> مدارس و آموزش و پرورش <span>18</span></h2><div class="grid">
+<a class="card" href="https://medu.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-school icon" style="color:#e83e8c"></i><span class="name">وزارت آموزش و پرورش</span></a>
+<a class="card" href="https://my.medu.ir" rel="noopener" target="_blank"><i class="fa-solid fa-user-graduate icon" style="color:#e83e8c"></i><span class="name">مای مدیو</span></a>
+<a class="card" href="https://sida.medu.ir" rel="noopener" target="_blank"><i class="fa-solid fa-id-card icon" style="color:#e83e8c"></i><span class="name">سیدا</span></a>
+<a class="card" href="https://pada.medu.ir" rel="noopener" target="_blank"><i class="fa-solid fa-table icon" style="color:#e83e8c"></i><span class="name">پادا</span></a>
+<a class="card" href="https://snd.medu.ir" rel="noopener" target="_blank"><i class="fa-solid fa-database icon" style="color:#e83e8c"></i><span class="name">سناد</span></a>
+<a class="card" href="https://final2.medu.ir" rel="noopener" target="_blank"><i class="fa-solid fa-flag-checkered icon" style="color:#e83e8c"></i><span class="name">سامانه فاینال</span></a>
+<a class="card" href="https://shad.ir" rel="noopener" target="_blank"><i class="fa-solid fa-chalkboard-user icon" style="color:#e83e8c"></i><span class="name">آموزش مجازی شاد</span></a>
+<a class="card" href="https://sampad.medu.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-building icon" style="color:#e83e8c"></i><span class="name">سازمان مدارس غیردولتی</span></a>
+<a class="card" href="https://sampad.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-star icon" style="color:#e83e8c"></i><span class="name">سمپاد</span></a>
+<a class="card" href="https://dres.ir" rel="noopener" target="_blank"><i class="fa-solid fa-hammer icon" style="color:#e83e8c"></i><span class="name">سازمان نوسازی مدارس</span></a>
+<a class="card" href="https://chap.sch.ir" rel="noopener" target="_blank"><i class="fa-solid fa-book icon" style="color:#e83e8c"></i><span class="name">سازمان پژوهش و برنامه‌ریزی آموزشی</span></a>
+<a class="card" href="https://aee.medu.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-check-double icon" style="color:#e83e8c"></i><span class="name">مرکز ارزشیابی آموزش و پرورش</span></a>
+<a class="card" href="https://savadschool.ir" rel="noopener" target="_blank"><i class="fa-solid fa-pen icon" style="color:#e83e8c"></i><span class="name">نهضت سوادآموزی</span></a>
+<a class="card" href="https://kpf.ir" rel="noopener" target="_blank"><i class="fa-solid fa-palette icon" style="color:#e83e8c"></i><span class="name">کانون پرورش فکری</span></a>
+<a class="card" href="https://roshd.ir" rel="noopener" target="_blank"><i class="fa-solid fa-lightbulb icon" style="color:#e83e8c"></i><span class="name">رشد</span></a>
+<a class="card" href="https://irtextbook.ir" rel="noopener" target="_blank"><i class="fa-solid fa-book-open icon" style="color:#e83e8c"></i><span class="name">ثبت سفارش کتاب درسی</span></a>
+<a class="card" href="https://rtb.medu.ir" rel="noopener" target="_blank"><i class="fa-solid fa-ranking-star icon" style="color:#e83e8c"></i><span class="name">سامانه رتبه‌بندی معلمان</span></a>
+<a class="card" href="https://cfu.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-users icon" style="color:#e83e8c"></i><span class="name">سامانه فرهنگیان</span></a>
+</div></section><section class="cat" data-cat="3"><h2><i class="fa-solid fa-graduation-cap" style="margin-left:8px"></i> دانشگاه و کنکور <span>70</span></h2><div class="grid">
+<a class="card" href="https://sanjesh.org" rel="noopener" target="_blank"><i class="fa-solid fa-file-pen icon" style="color:#fd7e14"></i><span class="name">سازمان سنجش</span></a>
+<a class="card" href="https://iau.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-university icon" style="color:#fd7e14"></i><span class="name">دانشگاه آزاد اسلامی</span></a>
+<a class="card" href="https://edu.iau.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-graduation-cap icon" style="color:#fd7e14"></i><span class="name">آموزش دانشگاه آزاد</span></a>
+<a class="card" href="https://azmoon.iau.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-pencil icon" style="color:#fd7e14"></i><span class="name">آزمون دانشگاه آزاد</span></a>
+<a class="card" href="https://pnu.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-school icon" style="color:#fd7e14"></i><span class="name">دانشگاه پیام نور</span></a>
+<a class="card" href="https://reg.pnu.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-flower icon" style="color:#fd7e14"></i><span class="name">سامانه گلستان پیام نور</span></a>
+<a class="card" href="https://uast.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-laptop icon" style="color:#fd7e14"></i><span class="name">دانشگاه علمی کاربردی</span></a>
+<a class="card" href="https://edu.uast.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-headphones icon" style="color:#fd7e14"></i><span class="name">سامانه هم‌آوا</span></a>
+<a class="card" href="https://tvu.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-screwdriver-wrench icon" style="color:#fd7e14"></i><span class="name">دانشگاه فنی و حرفه‌ای</span></a>
+<a class="card" href="https://ut.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#fd7e14"></i><span class="name">دانشگاه تهران</span></a>
+<a class="card" href="https://sharif.edu" rel="noopener" target="_blank"><i class="fa-solid fa-microchip icon" style="color:#fd7e14"></i><span class="name">دانشگاه صنعتی شریف</span></a>
+<a class="card" href="https://aut.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-robot icon" style="color:#fd7e14"></i><span class="name">دانشگاه امیرکبیر</span></a>
+<a class="card" href="https://sbu.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-building-columns icon" style="color:#fd7e14"></i><span class="name">دانشگاه شهید بهشتی</span></a>
+<a class="card" href="https://atu.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-user-tie icon" style="color:#fd7e14"></i><span class="name">دانشگاه علامه طباطبایی</span></a>
+<a class="card" href="https://kntu.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-cube icon" style="color:#fd7e14"></i><span class="name">دانشگاه خواجه نصیر</span></a>
+<a class="card" href="https://iust.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-gears icon" style="color:#fd7e14"></i><span class="name">دانشگاه علم و صنعت</span></a>
+<a class="card" href="https://modares.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-chalkboard icon" style="color:#fd7e14"></i><span class="name">دانشگاه تربیت مدرس</span></a>
+<a class="card" href="https://alzahra.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-female icon" style="color:#fd7e14"></i><span class="name">دانشگاه الزهرا</span></a>
+<a class="card" href="https://tabrizu.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-location-dot icon" style="color:#fd7e14"></i><span class="name">دانشگاه تبریز</span></a>
+<a class="card" href="https://um.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-mosque icon" style="color:#fd7e14"></i><span class="name">دانشگاه فردوسی مشهد</span></a>
+<a class="card" href="https://ui.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-palace icon" style="color:#fd7e14"></i><span class="name">دانشگاه اصفهان</span></a>
+<a class="card" href="https://shirazu.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-city icon" style="color:#fd7e14"></i><span class="name">دانشگاه شیراز</span></a>
+<a class="card" href="https://scu.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-water icon" style="color:#fd7e14"></i><span class="name">دانشگاه اهواز</span></a>
+<a class="card" href="https://ajums.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-heartbeat icon" style="color:#fd7e14"></i><span class="name">دانشگاه جندی شاپور اهواز</span></a>
+<a class="card" href="https://urmia.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-mountain icon" style="color:#fd7e14"></i><span class="name">دانشگاه ارومیه</span></a>
+<a class="card" href="https://uk.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-desert icon" style="color:#fd7e14"></i><span class="name">دانشگاه کرمان</span></a>
+<a class="card" href="https://yazd.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-sun icon" style="color:#fd7e14"></i><span class="name">دانشگاه یزد</span></a>
+<a class="card" href="https://znu.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-tree icon" style="color:#fd7e14"></i><span class="name">دانشگاه زنجان</span></a>
+<a class="card" href="https://guilan.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-leaf icon" style="color:#fd7e14"></i><span class="name">دانشگاه گیلان</span></a>
+<a class="card" href="https://umz.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-umbrella icon" style="color:#fd7e14"></i><span class="name">دانشگاه مازندران</span></a>
+<a class="card" href="https://razi.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-flask icon" style="color:#fd7e14"></i><span class="name">دانشگاه رازی کرمانشاه</span></a>
+<a class="card" href="https://lu.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-mountain-sun icon" style="color:#fd7e14"></i><span class="name">دانشگاه لرستان</span></a>
+<a class="card" href="https://uok.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-mountain icon" style="color:#fd7e14"></i><span class="name">دانشگاه کردستان</span></a>
+<a class="card" href="https://usb.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-sun icon" style="color:#fd7e14"></i><span class="name">دانشگاه سیستان و بلوچستان</span></a>
+<a class="card" href="https://basu.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-avocado icon" style="color:#fd7e14"></i><span class="name">دانشگاه بوعلی سینا</span></a>
+<a class="card" href="https://kashanu.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-kaaba icon" style="color:#fd7e14"></i><span class="name">دانشگاه کاشان</span></a>
+<a class="card" href="https://yu.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-mountain icon" style="color:#fd7e14"></i><span class="name">دانشگاه یاسوج</span></a>
+<a class="card" href="https://qom.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-mosque icon" style="color:#fd7e14"></i><span class="name">دانشگاه قم</span></a>
+<a class="card" href="https://semnan.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-desert icon" style="color:#fd7e14"></i><span class="name">دانشگاه سمنان</span></a>
+<a class="card" href="https://sku.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-mountain icon" style="color:#fd7e14"></i><span class="name">دانشگاه شهرکرد</span></a>
+<a class="card" href="https://uma.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-tree icon" style="color:#fd7e14"></i><span class="name">دانشگاه محقق اردبیلی</span></a>
+<a class="card" href="https://gu.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-leaf icon" style="color:#fd7e14"></i><span class="name">دانشگاه گلستان</span></a>
+<a class="card" href="https://birjand.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-mountain icon" style="color:#fd7e14"></i><span class="name">دانشگاه بیرجند</span></a>
+<a class="card" href="https://ub.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-building icon" style="color:#fd7e14"></i><span class="name">دانشگاه بجنورد</span></a>
+<a class="card" href="https://uoz.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-sun icon" style="color:#fd7e14"></i><span class="name">دانشگاه زابل</span></a>
+<a class="card" href="https://hormozgan.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-water icon" style="color:#fd7e14"></i><span class="name">دانشگاه هرمزگان</span></a>
+<a class="card" href="https://pgu.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-ship icon" style="color:#fd7e14"></i><span class="name">دانشگاه خلیج فارس</span></a>
+<a class="card" href="https://iut.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-industry icon" style="color:#fd7e14"></i><span class="name">دانشگاه صنعتی اصفهان</span></a>
+<a class="card" href="https://sutech.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-microchip icon" style="color:#fd7e14"></i><span class="name">دانشگاه صنعتی شیراز</span></a>
+<a class="card" href="https://nit.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-laptop icon" style="color:#fd7e14"></i><span class="name">دانشگاه صنعتی نوشیروانی بابل</span></a>
+<a class="card" href="https://sut.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-gears icon" style="color:#fd7e14"></i><span class="name">دانشگاه صنعتی سهند</span></a>
+<a class="card" href="https://kut.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-building icon" style="color:#fd7e14"></i><span class="name">دانشگاه صنعتی کرمانشاه</span></a>
+<a class="card" href="https://uut.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-mountain icon" style="color:#fd7e14"></i><span class="name">دانشگاه صنعتی ارومیه</span></a>
+<a class="card" href="https://tums.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-heart-pulse icon" style="color:#fd7e14"></i><span class="name">دانشگاه علوم پزشکی تهران</span></a>
+<a class="card" href="https://iums.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-hospital icon" style="color:#fd7e14"></i><span class="name">دانشگاه علوم پزشکی ایران</span></a>
+<a class="card" href="https://sbmu.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-user-doctor icon" style="color:#fd7e14"></i><span class="name">دانشگاه علوم پزشکی شهید بهشتی</span></a>
+<a class="card" href="https://mums.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-mosque icon" style="color:#fd7e14"></i><span class="name">دانشگاه علوم پزشکی مشهد</span></a>
+<a class="card" href="https://sums.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-city icon" style="color:#fd7e14"></i><span class="name">دانشگاه علوم پزشکی شیراز</span></a>
+<a class="card" href="https://mui.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-palace icon" style="color:#fd7e14"></i><span class="name">دانشگاه علوم پزشکی اصفهان</span></a>
+<a class="card" href="https://tbzmed.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-location-dot icon" style="color:#fd7e14"></i><span class="name">دانشگاه علوم پزشکی تبریز</span></a>
+<a class="card" href="https://irandoc.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-book-open icon" style="color:#fd7e14"></i><span class="name">ایرانداک</span></a>
+<a class="card" href="https://swf.ir" rel="noopener" target="_blank"><i class="fa-solid fa-hand-holding-dollar icon" style="color:#fd7e14"></i><span class="name">صندوق رفاه دانشجویان</span></a>
+<a class="card" href="https://saorg.ir" rel="noopener" target="_blank"><i class="fa-solid fa-building-columns icon" style="color:#fd7e14"></i><span class="name">سازمان امور دانشجویان</span></a>
+<a class="card" href="https://isc.ac" rel="noopener" target="_blank"><i class="fa-solid fa-crown icon" style="color:#fd7e14"></i><span class="name">ISC</span></a>
+<a class="card" href="https://unipress.org" rel="noopener" target="_blank"><i class="fa-solid fa-print icon" style="color:#fd7e14"></i><span class="name">مرکز نشر دانشگاهی</span></a>
+<a class="card" href="https://kanoon.ir" rel="noopener" target="_blank"><i class="fa-solid fa-pen-fancy icon" style="color:#fd7e14"></i><span class="name">کانون قلم‌چی</span></a>
+<a class="card" href="https://gozine2.ir" rel="noopener" target="_blank"><i class="fa-solid fa-2 icon" style="color:#fd7e14"></i><span class="name">گزینه دو</span></a>
+<a class="card" href="https://gaj.ir" rel="noopener" target="_blank"><i class="fa-solid fa-book icon" style="color:#fd7e14"></i><span class="name">گاج</span></a>
+<a class="card" href="https://my.sanjesh.org" rel="noopener" target="_blank"><i class="fa-solid fa-user-check icon" style="color:#fd7e14"></i><span class="name">مای سنجش</span></a>
+</div></section><section class="cat" data-cat="4"><h2><i class="fa-solid fa-screwdriver-wrench" style="margin-left:8px"></i> فنی و حرفه‌ای و مهارت <span>7</span></h2><div class="grid">
+<a class="card" href="https://irantvto.ir" rel="noopener" target="_blank"><i class="fa-solid fa-screwdriver-wrench icon" style="color:#20c997"></i><span class="name">سازمان فنی و حرفه‌ای</span></a>
+<a class="card" href="https://portaltvto.com" rel="noopener" target="_blank"><i class="fa-solid fa-globe icon" style="color:#20c997"></i><span class="name">پرتال فنی و حرفه‌ای</span></a>
+<a class="card" href="https://azmoon.portaltvto.com" rel="noopener" target="_blank"><i class="fa-solid fa-pencil icon" style="color:#20c997"></i><span class="name">آزمون فنی و حرفه‌ای</span></a>
+<a class="card" href="https://pay.portaltvto.com" rel="noopener" target="_blank"><i class="fa-solid fa-credit-card icon" style="color:#20c997"></i><span class="name">پرداخت گواهینامه فنی و حرفه‌ای</span></a>
+<a class="card" href="https://azmoon.portaltvto.com/estelam/estelam" rel="noopener" target="_blank"><i class="fa-solid fa-magnifying-glass icon" style="color:#20c997"></i><span class="name">استعلام گواهینامه فنی و حرفه‌ای</span></a>
+<a class="card" href="https://tvto.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-building icon" style="color:#20c997"></i><span class="name">سازمان آموزش فنی و حرفه‌ای کشور</span></a>
+<a class="card" href="https://pay.portaltvto.com/pay/licence2" rel="noopener" target="_blank"><i class="fa-solid fa-file-invoice icon" style="color:#20c997"></i><span class="name">پرداخت هزینه گواهینامه فنی و حرفه‌ای</span></a>
+</div></section><section class="cat" data-cat="5"><h2><i class="fa-solid fa-briefcase" style="margin-left:8px"></i> کار، بیمه و تأمین اجتماعی <span>13</span></h2><div class="grid">
+<a class="card" href="https://tamin.ir" rel="noopener" target="_blank"><i class="fa-solid fa-hospital-user icon" style="color:#fd7e14"></i><span class="name">تأمین اجتماعی</span></a>
+<a class="card" href="https://account.tamin.ir" rel="noopener" target="_blank"><i class="fa-solid fa-user icon" style="color:#fd7e14"></i><span class="name">تأمین اجتماعی من</span></a>
+<a class="card" href="https://es.tamin.ir" rel="noopener" target="_blank"><i class="fa-solid fa-laptop icon" style="color:#fd7e14"></i><span class="name">سامانه خدمات غیرحضوری تأمین اجتماعی</span></a>
+<a class="card" href="https://samt.tamin.ir" rel="noopener" target="_blank"><i class="fa-solid fa-file-invoice icon" style="color:#fd7e14"></i><span class="name">سامانه فیش حقوقی تأمین اجتماعی</span></a>
+<a class="card" href="https://prkar.mcls.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-handshake icon" style="color:#fd7e14"></i><span class="name">سامانه جامع روابط کار</span></a>
+<a class="card" href="https://shoghl.mcls.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-briefcase icon" style="color:#fd7e14"></i><span class="name">سامانه جستجوی شغل</span></a>
+<a class="card" href="https://hemayat.mcls.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-hand-holding-heart icon" style="color:#fd7e14"></i><span class="name">سامانه حمایت</span></a>
+<a class="card" href="https://behzisti.ir" rel="noopener" target="_blank"><i class="fa-solid fa-wheelchair icon" style="color:#fd7e14"></i><span class="name">بهزیستی</span></a>
+<a class="card" href="https://cspf.ir" rel="noopener" target="_blank"><i class="fa-solid fa-piggy-bank icon" style="color:#fd7e14"></i><span class="name">صندوق بازنشستگی کشوری</span></a>
+<a class="card" href="https://roostaa.ir" rel="noopener" target="_blank"><i class="fa-solid fa-person-digging icon" style="color:#fd7e14"></i><span class="name">صندوق بیمه اجتماعی کشاورزان</span></a>
+<a class="card" href="https://refah-bank.ir" rel="noopener" target="_blank"><i class="fa-solid fa-building-columns icon" style="color:#fd7e14"></i><span class="name">بانک رفاه کارگران</span></a>
+<a class="card" href="https://kara.mcls.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-users icon" style="color:#fd7e14"></i><span class="name">سامانه کارا</span></a>
+<a class="card" href="https://smkh.mcls.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-house-chimney icon" style="color:#fd7e14"></i><span class="name">سامانه مشاغل خانگی</span></a>
+</div></section><section class="cat" data-cat="6"><h2><i class="fa-solid fa-file-invoice-dollar" style="margin-left:8px"></i> مالیات، حسابداری و مالی <span>22</span></h2><div class="grid">
+<a class="card" href="https://intamedia.ir" rel="noopener" target="_blank"><i class="fa-solid fa-building-columns icon" style="color:#0d6efd"></i><span class="name">سازمان امور مالیاتی</span></a>
+<a class="card" href="https://tax.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-file-invoice-dollar icon" style="color:#0d6efd"></i><span class="name">درگاه مالیاتی</span></a>
+<a class="card" href="https://my.tax.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-user icon" style="color:#0d6efd"></i><span class="name">my.tax.gov.ir</span></a>
+<a class="card" href="https://tp.tax.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-people-group icon" style="color:#0d6efd"></i><span class="name">سامانه مودیان</span></a>
+<a class="card" href="https://return.tax.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-reply icon" style="color:#0d6efd"></i><span class="name">سامانه اظهارنامه مالیاتی</span></a>
+<a class="card" href="https://evat.ir" rel="noopener" target="_blank"><i class="fa-solid fa-plus-minus icon" style="color:#0d6efd"></i><span class="name">سامانه ارزش افزوده</span></a>
+<a class="card" href="https://salary.tax.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-wallet icon" style="color:#0d6efd"></i><span class="name">سامانه مالیات حقوق</span></a>
+<a class="card" href="https://ttms11.tax.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-calendar icon" style="color:#0d6efd"></i><span class="name">سامانه معاملات فصلی</span></a>
+<a class="card" href="https://irica.ir" rel="noopener" target="_blank"><i class="fa-solid fa-ship icon" style="color:#0d6efd"></i><span class="name">گمرک جمهوری اسلامی</span></a>
+<a class="card" href="https://epl.irica.ir" rel="noopener" target="_blank"><i class="fa-solid fa-window-maximize icon" style="color:#0d6efd"></i><span class="name">پنجره واحد تجارت فرامرزی</span></a>
+<a class="card" href="https://ntsw.ir" rel="noopener" target="_blank"><i class="fa-solid fa-store icon" style="color:#0d6efd"></i><span class="name">سامانه جامع تجارت</span></a>
+<a class="card" href="https://nwms.ir" rel="noopener" target="_blank"><i class="fa-solid fa-warehouse icon" style="color:#0d6efd"></i><span class="name">سامانه جامع انبارها</span></a>
+<a class="card" href="https://ecommerce.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-cart-shopping icon" style="color:#0d6efd"></i><span class="name">مرکز توسعه تجارت الکترونیکی</span></a>
+<a class="card" href="https://enamad.ir" rel="noopener" target="_blank"><i class="fa-solid fa-certificate icon" style="color:#0d6efd"></i><span class="name">اینماد</span></a>
+<a class="card" href="https://setadiran.ir" rel="noopener" target="_blank"><i class="fa-solid fa-flag icon" style="color:#0d6efd"></i><span class="name">سامانه ستاد ایران</span></a>
+<a class="card" href="https://tse.ir" rel="noopener" target="_blank"><i class="fa-solid fa-chart-line icon" style="color:#0d6efd"></i><span class="name">بورس تهران</span></a>
+<a class="card" href="https://ifb.ir" rel="noopener" target="_blank"><i class="fa-solid fa-chart-bar icon" style="color:#0d6efd"></i><span class="name">فرابورس ایران</span></a>
+<a class="card" href="https://codal.ir" rel="noopener" target="_blank"><i class="fa-solid fa-file-lines icon" style="color:#0d6efd"></i><span class="name">کدال</span></a>
+<a class="card" href="https://csdiran.ir" rel="noopener" target="_blank"><i class="fa-solid fa-building icon" style="color:#0d6efd"></i><span class="name">شرکت سپرده‌گذاری مرکزی</span></a>
+<a class="card" href="https://sejam.ir" rel="noopener" target="_blank"><i class="fa-solid fa-id-card icon" style="color:#0d6efd"></i><span class="name">سجام</span></a>
+<a class="card" href="https://tavanirangroup.com" rel="noopener" target="_blank"><i class="fa-solid fa-bolt icon" style="color:#0d6efd"></i><span class="name">توانیران</span></a>
+<a class="card" href="https://audit.org.ir" rel="noopener" target="_blank"><i class="fa-solid fa-magnifying-glass-chart icon" style="color:#0d6efd"></i><span class="name">سازمان حسابرسی</span></a>
+</div></section><section class="cat" data-cat="7"><h2><i class="fa-solid fa-building-columns" style="margin-left:8px"></i> بانک‌ها <span>35</span></h2><div class="grid">
+<a class="card" href="https://cbi.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#198754"></i><span class="name">بانک مرکزی</span></a>
+<a class="card" href="https://bmi.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#198754"></i><span class="name">بانک ملی</span></a>
+<a class="card" href="https://bankmellat.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#198754"></i><span class="name">بانک ملت</span></a>
+<a class="card" href="https://bsi.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#198754"></i><span class="name">بانک صادرات</span></a>
+<a class="card" href="https://tejaratbank.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#198754"></i><span class="name">بانک تجارت</span></a>
+<a class="card" href="https://banksepah.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#198754"></i><span class="name">بانک سپه</span></a>
+<a class="card" href="https://bank-maskan.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#198754"></i><span class="name">بانک مسکن</span></a>
+<a class="card" href="https://bki.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#198754"></i><span class="name">بانک کشاورزی</span></a>
+<a class="card" href="https://postbank.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#198754"></i><span class="name">پست بانک</span></a>
+<a class="card" href="https://ttbank.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#198754"></i><span class="name">بانک توسعه تعاون</span></a>
+<a class="card" href="https://edbi.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#198754"></i><span class="name">بانک توسعه صادرات</span></a>
+<a class="card" href="https://bim.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#198754"></i><span class="name">بانک صنعت و معدن</span></a>
+<a class="card" href="https://bpi.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#198754"></i><span class="name">بانک پاسارگاد</span></a>
+<a class="card" href="https://parsian-bank.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#198754"></i><span class="name">بانک پارسیان</span></a>
+<a class="card" href="https://sb24.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#198754"></i><span class="name">بانک سامان</span></a>
+<a class="card" href="https://enbank.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#198754"></i><span class="name">بانک اقتصاد نوین</span></a>
+<a class="card" href="https://izbank.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#198754"></i><span class="name">بانک ایران زمین</span></a>
+<a class="card" href="https://shahr-bank.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#198754"></i><span class="name">بانک شهر</span></a>
+<a class="card" href="https://sinabank.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#198754"></i><span class="name">بانک سینا</span></a>
+<a class="card" href="https://day24.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#198754"></i><span class="name">بانک دی</span></a>
+<a class="card" href="https://sbank.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#198754"></i><span class="name">بانک سرمایه</span></a>
+<a class="card" href="https://karafarinbank.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#198754"></i><span class="name">بانک کارآفرین</span></a>
+<a class="card" href="https://tourismbank.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#198754"></i><span class="name">بانک گردشگری</span></a>
+<a class="card" href="https://middleeastbank.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#198754"></i><span class="name">بانک خاورمیانه</span></a>
+<a class="card" href="https://qmb.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#198754"></i><span class="name">بانک قرض‌الحسنه مهر ایران</span></a>
+<a class="card" href="https://rqbank.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#198754"></i><span class="name">بانک قرض‌الحسنه رسالت</span></a>
+<a class="card" href="https://ayandehbank.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#198754"></i><span class="name">بانک آینده</span></a>
+<a class="card" href="https://ivbb.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#198754"></i><span class="name">بانک ایران‌ونزوئلا</span></a>
+<a class="card" href="https://iran-russia-bank.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#198754"></i><span class="name">بانک مشترک ایران و روسیه</span></a>
+<a class="card" href="https://ve.cbi.ir" rel="noopener" target="_blank"><i class="fa-solid fa-ring icon" style="color:#198754"></i><span class="name">سامانه وام ازدواج</span></a>
+<a class="card" href="https://shaparak.ir" rel="noopener" target="_blank"><i class="fa-solid fa-network-wired icon" style="color:#198754"></i><span class="name">شبکه شاپرک</span></a>
+<a class="card" href="https://sayad.bmi.ir" rel="noopener" target="_blank"><i class="fa-solid fa-fish icon" style="color:#198754"></i><span class="name">سامانه صیاد</span></a>
+<a class="card" href="https://www.mresalat.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#198754"></i><span class="name">خدمات بانک رسالت</span></a>
+<a class="card" href="https://user.imerat.ir/#/auth/login" rel="noopener" target="_blank"><i class="fa-solid fa-chart-line icon" style="color:#198754"></i><span class="name">ارزیابی توان مالی رسالت (مرآت)</span></a>
+<a class="card" href="https://omerat.ir/#!/login" rel="noopener" target="_blank"><i class="fa-solid fa-magnifying-glass-chart icon" style="color:#198754"></i><span class="name">سامانه مرآت</span></a>
+</div></section><section class="cat" data-cat="8"><h2><i class="fa-solid fa-car" style="margin-left:8px"></i> خودرو، پلیس و حمل‌ونقل <span>28</span></h2><div class="grid">
+<a class="card" href="https://rahvar120.ir" rel="noopener" target="_blank"><i class="fa-solid fa-car icon" style="color:#20c997"></i><span class="name">راهور ۱۲۰</span></a>
+<a class="card" href="https://nobatdehi.epolice.ir" rel="noopener" target="_blank"><i class="fa-solid fa-calendar-check icon" style="color:#20c997"></i><span class="name">نوبت تعویض پلاک</span></a>
+<a class="card" href="https://nnhk.ir" rel="noopener" target="_blank"><i class="fa-solid fa-car-burst icon" style="color:#20c997"></i><span class="name">سامانه خودرو فرسوده</span></a>
+<a class="card" href="https://ikco.ir" rel="noopener" target="_blank"><i class="fa-solid fa-car icon" style="color:#20c997"></i><span class="name">ایران خودرو</span></a>
+<a class="card" href="https://esale.ikco.ir" rel="noopener" target="_blank"><i class="fa-solid fa-cart-shopping icon" style="color:#20c997"></i><span class="name">فروش ایران خودرو</span></a>
+<a class="card" href="https://ikcosales.ir" rel="noopener" target="_blank"><i class="fa-solid fa-car icon" style="color:#20c997"></i><span class="name">سامانه فروش ایران خودرو</span></a>
+<a class="card" href="https://saipacorp.com" rel="noopener" target="_blank"><i class="fa-solid fa-car icon" style="color:#20c997"></i><span class="name">سایپا</span></a>
+<a class="card" href="https://saipa.iranecar.com" rel="noopener" target="_blank"><i class="fa-solid fa-car icon" style="color:#20c997"></i><span class="name">فروش سایپا</span></a>
+<a class="card" href="https://kermanmotor.com" rel="noopener" target="_blank"><i class="fa-solid fa-car icon" style="color:#20c997"></i><span class="name">کرمان موتور</span></a>
+<a class="card" href="https://bahman.ir" rel="noopener" target="_blank"><i class="fa-solid fa-car icon" style="color:#20c997"></i><span class="name">بهمن موتور</span></a>
+<a class="card" href="https://mvmco.ir" rel="noopener" target="_blank"><i class="fa-solid fa-car icon" style="color:#20c997"></i><span class="name">مدیران خودرو</span></a>
+<a class="card" href="https://fardamotor.ir" rel="noopener" target="_blank"><i class="fa-solid fa-car icon" style="color:#20c997"></i><span class="name">فردا موتور</span></a>
+<a class="card" href="https://mammutauto.com" rel="noopener" target="_blank"><i class="fa-solid fa-car icon" style="color:#20c997"></i><span class="name">ماموت خودرو</span></a>
+<a class="card" href="https://rmto.ir" rel="noopener" target="_blank"><i class="fa-solid fa-road icon" style="color:#20c997"></i><span class="name">سازمان راهداری</span></a>
+<a class="card" href="https://141.ir" rel="noopener" target="_blank"><i class="fa-solid fa-phone icon" style="color:#20c997"></i><span class="name">مرکز اطلاعات راه‌ها ۱۴۱</span></a>
+<a class="card" href="https://rai.ir" rel="noopener" target="_blank"><i class="fa-solid fa-train-subway icon" style="color:#20c997"></i><span class="name">شرکت راه‌آهن</span></a>
+<a class="card" href="https://raja.ir" rel="noopener" target="_blank"><i class="fa-solid fa-train icon" style="color:#20c997"></i><span class="name">رجا</span></a>
+<a class="card" href="https://airport.ir" rel="noopener" target="_blank"><i class="fa-solid fa-plane icon" style="color:#20c997"></i><span class="name">شرکت فرودگاه‌ها</span></a>
+<a class="card" href="https://caa.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-plane icon" style="color:#20c997"></i><span class="name">سازمان هواپیمایی کشوری</span></a>
+<a class="card" href="https://iranair.com" rel="noopener" target="_blank"><i class="fa-solid fa-plane icon" style="color:#20c997"></i><span class="name">ایران ایر</span></a>
+<a class="card" href="https://mahan.aero" rel="noopener" target="_blank"><i class="fa-solid fa-plane icon" style="color:#20c997"></i><span class="name">ماهان</span></a>
+<a class="card" href="https://avarezi.ir" rel="noopener" target="_blank"><i class="fa-solid fa-toll icon" style="color:#20c997"></i><span class="name">عوارض آزادراهی</span></a>
+<a class="card" href="https://www.azadrah.ir" rel="noopener" target="_blank"><i class="fa-solid fa-road icon" style="color:#20c997"></i><span class="name">سامانه عوارض آزادراه</span></a>
+<a class="card" href="https://centinsur.ir" rel="noopener" target="_blank"><i class="fa-solid fa-shield icon" style="color:#20c997"></i><span class="name">بیمه شخص ثالث</span></a>
+<a class="card" href="https://gcr.niopdc.ir" rel="noopener" target="_blank"><i class="fa-solid fa-gas-pump icon" style="color:#20c997"></i><span class="name">دوگانه‌سوز کردن خودرو</span></a>
+<a class="card" href="https://niopdc.ir" rel="noopener" target="_blank"><i class="fa-solid fa-oil-well icon" style="color:#20c997"></i><span class="name">شرکت ملی پخش فرآورده‌های نفتی</span></a>
+<a class="card" href="https://nnhk.ir/auth/sso/login" rel="noopener" target="_blank"><i class="fa-solid fa-car-burst icon" style="color:#20c997"></i><span class="name">سامانه خودروهای فرسوده</span></a>
+</div></section><section class="cat" data-cat="9"><h2><i class="fa-solid fa-truck-fast" style="margin-left:8px"></i> پست و مرسولات <span>8</span></h2><div class="grid">
+<a class="card" href="https://post.ir" rel="noopener" target="_blank"><i class="fa-solid fa-envelope icon" style="color:#0d6efd"></i><span class="name">شرکت ملی پست</span></a>
+<a class="card" href="https://tracking.post.ir" rel="noopener" target="_blank"><i class="fa-solid fa-map-location-dot icon" style="color:#0d6efd"></i><span class="name">رهگیری مرسولات پستی</span></a>
+<a class="card" href="https://postyafteh.post.ir" rel="noopener" target="_blank"><i class="fa-solid fa-check icon" style="color:#0d6efd"></i><span class="name">پست‌یافته</span></a>
+<a class="card" href="https://epost.ir" rel="noopener" target="_blank"><i class="fa-solid fa-envelope icon" style="color:#0d6efd"></i><span class="name">خدمات پستی</span></a>
+<a class="card" href="https://postex.ir" rel="noopener" target="_blank"><i class="fa-solid fa-box icon" style="color:#0d6efd"></i><span class="name">پستکس</span></a>
+<a class="card" href="https://chaparnet.com" rel="noopener" target="_blank"><i class="fa-solid fa-horse icon" style="color:#0d6efd"></i><span class="name">چاپار</span></a>
+<a class="card" href="https://tipaxco.com" rel="noopener" target="_blank"><i class="fa-solid fa-truck-fast icon" style="color:#0d6efd"></i><span class="name">تیپاکس</span></a>
+<a class="card" href="https://badpa.co" rel="noopener" target="_blank"><i class="fa-solid fa-person-running icon" style="color:#0d6efd"></i><span class="name">پیک بادپا</span></a>
+</div></section><section class="cat" data-cat="10"><h2><i class="fa-solid fa-heart-pulse" style="margin-left:8px"></i> سلامت و درمان <span>11</span></h2><div class="grid">
+<a class="card" href="https://fda.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-pills icon" style="color:#dc3545"></i><span class="name">سازمان غذا و دارو</span></a>
+<a class="card" href="https://ihio.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-hospital icon" style="color:#dc3545"></i><span class="name">بیمه سلامت</span></a>
+<a class="card" href="https://csp.ihio.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-user-check icon" style="color:#dc3545"></i><span class="name">سامانه خدمات بیمه سلامت</span></a>
+<a class="card" href="https://nobat.ir" rel="noopener" target="_blank"><i class="fa-solid fa-clock icon" style="color:#dc3545"></i><span class="name">نوبت‌دهی سلامت</span></a>
+<a class="card" href="https://doctoreto.com" rel="noopener" target="_blank"><i class="fa-solid fa-user-doctor icon" style="color:#dc3545"></i><span class="name">دکترتو</span></a>
+<a class="card" href="https://drdr.ir" rel="noopener" target="_blank"><i class="fa-solid fa-user-doctor icon" style="color:#dc3545"></i><span class="name">دکتردکتر</span></a>
+<a class="card" href="https://pezeshk24.com" rel="noopener" target="_blank"><i class="fa-solid fa-calendar-check icon" style="color:#dc3545"></i><span class="name">پذیرش ۲۴</span></a>
+<a class="card" href="https://ems.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-truck-medical icon" style="color:#dc3545"></i><span class="name">اورژانس کشور</span></a>
+<a class="card" href="https://ibto.ir" rel="noopener" target="_blank"><i class="fa-solid fa-droplet icon" style="color:#dc3545"></i><span class="name">سازمان انتقال خون</span></a>
+<a class="card" href="https://rcs.ir" rel="noopener" target="_blank"><i class="fa-solid fa-hand-holding-heart icon" style="color:#dc3545"></i><span class="name">هلال احمر</span></a>
+<a class="card" href="https://health.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-heart-pulse icon" style="color:#dc3545"></i><span class="name">معاونت بهداشت</span></a>
+</div></section><section class="cat" data-cat="11"><h2><i class="fa-solid fa-city" style="margin-left:8px"></i> خدمات شهری و عمومی <span>16</span></h2><div class="grid">
+<a class="card" href="https://tehran.ir" rel="noopener" target="_blank"><i class="fa-solid fa-city icon" style="color:#6f42c1"></i><span class="name">شهرداری تهران</span></a>
+<a class="card" href="https://mashhad.ir" rel="noopener" target="_blank"><i class="fa-solid fa-city icon" style="color:#6f42c1"></i><span class="name">شهرداری مشهد</span></a>
+<a class="card" href="https://isfahan.ir" rel="noopener" target="_blank"><i class="fa-solid fa-city icon" style="color:#6f42c1"></i><span class="name">شهرداری اصفهان</span></a>
+<a class="card" href="https://shiraz.ir" rel="noopener" target="_blank"><i class="fa-solid fa-city icon" style="color:#6f42c1"></i><span class="name">شهرداری شیراز</span></a>
+<a class="card" href="https://ahvaz.ir" rel="noopener" target="_blank"><i class="fa-solid fa-city icon" style="color:#6f42c1"></i><span class="name">شهرداری اهواز</span></a>
+<a class="card" href="https://tabriz.ir" rel="noopener" target="_blank"><i class="fa-solid fa-city icon" style="color:#6f42c1"></i><span class="name">شهرداری تبریز</span></a>
+<a class="card" href="https://karaj.ir" rel="noopener" target="_blank"><i class="fa-solid fa-city icon" style="color:#6f42c1"></i><span class="name">شهرداری کرج</span></a>
+<a class="card" href="https://qom.ir" rel="noopener" target="_blank"><i class="fa-solid fa-city icon" style="color:#6f42c1"></i><span class="name">شهرداری قم</span></a>
+<a class="card" href="https://rasht.ir" rel="noopener" target="_blank"><i class="fa-solid fa-city icon" style="color:#6f42c1"></i><span class="name">شهرداری رشت</span></a>
+<a class="card" href="https://137.ir" rel="noopener" target="_blank"><i class="fa-solid fa-phone icon" style="color:#6f42c1"></i><span class="name">سامانه ۱۳۷</span></a>
+<a class="card" href="https://neshan.org" rel="noopener" target="_blank"><i class="fa-solid fa-map icon" style="color:#6f42c1"></i><span class="name">نقشه نشان</span></a>
+<a class="card" href="https://balad.ir" rel="noopener" target="_blank"><i class="fa-solid fa-location-dot icon" style="color:#6f42c1"></i><span class="name">بلد</span></a>
+<a class="card" href="https://maps.google.com" rel="noopener" target="_blank"><i class="fa-solid fa-map icon" style="color:#6f42c1"></i><span class="name">گوگل مپس</span></a>
+<a class="card" href="https://time.ir" rel="noopener" target="_blank"><i class="fa-solid fa-clock icon" style="color:#6f42c1"></i><span class="name">زمان ایران</span></a>
+<a class="card" href="https://calendar.ut.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-calendar icon" style="color:#6f42c1"></i><span class="name">تقویم</span></a>
+<a class="card" href="https://namaz.ir" rel="noopener" target="_blank"><i class="fa-solid fa-mosque icon" style="color:#6f42c1"></i><span class="name">اوقات شرعی</span></a>
+</div></section><section class="cat" data-cat="12"><h2><i class="fa-solid fa-wifi" style="margin-left:8px"></i> اینترنت، اپراتورها و فناوری <span>19</span></h2><div class="grid">
+<a class="card" href="https://mci.ir" rel="noopener" target="_blank"><i class="fa-solid fa-sim-card icon" style="color:#0d6efd"></i><span class="name">همراه اول</span></a>
+<a class="card" href="https://irancell.ir" rel="noopener" target="_blank"><i class="fa-solid fa-sim-card icon" style="color:#0d6efd"></i><span class="name">ایرانسل</span></a>
+<a class="card" href="https://rightel.ir" rel="noopener" target="_blank"><i class="fa-solid fa-sim-card icon" style="color:#0d6efd"></i><span class="name">رایتل</span></a>
+<a class="card" href="https://tci.ir" rel="noopener" target="_blank"><i class="fa-solid fa-phone icon" style="color:#0d6efd"></i><span class="name">مخابرات ایران</span></a>
+<a class="card" href="https://shatel.ir" rel="noopener" target="_blank"><i class="fa-solid fa-wifi icon" style="color:#0d6efd"></i><span class="name">شاتل</span></a>
+<a class="card" href="https://asiatech.ir" rel="noopener" target="_blank"><i class="fa-solid fa-wifi icon" style="color:#0d6efd"></i><span class="name">آسیاتک</span></a>
+<a class="card" href="https://hiweb.ir" rel="noopener" target="_blank"><i class="fa-solid fa-globe icon" style="color:#0d6efd"></i><span class="name">های‌وب</span></a>
+<a class="card" href="https://mobinnet.ir" rel="noopener" target="_blank"><i class="fa-solid fa-wifi icon" style="color:#0d6efd"></i><span class="name">مبین‌نت</span></a>
+<a class="card" href="https://parsonline.com" rel="noopener" target="_blank"><i class="fa-solid fa-globe icon" style="color:#0d6efd"></i><span class="name">پارس آنلاین</span></a>
+<a class="card" href="https://arvancloud.ir" rel="noopener" target="_blank"><i class="fa-solid fa-cloud icon" style="color:#0d6efd"></i><span class="name">ابر آروان</span></a>
+<a class="card" href="https://netafraz.com" rel="noopener" target="_blank"><i class="fa-solid fa-globe icon" style="color:#0d6efd"></i><span class="name">نت‌افراز</span></a>
+<a class="card" href="https://mihanwebhost.com" rel="noopener" target="_blank"><i class="fa-solid fa-server icon" style="color:#0d6efd"></i><span class="name">میهن‌وب‌هاست</span></a>
+<a class="card" href="https://iranserver.com" rel="noopener" target="_blank"><i class="fa-solid fa-server icon" style="color:#0d6efd"></i><span class="name">ایران سرور</span></a>
+<a class="card" href="https://hostiran.net" rel="noopener" target="_blank"><i class="fa-solid fa-server icon" style="color:#0d6efd"></i><span class="name">هاست ایران</span></a>
+<a class="card" href="https://nic.ir" rel="noopener" target="_blank"><i class="fa-solid fa-globe icon" style="color:#0d6efd"></i><span class="name">سامانه ثبت دامنه ایرنیک</span></a>
+<a class="card" href="https://zoomit.ir" rel="noopener" target="_blank"><i class="fa-solid fa-microchip icon" style="color:#0d6efd"></i><span class="name">زومیت</span></a>
+<a class="card" href="https://digiato.com" rel="noopener" target="_blank"><i class="fa-solid fa-microchip icon" style="color:#0d6efd"></i><span class="name">دیجیاتو</span></a>
+<a class="card" href="https://shahrsakhtafzar.com" rel="noopener" target="_blank"><i class="fa-solid fa-microchip icon" style="color:#0d6efd"></i><span class="name">شهر سخت‌افزار</span></a>
+<a class="card" href="https://sakhtafzarmag.com" rel="noopener" target="_blank"><i class="fa-solid fa-microchip icon" style="color:#0d6efd"></i><span class="name">سخت‌افزار</span></a>
+</div></section><section class="cat" data-cat="13"><h2><i class="fa-solid fa-toolbox" style="margin-left:8px"></i> ابزارهای آنلاین <span>24</span></h2><div class="grid">
+<a class="card" href="https://google.com" rel="noopener" target="_blank"><i class="fa-brands fa-google icon" style="color:#ea4335"></i><span class="name">گوگل</span></a>
+<a class="card" href="https://bing.com" rel="noopener" target="_blank"><i class="fa-brands fa-microsoft icon" style="color:#005a9c"></i><span class="name">بینگ</span></a>
+<a class="card" href="https://yahoo.com" rel="noopener" target="_blank"><i class="fa-brands fa-yahoo icon" style="color:#6001d2"></i><span class="name">یاهو</span></a>
+<a class="card" href="https://fa.wikipedia.org" rel="noopener" target="_blank"><i class="fa-brands fa-wikipedia-w icon" style="color:#000000"></i><span class="name">ویکی‌پدیا فارسی</span></a>
+<a class="card" href="https://translate.google.com" rel="noopener" target="_blank"><i class="fa-solid fa-language icon" style="color:#4285f4"></i><span class="name">ترجمه گوگل</span></a>
+<a class="card" href="https://drive.google.com" rel="noopener" target="_blank"><i class="fa-brands fa-google-drive icon" style="color:#fbbc04"></i><span class="name">Google Drive</span></a>
+<a class="card" href="https://mail.google.com" rel="noopener" target="_blank"><i class="fa-regular fa-envelope icon" style="color:#ea4335"></i><span class="name">Gmail</span></a>
+<a class="card" href="https://docs.google.com" rel="noopener" target="_blank"><i class="fa-regular fa-file-lines icon" style="color:#4285f4"></i><span class="name">Google Docs</span></a>
+<a class="card" href="https://forms.google.com" rel="noopener" target="_blank"><i class="fa-regular fa-rectangle-list icon" style="color:#34a853"></i><span class="name">Google Forms</span></a>
+<a class="card" href="https://canva.com" rel="noopener" target="_blank"><i class="fa-brands fa-canva icon" style="color:#00c4cc"></i><span class="name">Canva</span></a>
+<a class="card" href="https://acrobat.adobe.com" rel="noopener" target="_blank"><i class="fa-brands fa-adobe icon" style="color:#ff0000"></i><span class="name">Adobe Acrobat Online</span></a>
+<a class="card" href="https://smallpdf.com" rel="noopener" target="_blank"><i class="fa-regular fa-file-pdf icon" style="color:#ff0000"></i><span class="name">Smallpdf</span></a>
+<a class="card" href="https://ilovepdf.com" rel="noopener" target="_blank"><i class="fa-regular fa-file-pdf icon" style="color:#e8602a"></i><span class="name">iLovePDF</span></a>
+<a class="card" href="https://tools.pdf24.org" rel="noopener" target="_blank"><i class="fa-regular fa-file-pdf icon" style="color:#0077b6"></i><span class="name">PDF24</span></a>
+<a class="card" href="https://tinypng.com" rel="noopener" target="_blank"><i class="fa-regular fa-image icon" style="color:#4a90d9"></i><span class="name">TinyPNG</span></a>
+<a class="card" href="https://remove.bg" rel="noopener" target="_blank"><i class="fa-regular fa-image icon" style="color:#6f42c1"></i><span class="name">Remove.bg</span></a>
+<a class="card" href="https://photopea.com" rel="noopener" target="_blank"><i class="fa-regular fa-image icon" style="color:#4a90d9"></i><span class="name">Photopea</span></a>
+<a class="card" href="https://qrcode-monkey.com" rel="noopener" target="_blank"><i class="fa-solid fa-qrcode icon" style="color:#000000"></i><span class="name">QRCode Monkey</span></a>
+<a class="card" href="https://speedtest.net" rel="noopener" target="_blank"><i class="fa-solid fa-gauge-high icon" style="color:#cf2e2e"></i><span class="name">Speedtest</span></a>
+<a class="card" href="https://virustotal.com" rel="noopener" target="_blank"><i class="fa-solid fa-virus icon" style="color:#ff0000"></i><span class="name">VirusTotal</span></a>
+<a class="card" href="https://archive.org" rel="noopener" target="_blank"><i class="fa-regular fa-clock icon" style="color:#000000"></i><span class="name">Internet Archive</span></a>
+<a class="card" href="https://github.com" rel="noopener" target="_blank"><i class="fa-brands fa-github icon" style="color:#181717"></i><span class="name">GitHub</span></a>
+<a class="card" href="https://gitlab.com" rel="noopener" target="_blank"><i class="fa-brands fa-gitlab icon" style="color:#fc6d26"></i><span class="name">GitLab</span></a>
+<a class="card" href="https://stackoverflow.com" rel="noopener" target="_blank"><i class="fa-brands fa-stack-overflow icon" style="color:#f48024"></i><span class="name">Stack Overflow</span></a>
+</div></section><section class="cat" data-cat="14"><h2><i class="fa-solid fa-cart-shopping" style="margin-left:8px"></i> خرید، آگهی و خدمات آنلاین <span>22</span></h2><div class="grid">
+<a class="card" href="https://digikala.com" rel="noopener" target="_blank"><i class="fa-solid fa-bag-shopping icon" style="color:#ef394e"></i><span class="name">دیجی‌کالا</span></a>
+<a class="card" href="https://torob.com" rel="noopener" target="_blank"><i class="fa-solid fa-magnifying-glass-dollar icon" style="color:#f39c12"></i><span class="name">ترب</span></a>
+<a class="card" href="https://divar.ir" rel="noopener" target="_blank"><i class="fa-regular fa-newspaper icon" style="color:#eb5b34"></i><span class="name">دیوار</span></a>
+<a class="card" href="https://sheypoor.com" rel="noopener" target="_blank"><i class="fa-regular fa-newspaper icon" style="color:#ea7d35"></i><span class="name">شیپور</span></a>
+<a class="card" href="https://basalam.com" rel="noopener" target="_blank"><i class="fa-regular fa-hand-peace icon" style="color:#00bcd4"></i><span class="name">باسلام</span></a>
+<a class="card" href="https://snapp.ir" rel="noopener" target="_blank"><i class="fa-solid fa-taxi icon" style="color:#ff6a00"></i><span class="name">اسنپ</span></a>
+<a class="card" href="https://tapsi.ir" rel="noopener" target="_blank"><i class="fa-solid fa-car icon" style="color:#ffb800"></i><span class="name">تپسی</span></a>
+<a class="card" href="https://snappfood.ir" rel="noopener" target="_blank"><i class="fa-solid fa-utensils icon" style="color:#ff6a00"></i><span class="name">اسنپ‌فود</span></a>
+<a class="card" href="https://emalls.ir" rel="noopener" target="_blank"><i class="fa-solid fa-store icon" style="color:#0077b6"></i><span class="name">ایمالز</span></a>
+<a class="card" href="https://zanbil.ir" rel="noopener" target="_blank"><i class="fa-solid fa-basket-shopping icon" style="color:#f9a825"></i><span class="name">زنبیل</span></a>
+<a class="card" href="https://okala.com" rel="noopener" target="_blank"><i class="fa-solid fa-cart-shopping icon" style="color:#4caf50"></i><span class="name">اکالا</span></a>
+<a class="card" href="https://khanoumi.com" rel="noopener" target="_blank"><i class="fa-solid fa-house-chimney icon" style="color:#e91e63"></i><span class="name">خانومی</span></a>
+<a class="card" href="https://netbarg.com" rel="noopener" target="_blank"><i class="fa-solid fa-tag icon" style="color:#ff5722"></i><span class="name">نت برگ</span></a>
+<a class="card" href="https://takhfifan.com" rel="noopener" target="_blank"><i class="fa-solid fa-tags icon" style="color:#9c27b0"></i><span class="name">تخفیفان</span></a>
+<a class="card" href="https://karnameh.com" rel="noopener" target="_blank"><i class="fa-regular fa-id-card icon" style="color:#0d6efd"></i><span class="name">کارنامه</span></a>
+<a class="card" href="https://hamrah-mechanic.com" rel="noopener" target="_blank"><i class="fa-solid fa-wrench icon" style="color:#ff9800"></i><span class="name">همراه مکانیک</span></a>
+<a class="card" href="https://kilid.com" rel="noopener" target="_blank"><i class="fa-solid fa-key icon" style="color:#607d8b"></i><span class="name">کیلید</span></a>
+<a class="card" href="https://irantalent.com" rel="noopener" target="_blank"><i class="fa-regular fa-star icon" style="color:#e91e63"></i><span class="name">ایران‌تلنت</span></a>
+<a class="card" href="https://jobvision.ir" rel="noopener" target="_blank"><i class="fa-regular fa-eye icon" style="color:#00bcd4"></i><span class="name">جاب‌ویژن</span></a>
+<a class="card" href="https://jobinja.ir" rel="noopener" target="_blank"><i class="fa-regular fa-building icon" style="color:#4caf50"></i><span class="name">جابینجا</span></a>
+<a class="card" href="https://e-estekhdam.com" rel="noopener" target="_blank"><i class="fa-solid fa-briefcase icon" style="color:#ff9800"></i><span class="name">ای استخدام</span></a>
+<a class="card" href="https://karboom.io" rel="noopener" target="_blank"><i class="fa-solid fa-rocket icon" style="color:#f44336"></i><span class="name">کاریابی</span></a>
+</div></section><section class="cat" data-cat="15"><h2><i class="fa-solid fa-newspaper" style="margin-left:8px"></i> خبر و رسانه <span>24</span></h2><div class="grid">
+<a class="card" href="https://irna.ir" rel="noopener" target="_blank"><i class="fa-solid fa-newspaper icon" style="color:#0d6efd"></i><span class="name">ایرنا</span></a>
+<a class="card" href="https://isna.ir" rel="noopener" target="_blank"><i class="fa-solid fa-newspaper icon" style="color:#dc3545"></i><span class="name">ایسنا</span></a>
+<a class="card" href="https://khuzestan.isna.ir" rel="noopener" target="_blank"><i class="fa-solid fa-newspaper icon" style="color:#dc3545"></i><span class="name">ایسنا خوزستان</span></a>
+<a class="card" href="https://mehrnews.com" rel="noopener" target="_blank"><i class="fa-solid fa-newspaper icon" style="color:#ffc107"></i><span class="name">مهر</span></a>
+<a class="card" href="https://tasnimnews.com" rel="noopener" target="_blank"><i class="fa-solid fa-newspaper icon" style="color:#28a745"></i><span class="name">تسنیم</span></a>
+<a class="card" href="https://farsnews.ir" rel="noopener" target="_blank"><i class="fa-solid fa-newspaper icon" style="color:#6f42c1"></i><span class="name">فارس</span></a>
+<a class="card" href="https://iscanews.ir" rel="noopener" target="_blank"><i class="fa-solid fa-newspaper icon" style="color:#17a2b8"></i><span class="name">ایسکانیوز</span></a>
+<a class="card" href="https://iran-newspaper.com" rel="noopener" target="_blank"><i class="fa-solid fa-newspaper icon" style="color:#e83e8c"></i><span class="name">ایران آنلاین</span></a>
+<a class="card" href="https://hamshahrionline.ir" rel="noopener" target="_blank"><i class="fa-solid fa-newspaper icon" style="color:#20c997"></i><span class="name">همشهری</span></a>
+<a class="card" href="https://sharghdaily.com" rel="noopener" target="_blank"><i class="fa-solid fa-newspaper icon" style="color:#343a40"></i><span class="name">شرق</span></a>
+<a class="card" href="https://donya-e-eqtesad.com" rel="noopener" target="_blank"><i class="fa-solid fa-newspaper icon" style="color:#0d6efd"></i><span class="name">دنیای اقتصاد</span></a>
+<a class="card" href="https://eghtesadonline.com" rel="noopener" target="_blank"><i class="fa-solid fa-newspaper icon" style="color:#fd7e14"></i><span class="name">اقتصاد آنلاین</span></a>
+<a class="card" href="https://tabnak.ir" rel="noopener" target="_blank"><i class="fa-solid fa-newspaper icon" style="color:#d63384"></i><span class="name">تابناک</span></a>
+<a class="card" href="https://khabaronline.ir" rel="noopener" target="_blank"><i class="fa-solid fa-newspaper icon" style="color:#0dcaf0"></i><span class="name">خبرآنلاین</span></a>
+<a class="card" href="https://asriran.com" rel="noopener" target="_blank"><i class="fa-solid fa-newspaper icon" style="color:#6c757d"></i><span class="name">عصر ایران</span></a>
+<a class="card" href="https://fararu.com" rel="noopener" target="_blank"><i class="fa-solid fa-newspaper icon" style="color:#9c27b0"></i><span class="name">فرارو</span></a>
+<a class="card" href="https://khabarfarsi.com" rel="noopener" target="_blank"><i class="fa-solid fa-newspaper icon" style="color:#009688"></i><span class="name">خبر فارسی</span></a>
+<a class="card" href="https://yjc.ir" rel="noopener" target="_blank"><i class="fa-solid fa-newspaper icon" style="color:#e91e63"></i><span class="name">باشگاه خبرنگاران</span></a>
+<a class="card" href="https://varzesh3.com" rel="noopener" target="_blank"><i class="fa-solid fa-futbol icon" style="color:#28a745"></i><span class="name">ورزش سه</span></a>
+<a class="card" href="https://tarafdari.com" rel="noopener" target="_blank"><i class="fa-solid fa-users icon" style="color:#17a2b8"></i><span class="name">طرفداری</span></a>
+<a class="card" href="https://filmnet.ir" rel="noopener" target="_blank"><i class="fa-solid fa-film icon" style="color:#dc3545"></i><span class="name">فیلم‌نت</span></a>
+<a class="card" href="https://namava.ir" rel="noopener" target="_blank"><i class="fa-solid fa-film icon" style="color:#6610f2"></i><span class="name">نماوا</span></a>
+<a class="card" href="https://aparat.com" rel="noopener" target="_blank"><i class="fa-solid fa-video icon" style="color:#ff5722"></i><span class="name">آپارات</span></a>
+<a class="card" href="https://telewebion.com" rel="noopener" target="_blank"><i class="fa-solid fa-tv icon" style="color:#0d6efd"></i><span class="name">تلوبیون</span></a>
+</div></section><section class="cat" data-cat="16"><h2><i class="fa-solid fa-book-open" style="margin-left:8px"></i> فرهنگی و کتاب <span>11</span></h2><div class="grid">
+<a class="card" href="https://ketab.ir" rel="noopener" target="_blank"><i class="fa-solid fa-book icon" style="color:#6f42c1"></i><span class="name">خانه کتاب و ادبیات ایران</span></a>
+<a class="card" href="https://nlai.ir" rel="noopener" target="_blank"><i class="fa-solid fa-book icon" style="color:#0d6efd"></i><span class="name">کتابخانه ملی</span></a>
+<a class="card" href="https://ical.ir" rel="noopener" target="_blank"><i class="fa-solid fa-book icon" style="color:#dc3545"></i><span class="name">کتابخانه مجلس</span></a>
+<a class="card" href="https://library.aqr.ir" rel="noopener" target="_blank"><i class="fa-solid fa-book icon" style="color:#28a745"></i><span class="name">کتابخانه آستان قدس</span></a>
+<a class="card" href="https://taaghche.com" rel="noopener" target="_blank"><i class="fa-solid fa-book-open icon" style="color:#f39c12"></i><span class="name">طاقچه</span></a>
+<a class="card" href="https://fidibo.com" rel="noopener" target="_blank"><i class="fa-solid fa-book-open icon" style="color:#e91e63"></i><span class="name">فیدیبو</span></a>
+<a class="card" href="https://ketabrah.ir" rel="noopener" target="_blank"><i class="fa-solid fa-book-open icon" style="color:#00bcd4"></i><span class="name">کتابراه</span></a>
+<a class="card" href="https://iranketab.ir" rel="noopener" target="_blank"><i class="fa-solid fa-book icon" style="color:#607d8b"></i><span class="name">ایران کتاب</span></a>
+<a class="card" href="https://goodreads.com" rel="noopener" target="_blank"><i class="fa-brands fa-goodreads-g icon" style="color:#46322b"></i><span class="name">گودریدز</span></a>
+<a class="card" href="https://novinbook.net" rel="noopener" target="_blank"><i class="fa-solid fa-book icon" style="color:#009688"></i><span class="name">نشر نوین</span></a>
+<a class="card" href="https://persianacademy.ir" rel="noopener" target="_blank"><i class="fa-regular fa-pen-to-square icon" style="color:#0d6efd"></i><span class="name">فرهنگستان زبان و ادب فارسی</span></a>
+</div></section><section class="cat" data-cat="17"><h2><i class="fa-solid fa-futbol" style="margin-left:8px"></i> ورزش <span>7</span></h2><div class="grid">
+<a class="card" href="https://olympic.ir" rel="noopener" target="_blank"><i class="fa-regular fa-circle icon" style="color:#000000"></i><span class="name">کمیته ملی المپیک</span></a>
+<a class="card" href="https://the-ffiri.com" rel="noopener" target="_blank"><i class="fa-solid fa-futbol icon" style="color:#1a73e8"></i><span class="name">فدراسیون فوتبال</span></a>
+<a class="card" href="https://irivf.ir" rel="noopener" target="_blank"><i class="fa-solid fa-volleyball icon" style="color:#ff5722"></i><span class="name">فدراسیون والیبال</span></a>
+<a class="card" href="https://ir-wrestling.ir" rel="noopener" target="_blank"><i class="fa-solid fa-person icon" style="color:#000000"></i><span class="name">فدراسیون کشتی</span></a>
+<a class="card" href="https://taekwondo.ir" rel="noopener" target="_blank"><i class="fa-solid fa-user icon" style="color:#e91e63"></i><span class="name">فدراسیون تکواندو</span></a>
+<a class="card" href="https://ifbb.ir" rel="noopener" target="_blank"><i class="fa-solid fa-dumbbell icon" style="color:#f39c12"></i><span class="name">فدراسیون بدنسازی</span></a>
+<a class="card" href="https://ifsm.ir" rel="noopener" target="_blank"><i class="fa-solid fa-heart-pulse icon" style="color:#dc3545"></i><span class="name">فدراسیون پزشکی ورزشی</span></a>
+</div></section><section class="cat" data-cat="18"><h2><i class="fa-solid fa-leaf" style="margin-left:8px"></i> کشاورزی، منابع طبیعی و محیط زیست <span>6</span></h2><div class="grid">
+<a class="card" href="https://frw.ir" rel="noopener" target="_blank"><i class="fa-solid fa-tree icon" style="color:#28a745"></i><span class="name">سازمان منابع طبیعی</span></a>
+<a class="card" href="https://ivo.ir" rel="noopener" target="_blank"><i class="fa-solid fa-paw icon" style="color:#fd7e14"></i><span class="name">سازمان دامپزشکی</span></a>
+<a class="card" href="https://ppo.ir" rel="noopener" target="_blank"><i class="fa-solid fa-seedling icon" style="color:#28a745"></i><span class="name">سازمان حفظ نباتات</span></a>
+<a class="card" href="https://areeo.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-flask icon" style="color:#0d6efd"></i><span class="name">مرکز تحقیقات کشاورزی</span></a>
+<a class="card" href="https://laoi.ir" rel="noopener" target="_blank"><i class="fa-solid fa-map icon" style="color:#6c757d"></i><span class="name">سازمان امور اراضی</span></a>
+<a class="card" href="https://semak.maj.ir" rel="noopener" target="_blank"><i class="fa-solid fa-microscope icon" style="color:#20c997"></i><span class="name">سامانه سماک</span></a>
+</div></section><section class="cat" data-cat="19"><h2><i class="fa-solid fa-house" style="margin-left:8px"></i> مسکن و املاک <span>7</span></h2><div class="grid">
+<a class="card" href="https://saman.mrud.ir" rel="noopener" target="_blank"><i class="fa-solid fa-house icon" style="color:#0d6efd"></i><span class="name">سامانه نهضت ملی مسکن</span></a>
+<a class="card" href="https://bonyadmaskan.ir" rel="noopener" target="_blank"><i class="fa-solid fa-building icon" style="color:#dc3545"></i><span class="name">بنیاد مسکن</span></a>
+<a class="card" href="https://nlho.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#28a745"></i><span class="name">سازمان ملی زمین و مسکن</span></a>
+<a class="card" href="https://ntoir.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-city icon" style="color:#fd7e14"></i><span class="name">شرکت عمران شهرهای جدید</span></a>
+<a class="card" href="https://kateb.ir" rel="noopener" target="_blank"><i class="fa-solid fa-pen icon" style="color:#6f42c1"></i><span class="name">سامانه کاتب</span></a>
+<a class="card" href="https://khodnevis.mrud.ir" rel="noopener" target="_blank"><i class="fa-solid fa-pen-fancy icon" style="color:#20c997"></i><span class="name">سامانه خودنویس</span></a>
+</div></section><section class="cat" data-cat="20"><h2><i class="fa-solid fa-chart-line" style="margin-left:8px"></i> بازار سرمایه و بورس <span>7</span></h2><div class="grid">
+<a class="card" href="https://tsetmc.com" rel="noopener" target="_blank"><i class="fa-solid fa-chart-line icon" style="color:#0d6efd"></i><span class="name">شرکت مدیریت فناوری بورس</span></a>
+<a class="card" href="https://fipiran.com" rel="noopener" target="_blank"><i class="fa-solid fa-chart-bar icon" style="color:#fd7e14"></i><span class="name">فیپیران</span></a>
+<a class="card" href="https://seo.ir" rel="noopener" target="_blank"><i class="fa-solid fa-building-columns icon" style="color:#28a745"></i><span class="name">سازمان بورس</span></a>
+<a class="card" href="https://ifc.ir" rel="noopener" target="_blank"><i class="fa-solid fa-coin icon" style="color:#6f42c1"></i><span class="name">مرکز مالی ایران</span></a>
+<a class="card" href="https://ime.co.ir" rel="noopener" target="_blank"><i class="fa-solid fa-cubes icon" style="color:#20c997"></i><span class="name">بورس کالا</span></a>
+<a class="card" href="https://irenex.ir" rel="noopener" target="_blank"><i class="fa-solid fa-bolt icon" style="color:#ffc107"></i><span class="name">بورس انرژی</span></a>
+<a class="card" href="https://ddn.csdiran.ir" rel="noopener" target="_blank"><i class="fa-solid fa-clock icon" style="color:#dc3545"></i><span class="name">سامانه پس از معاملات</span></a>
+</div></section><section class="cat" data-cat="21"><h2><i class="fa-solid fa-building" style="margin-left:8px"></i> ثبت شرکت، کسب‌وکار و مجوز <span>4</span></h2><div class="grid">
+<a class="card" href="https://irsherkat.ssaa.ir" rel="noopener" target="_blank"><i class="fa-solid fa-building icon" style="color:#0d6efd"></i><span class="name">ثبت شرکت‌ها</span></a>
+<a class="card" href="https://iripo.ssaa.ir" rel="noopener" target="_blank"><i class="fa-regular fa-copyright icon" style="color:#dc3545"></i><span class="name">مرکز مالکیت معنوی</span></a>
+<a class="card" href="https://iccima.ir" rel="noopener" target="_blank"><i class="fa-solid fa-handshake icon" style="color:#28a745"></i><span class="name">اتاق بازرگانی ایران</span></a>
+<a class="card" href="https://iranianasnaf.ir" rel="noopener" target="_blank"><i class="fa-solid fa-store icon" style="color:#6f42c1"></i><span class="name">اتاق اصناف ایران</span></a>
+</div></section><section class="cat" data-cat="22"><h2><i class="fa-solid fa-plane-departure" style="margin-left:8px"></i> سفر و گردشگری <span>12</span></h2><div class="grid">
+<a class="card" href="https://mcth.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#0d6efd"></i><span class="name">وزارت میراث فرهنگی</span></a>
+<a class="card" href="https://ichodoc.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#dc3545"></i><span class="name">میراث فرهنگی</span></a>
+<a class="card" href="https://irantourism.ir" rel="noopener" target="_blank"><i class="fa-solid fa-plane-departure icon" style="color:#28a745"></i><span class="name">ایرانگردی</span></a>
+<a class="card" href="https://alibaba.ir" rel="noopener" target="_blank"><i class="fa-solid fa-plane icon" style="color:#f39c12"></i><span class="name">علی‌بابا</span></a>
+<a class="card" href="https://flightio.com" rel="noopener" target="_blank"><i class="fa-solid fa-plane icon" style="color:#6f42c1"></i><span class="name">فلایتیو</span></a>
+<a class="card" href="https://safarmarket.com" rel="noopener" target="_blank"><i class="fa-solid fa-suitcase icon" style="color:#20c997"></i><span class="name">سفرمارکت</span></a>
+<a class="card" href="https://jabama.com" rel="noopener" target="_blank"><i class="fa-solid fa-house-chimney icon" style="color:#e91e63"></i><span class="name">جاباما</span></a>
+<a class="card" href="https://shab.ir" rel="noopener" target="_blank"><i class="fa-solid fa-bed icon" style="color:#00bcd4"></i><span class="name">شب</span></a>
+<a class="card" href="https://otaghak.com" rel="noopener" target="_blank"><i class="fa-solid fa-door-open icon" style="color:#ff9800"></i><span class="name">اتاقک</span></a>
+<a class="card" href="https://rahinow.com" rel="noopener" target="_blank"><i class="fa-solid fa-road icon" style="color:#9c27b0"></i><span class="name">رهی نو</span></a>
+<a class="card" href="https://snapptrip.com" rel="noopener" target="_blank"><i class="fa-solid fa-plane icon" style="color:#ff6a00"></i><span class="name">اسنپ‌تریپ</span></a>
+<a class="card" href="https://trip.ir" rel="noopener" target="_blank"><i class="fa-solid fa-suitcase-rolling icon" style="color:#0d6efd"></i><span class="name">تریپ</span></a>
+</div></section><section class="cat" data-cat="23"><h2><i class="fa-solid fa-mosque" style="margin-left:8px"></i> دینی و اوقات شرعی <span>4</span></h2><div class="grid">
+<a class="card" href="https://pasokhgoo.ir" rel="noopener" target="_blank"><i class="fa-solid fa-question icon" style="color:#0d6efd"></i><span class="name">مرکز ملی پاسخگویی</span></a>
+<a class="card" href="https://hawzah.net" rel="noopener" target="_blank"><i class="fa-solid fa-mosque icon" style="color:#28a745"></i><span class="name">سایت حوزه</span></a>
+<a class="card" href="https://quran.ir" rel="noopener" target="_blank"><i class="fa-solid fa-book-quran icon" style="color:#6f42c1"></i><span class="name">قرآن کریم</span></a>
+<a class="card" href="https://quraniran.ir" rel="noopener" target="_blank"><i class="fa-solid fa-book icon" style="color:#dc3545"></i><span class="name">مرکز طبع و نشر قرآن</span></a>
+</div></section><section class="cat" data-cat="24"><h2><i class="fa-solid fa-map-location-dot" style="margin-left:8px"></i> استان‌ها و خدمات استانی <span>30</span></h2><div class="grid">
+<a class="card" href="https://ostan-as.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-location-dot icon" style="color:#0d6efd"></i><span class="name">پورتال استانداری آذربایجان شرقی</span></a>
+<a class="card" href="https://west-az.ir" rel="noopener" target="_blank"><i class="fa-solid fa-location-dot icon" style="color:#dc3545"></i><span class="name">پورتال استانداری آذربایجان غربی</span></a>
+<a class="card" href="https://ardebil.ir" rel="noopener" target="_blank"><i class="fa-solid fa-location-dot icon" style="color:#28a745"></i><span class="name">پورتال استانداری اردبیل</span></a>
+<a class="card" href="https://ostan-es.ir" rel="noopener" target="_blank"><i class="fa-solid fa-location-dot icon" style="color:#6f42c1"></i><span class="name">پورتال استانداری اصفهان</span></a>
+<a class="card" href="https://alborz.ir" rel="noopener" target="_blank"><i class="fa-solid fa-location-dot icon" style="color:#fd7e14"></i><span class="name">پورتال استانداری البرز</span></a>
+<a class="card" href="https://ilam.ir" rel="noopener" target="_blank"><i class="fa-solid fa-location-dot icon" style="color:#20c997"></i><span class="name">پورتال استانداری ایلام</span></a>
+<a class="card" href="https://bushehr.ir" rel="noopener" target="_blank"><i class="fa-solid fa-location-dot icon" style="color:#ffc107"></i><span class="name">پورتال استانداری بوشهر</span></a>
+<a class="card" href="https://ostan-th.ir" rel="noopener" target="_blank"><i class="fa-solid fa-location-dot icon" style="color:#0d6efd"></i><span class="name">پورتال استانداری تهران</span></a>
+<a class="card" href="https://chb.ir" rel="noopener" target="_blank"><i class="fa-solid fa-location-dot icon" style="color:#dc3545"></i><span class="name">پورتال استانداری چهارمحال و بختیاری</span></a>
+<a class="card" href="https://sk-ostan.ir" rel="noopener" target="_blank"><i class="fa-solid fa-location-dot icon" style="color:#28a745"></i><span class="name">پورتال استانداری خراسان جنوبی</span></a>
+<a class="card" href="https://khorasan.ir" rel="noopener" target="_blank"><i class="fa-solid fa-location-dot icon" style="color:#6f42c1"></i><span class="name">پورتال استانداری خراسان رضوی</span></a>
+<a class="card" href="https://nkhorasan.ir" rel="noopener" target="_blank"><i class="fa-solid fa-location-dot icon" style="color:#fd7e14"></i><span class="name">پورتال استانداری خراسان شمالی</span></a>
+<a class="card" href="https://khuzestan.ir" rel="noopener" target="_blank"><i class="fa-solid fa-location-dot icon" style="color:#20c997"></i><span class="name">پورتال استانداری خوزستان</span></a>
+<a class="card" href="https://zanjan.ir" rel="noopener" target="_blank"><i class="fa-solid fa-location-dot icon" style="color:#ffc107"></i><span class="name">پورتال استانداری زنجان</span></a>
+<a class="card" href="https://semnan.ir" rel="noopener" target="_blank"><i class="fa-solid fa-location-dot icon" style="color:#0d6efd"></i><span class="name">پورتال استانداری سمنان</span></a>
+<a class="card" href="https://sbportal.ir" rel="noopener" target="_blank"><i class="fa-solid fa-location-dot icon" style="color:#dc3545"></i><span class="name">پورتال استانداری سیستان و بلوچستان</span></a>
+<a class="card" href="https://fars.ir" rel="noopener" target="_blank"><i class="fa-solid fa-location-dot icon" style="color:#28a745"></i><span class="name">پورتال استانداری فارس</span></a>
+<a class="card" href="https://qazvin.ir" rel="noopener" target="_blank"><i class="fa-solid fa-location-dot icon" style="color:#6f42c1"></i><span class="name">پورتال استانداری قزوین</span></a>
+<a class="card" href="https://kurdistan.ir" rel="noopener" target="_blank"><i class="fa-solid fa-location-dot icon" style="color:#fd7e14"></i><span class="name">پورتال استانداری کردستان</span></a>
+<a class="card" href="https://kerman.ir" rel="noopener" target="_blank"><i class="fa-solid fa-location-dot icon" style="color:#20c997"></i><span class="name">پورتال استانداری کرمان</span></a>
+<a class="card" href="https://kermanshah.ir" rel="noopener" target="_blank"><i class="fa-solid fa-location-dot icon" style="color:#ffc107"></i><span class="name">پورتال استانداری کرمانشاه</span></a>
+<a class="card" href="https://boyer-ahmad.ir" rel="noopener" target="_blank"><i class="fa-solid fa-location-dot icon" style="color:#0d6efd"></i><span class="name">پورتال استانداری کهگیلویه و بویراحمد</span></a>
+<a class="card" href="https://golestan.ir" rel="noopener" target="_blank"><i class="fa-solid fa-location-dot icon" style="color:#dc3545"></i><span class="name">پورتال استانداری گلستان</span></a>
+<a class="card" href="https://gilan.ir" rel="noopener" target="_blank"><i class="fa-solid fa-location-dot icon" style="color:#28a745"></i><span class="name">پورتال استانداری گیلان</span></a>
+<a class="card" href="https://lorestan.ir" rel="noopener" target="_blank"><i class="fa-solid fa-location-dot icon" style="color:#6f42c1"></i><span class="name">پورتال استانداری لرستان</span></a>
+<a class="card" href="https://mazandaran.ir" rel="noopener" target="_blank"><i class="fa-solid fa-location-dot icon" style="color:#fd7e14"></i><span class="name">پورتال استانداری مازندران</span></a>
+<a class="card" href="https://markazi.ir" rel="noopener" target="_blank"><i class="fa-solid fa-location-dot icon" style="color:#20c997"></i><span class="name">پورتال استانداری مرکزی</span></a>
+<a class="card" href="https://hormozgan.ir" rel="noopener" target="_blank"><i class="fa-solid fa-location-dot icon" style="color:#ffc107"></i><span class="name">پورتال استانداری هرمزگان</span></a>
+<a class="card" href="https://hamedan.ir" rel="noopener" target="_blank"><i class="fa-solid fa-location-dot icon" style="color:#0d6efd"></i><span class="name">پورتال استانداری همدان</span></a>
+<a class="card" href="https://yazd.ir" rel="noopener" target="_blank"><i class="fa-solid fa-location-dot icon" style="color:#dc3545"></i><span class="name">پورتال استانداری یزد</span></a>
+</div></section><section class="cat" data-cat="25"><h2><i class="fa-solid fa-layer-group" style="margin-left:8px"></i> سایر خدمات کاربردی <span>92</span></h2><div class="grid">
+<a class="card" href="https://up.ir" rel="noopener" target="_blank"><i class="fa-solid fa-cloud-arrow-up icon" style="color:#0d6efd"></i><span class="name">آپ</span></a>
+<a class="card" href="https://724.ir" rel="noopener" target="_blank"><i class="fa-regular fa-clock icon" style="color:#dc3545"></i><span class="name">۷۲۴</span></a>
+<a class="card" href="https://idpay.ir" rel="noopener" target="_blank"><i class="fa-regular fa-credit-card icon" style="color:#28a745"></i><span class="name">آیدی‌پی</span></a>
+<a class="card" href="https://zarinpal.com" rel="noopener" target="_blank"><i class="fa-solid fa-wallet icon" style="color:#6f42c1"></i><span class="name">زرین‌پال</span></a>
+<a class="card" href="https://nextpay.org" rel="noopener" target="_blank"><i class="fa-regular fa-credit-card icon" style="color:#fd7e14"></i><span class="name">نکست‌پی</span></a>
+<a class="card" href="https://payping.ir" rel="noopener" target="_blank"><i class="fa-solid fa-credit-card icon" style="color:#20c997"></i><span class="name">پی‌پینگ</span></a>
+<a class="card" href="https://azki.com" rel="noopener" target="_blank"><i class="fa-solid fa-shield icon" style="color:#ffc107"></i><span class="name">ازکی</span></a>
+<a class="card" href="https://bimebazar.com" rel="noopener" target="_blank"><i class="fa-solid fa-shield icon" style="color:#0d6efd"></i><span class="name">بیمه‌بازار</span></a>
+<a class="card" href="https://bimito.com" rel="noopener" target="_blank"><i class="fa-solid fa-shield icon" style="color:#dc3545"></i><span class="name">بیمیتو</span></a>
+<a class="card" href="https://dal.ir" rel="noopener" target="_blank"><i class="fa-solid fa-arrow-right icon" style="color:#28a745"></i><span class="name">دال</span></a>
+<a class="card" href="https://bimeh.com" rel="noopener" target="_blank"><i class="fa-solid fa-shield icon" style="color:#6f42c1"></i><span class="name">بیمه دات کام</span></a>
+<a class="card" href="https://itoll.ir" rel="noopener" target="_blank"><i class="fa-solid fa-car icon" style="color:#fd7e14"></i><span class="name">آیتول</span></a>
+<a class="card" href="https://ghabzino.com" rel="noopener" target="_blank"><i class="fa-regular fa-receipt icon" style="color:#20c997"></i><span class="name">قبضینو</span></a>
+<a class="card" href="https://apana.ir" rel="noopener" target="_blank"><i class="fa-solid fa-globe icon" style="color:#ffc107"></i><span class="name">آپانا</span></a>
+<a class="card" href="https://app.bmi.ir" rel="noopener" target="_blank"><i class="fa-solid fa-mobile-screen icon" style="color:#0d6efd"></i><span class="name">ایوا</span></a>
+<a class="card" href="https://ble.ir" rel="noopener" target="_blank"><i class="fa-solid fa-comment icon" style="color:#dc3545"></i><span class="name">بله</span></a>
+<a class="card" href="https://rubika.ir" rel="noopener" target="_blank"><i class="fa-solid fa-comment-dots icon" style="color:#28a745"></i><span class="name">روبیکا</span></a>
+<a class="card" href="https://eitaa.com" rel="noopener" target="_blank"><i class="fa-solid fa-paper-plane icon" style="color:#6f42c1"></i><span class="name">ایتا</span></a>
+<a class="card" href="https://splus.ir" rel="noopener" target="_blank"><i class="fa-solid fa-comment-sms icon" style="color:#fd7e14"></i><span class="name">سروش پلاس</span></a>
+<a class="card" href="https://gap.im" rel="noopener" target="_blank"><i class="fa-solid fa-comment icon" style="color:#20c997"></i><span class="name">گپ</span></a>
+<a class="card" href="https://virasty.com" rel="noopener" target="_blank"><i class="fa-solid fa-pen-fancy icon" style="color:#ffc107"></i><span class="name">ویراستی</span></a>
+<a class="card" href="https://namasha.com" rel="noopener" target="_blank"><i class="fa-solid fa-video icon" style="color:#0d6efd"></i><span class="name">نماشا</span></a>
+<a class="card" href="https://filimo.com" rel="noopener" target="_blank"><i class="fa-solid fa-film icon" style="color:#dc3545"></i><span class="name">فیلیمو</span></a>
+<a class="card" href="https://anten.ir" rel="noopener" target="_blank"><i class="fa-solid fa-signal icon" style="color:#28a745"></i><span class="name">آنتن</span></a>
+<a class="card" href="https://my.irancell.ir" rel="noopener" target="_blank"><i class="fa-solid fa-sim-card icon" style="color:#6f42c1"></i><span class="name">ایرانسل من</span></a>
+<a class="card" href="https://my.mci.ir" rel="noopener" target="_blank"><i class="fa-solid fa-sim-card icon" style="color:#fd7e14"></i><span class="name">همراه من</span></a>
+<a class="card" href="https://my.rightel.ir" rel="noopener" target="_blank"><i class="fa-solid fa-sim-card icon" style="color:#20c997"></i><span class="name">رایتل من</span></a>
+<a class="card" href="https://my.tci.ir" rel="noopener" target="_blank"><i class="fa-solid fa-phone icon" style="color:#ffc107"></i><span class="name">مخابرات من</span></a>
+<a class="card" href="https://my.shatel.ir" rel="noopener" target="_blank"><i class="fa-solid fa-wifi icon" style="color:#0d6efd"></i><span class="name">شاتل من</span></a>
+<a class="card" href="https://my.asiatech.ir" rel="noopener" target="_blank"><i class="fa-solid fa-wifi icon" style="color:#dc3545"></i><span class="name">آسیاتک من</span></a>
+<a class="card" href="https://iranianmotorco.ir" rel="noopener" target="_blank"><i class="fa-solid fa-motorcycle icon" style="color:#28a745"></i><span class="name">موتور سیکلت ایران</span></a>
+<a class="card" href="https://pmo.ir" rel="noopener" target="_blank"><i class="fa-solid fa-ship icon" style="color:#6f42c1"></i><span class="name">سازمان بنادر</span></a>
+<a class="card" href="https://ikia.airport.ir" rel="noopener" target="_blank"><i class="fa-solid fa-plane icon" style="color:#fd7e14"></i><span class="name">فرودگاه امام خمینی</span></a>
+<a class="card" href="https://mehrabad.airport.ir" rel="noopener" target="_blank"><i class="fa-solid fa-plane icon" style="color:#20c997"></i><span class="name">فرودگاه مهرآباد</span></a>
+<a class="card" href="https://nigc.ir" rel="noopener" target="_blank"><i class="fa-solid fa-fire icon" style="color:#ffc107"></i><span class="name">شرکت ملی گاز</span></a>
+<a class="card" href="https://tavanir.org.ir" rel="noopener" target="_blank"><i class="fa-solid fa-bolt icon" style="color:#0d6efd"></i><span class="name">توانیر</span></a>
+<a class="card" href="https://bargheman.com" rel="noopener" target="_blank"><i class="fa-solid fa-bolt icon" style="color:#dc3545"></i><span class="name">برق من</span></a>
+<a class="card" href="https://nww.ir" rel="noopener" target="_blank"><i class="fa-solid fa-droplet icon" style="color:#28a745"></i><span class="name">آب و فاضلاب</span></a>
+<a class="card" href="https://nioc.ir" rel="noopener" target="_blank"><i class="fa-solid fa-oil-well icon" style="color:#6f42c1"></i><span class="name">شرکت ملی نفت</span></a>
+<a class="card" href="https://saba.org.ir" rel="noopener" target="_blank"><i class="fa-regular fa-sun icon" style="color:#fd7e14"></i><span class="name">سامانه جامع انرژی</span></a>
+<a class="card" href="https://gsi.ir" rel="noopener" target="_blank"><i class="fa-solid fa-mountain icon" style="color:#20c997"></i><span class="name">سازمان زمین‌شناسی</span></a>
+<a class="card" href="https://irsc.ut.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-wave-square icon" style="color:#ffc107"></i><span class="name">مرکز لرزه‌نگاری</span></a>
+<a class="card" href="https://nri.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-flask icon" style="color:#0d6efd"></i><span class="name">پژوهشگاه نیرو</span></a>
+<a class="card" href="https://bhrc.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-road icon" style="color:#dc3545"></i><span class="name">مرکز تحقیقات راه و مسکن</span></a>
+<a class="card" href="https://dotic.ir" rel="noopener" target="_blank"><i class="fa-solid fa-scale-balanced icon" style="color:#28a745"></i><span class="name">بانک اطلاعات قوانین</span></a>
+<a class="card" href="https://rc.majlis.ir" rel="noopener" target="_blank"><i class="fa-solid fa-building-columns icon" style="color:#6f42c1"></i><span class="name">مرکز پژوهش‌های مجلس</span></a>
+<a class="card" href="https://majlis.ir" rel="noopener" target="_blank"><i class="fa-solid fa-building-columns icon" style="color:#fd7e14"></i><span class="name">مجلس شورای اسلامی</span></a>
+<a class="card" href="https://qavanin.ir" rel="noopener" target="_blank"><i class="fa-solid fa-book icon" style="color:#20c997"></i><span class="name">سامانه قوانین و مقررات</span></a>
+<a class="card" href="https://dolat.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#ffc107"></i><span class="name">پایگاه اطلاع‌رسانی دولت</span></a>
+<a class="card" href="https://president.ir" rel="noopener" target="_blank"><i class="fa-solid fa-landmark icon" style="color:#0d6efd"></i><span class="name">ریاست جمهوری</span></a>
+<a class="card" href="https://aeoi.org.ir" rel="noopener" target="_blank"><i class="fa-solid fa-atom icon" style="color:#dc3545"></i><span class="name">سازمان انرژی اتمی</span></a>
+<a class="card" href="https://mod.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-shield-halved icon" style="color:#28a745"></i><span class="name">وزارت دفاع</span></a>
+<a class="card" href="https://police.ir" rel="noopener" target="_blank"><i class="fa-solid fa-user-police icon" style="color:#6f42c1"></i><span class="name">نیروی انتظامی</span></a>
+<a class="card" href="https://cyberpolice.ir" rel="noopener" target="_blank"><i class="fa-solid fa-user-secret icon" style="color:#fd7e14"></i><span class="name">پلیس فتا</span></a>
+<a class="card" href="https://vazifeh.police.ir" rel="noopener" target="_blank"><i class="fa-regular fa-clock icon" style="color:#20c997"></i><span class="name">سازمان وظیفه عمومی</span></a>
+<a class="card" href="https://portal.saorg.ir" rel="noopener" target="_blank"><i class="fa-solid fa-graduation-cap icon" style="color:#ffc107"></i><span class="name">سامانه سجاد</span></a>
+<a class="card" href="https://nesha.saorg.ir" rel="noopener" target="_blank"><i class="fa-regular fa-map icon" style="color:#0d6efd"></i><span class="name">سامانه نشا</span></a>
+<a class="card" href="https://art.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-palette icon" style="color:#dc3545"></i><span class="name">دانشگاه هنر تهران</span></a>
+<a class="card" href="https://aui.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-palette icon" style="color:#28a745"></i><span class="name">دانشگاه هنر اصفهان</span></a>
+<a class="card" href="https://sru.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-chalkboard-user icon" style="color:#6f42c1"></i><span class="name">دانشگاه تربیت دبیر شهید رجایی</span></a>
+<a class="card" href="https://jsu.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-building icon" style="color:#fd7e14"></i><span class="name">دانشگاه صنعتی جندی شاپور دزفول</span></a>
+<a class="card" href="https://khatam.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-building icon" style="color:#20c997"></i><span class="name">دانشگاه صنعتی خاتم‌الانبیا بهبهان</span></a>
+<a class="card" href="https://kmsu.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-ship icon" style="color:#ffc107"></i><span class="name">دانشگاه علوم و فنون دریایی خرمشهر</span></a>
+<a class="card" href="https://asau.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-seedling icon" style="color:#0d6efd"></i><span class="name">دانشگاه علوم کشاورزی خوزستان</span></a>
+<a class="card" href="https://dums.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-heart-pulse icon" style="color:#dc3545"></i><span class="name">دانشگاه علوم پزشکی دزفول</span></a>
+<a class="card" href="https://abadanums.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-heart-pulse icon" style="color:#28a745"></i><span class="name">دانشگاه علوم پزشکی آبادان</span></a>
+<a class="card" href="https://mubabol.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-heart-pulse icon" style="color:#6f42c1"></i><span class="name">دانشگاه علوم پزشکی بابل</span></a>
+<a class="card" href="https://gums.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-heart-pulse icon" style="color:#fd7e14"></i><span class="name">دانشگاه علوم پزشکی گیلان</span></a>
+<a class="card" href="https://mazums.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-heart-pulse icon" style="color:#20c997"></i><span class="name">دانشگاه علوم پزشکی مازندران</span></a>
+<a class="card" href="https://kmu.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-heart-pulse icon" style="color:#ffc107"></i><span class="name">دانشگاه علوم پزشکی کرمان</span></a>
+<a class="card" href="https://ssu.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-heart-pulse icon" style="color:#0d6efd"></i><span class="name">دانشگاه علوم پزشکی یزد</span></a>
+<a class="card" href="https://zums.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-heart-pulse icon" style="color:#dc3545"></i><span class="name">دانشگاه علوم پزشکی زنجان</span></a>
+<a class="card" href="https://kums.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-heart-pulse icon" style="color:#28a745"></i><span class="name">دانشگاه علوم پزشکی کرمانشاه</span></a>
+<a class="card" href="https://umsha.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-heart-pulse icon" style="color:#6f42c1"></i><span class="name">دانشگاه علوم پزشکی همدان</span></a>
+<a class="card" href="https://muq.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-heart-pulse icon" style="color:#fd7e14"></i><span class="name">دانشگاه علوم پزشکی قم</span></a>
+<a class="card" href="https://umsu.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-heart-pulse icon" style="color:#20c997"></i><span class="name">دانشگاه علوم پزشکی ارومیه</span></a>
+<a class="card" href="https://arums.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-heart-pulse icon" style="color:#ffc107"></i><span class="name">دانشگاه علوم پزشکی اردبیل</span></a>
+<a class="card" href="https://bpums.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-heart-pulse icon" style="color:#0d6efd"></i><span class="name">دانشگاه علوم پزشکی بوشهر</span></a>
+<a class="card" href="https://hums.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-heart-pulse icon" style="color:#dc3545"></i><span class="name">دانشگاه علوم پزشکی بندرعباس</span></a>
+<a class="card" href="https://birjandums.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-heart-pulse icon" style="color:#28a745"></i><span class="name">دانشگاه علوم پزشکی بیرجند</span></a>
+<a class="card" href="https://nkums.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-heart-pulse icon" style="color:#6f42c1"></i><span class="name">دانشگاه علوم پزشکی بجنورد</span></a>
+<a class="card" href="https://yums.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-heart-pulse icon" style="color:#fd7e14"></i><span class="name">دانشگاه علوم پزشکی یاسوج</span></a>
+<a class="card" href="https://zaums.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-heart-pulse icon" style="color:#20c997"></i><span class="name">دانشگاه علوم پزشکی زاهدان</span></a>
+<a class="card" href="https://rums.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-heart-pulse icon" style="color:#ffc107"></i><span class="name">دانشگاه علوم پزشکی رفسنجان</span></a>
+<a class="card" href="https://kaums.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-heart-pulse icon" style="color:#0d6efd"></i><span class="name">دانشگاه علوم پزشکی کاشان</span></a>
+<a class="card" href="https://goums.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-heart-pulse icon" style="color:#dc3545"></i><span class="name">دانشگاه علوم پزشکی گلستان</span></a>
+<a class="card" href="https://lums.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-heart-pulse icon" style="color:#28a745"></i><span class="name">دانشگاه علوم پزشکی لرستان</span></a>
+<a class="card" href="https://semums.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-heart-pulse icon" style="color:#6f42c1"></i><span class="name">دانشگاه علوم پزشکی سمنان</span></a>
+<a class="card" href="https://shmu.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-heart-pulse icon" style="color:#fd7e14"></i><span class="name">دانشگاه علوم پزشکی شاهرود</span></a>
+<a class="card" href="https://arakmu.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-heart-pulse icon" style="color:#20c997"></i><span class="name">دانشگاه علوم پزشکی اراک</span></a>
+<a class="card" href="https://skums.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-heart-pulse icon" style="color:#ffc107"></i><span class="name">دانشگاه علوم پزشکی شهرکرد</span></a>
+<a class="card" href="https://qums.ac.ir" rel="noopener" target="_blank"><i class="fa-solid fa-heart-pulse icon" style="color:#0d6efd"></i><span class="name">دانشگاه علوم پزشکی قزوین</span></a>
+</div></section><section class="cat" data-cat="26"><h2><i class="fa-solid fa-chalkboard-user" style="margin-left:8px"></i> آموزش <span>33</span></h2><div class="grid">
+<a class="card" href="https://edu.medu.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-school icon" style="color:#0d6efd"></i><span class="name">پرتال آموزش و پرورش</span></a>
+<a class="card" href="https://khuz.medu.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-school icon" style="color:#dc3545"></i><span class="name">اداره کل آموزش و پرورش خوزستان</span></a>
+<a class="card" href="https://tehran.medu.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-school icon" style="color:#28a745"></i><span class="name">اداره کل آموزش و پرورش تهران</span></a>
+<a class="card" href="https://isfahan.medu.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-school icon" style="color:#6f42c1"></i><span class="name">اداره کل آموزش و پرورش اصفهان</span></a>
+<a class="card" href="https://fars.medu.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-school icon" style="color:#fd7e14"></i><span class="name">اداره کل آموزش و پرورش فارس</span></a>
+<a class="card" href="https://razavi.medu.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-school icon" style="color:#20c997"></i><span class="name">اداره کل آموزش و پرورش خراسان رضوی</span></a>
+<a class="card" href="https://eastazar.medu.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-school icon" style="color:#ffc107"></i><span class="name">اداره کل آموزش و پرورش آذربایجان شرقی</span></a>
+<a class="card" href="https://gilan.medu.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-school icon" style="color:#0d6efd"></i><span class="name">اداره کل آموزش و پرورش گیلان</span></a>
+<a class="card" href="https://mazand.medu.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-school icon" style="color:#dc3545"></i><span class="name">اداره کل آموزش و پرورش مازندران</span></a>
+<a class="card" href="https://kerman.medu.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-school icon" style="color:#28a745"></i><span class="name">اداره کل آموزش و پرورش کرمان</span></a>
+<a class="card" href="https://kermanshah.medu.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-school icon" style="color:#6f42c1"></i><span class="name">اداره کل آموزش و پرورش کرمانشاه</span></a>
+<a class="card" href="https://lorestan.medu.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-school icon" style="color:#fd7e14"></i><span class="name">اداره کل آموزش و پرورش لرستان</span></a>
+<a class="card" href="https://kurdistan.medu.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-school icon" style="color:#20c997"></i><span class="name">اداره کل آموزش و پرورش کردستان</span></a>
+<a class="card" href="https://yazd.medu.gov.ir" rel="noopener" target="_blank"><i class="fa-solid fa-school icon" style="color:#ffc107"></i><span class="name">اداره کل آموزش و پرورش یزد</span></a>
+<a class="card" href="https://medu.gov.ir/?q=اخبار" rel="noopener" target="_blank"><i class="fa-regular fa-newspaper icon" style="color:#fd7e14"></i><span class="name">medu.gov.ir — جستجوی اخبار</span></a>
+</div></section></div>
+
+
+<script src="https://unpkg.com/@simplewebauthn/browser@13.3.0/dist/bundle/index.umd.min.js"></script>
+<script>
+const LICENSE_API = 'https://dmvttrdvarysgyuzfhgg.supabase.co/functions/v1/hamyar-api';
+const DEVICE_API = 'https://dmvttrdvarysgyuzfhgg.supabase.co/functions/v1/hamyar-device';
+
+function setLicenseButtonLoading(loading, text) {
+  const btn = document.getElementById('activateBtn');
+  if (!btn) return;
+  btn.classList.toggle('loading', loading);
+  btn.disabled = loading;
+  btn.innerHTML = loading
+    ? '<span class="btn-spinner" style="display:inline-block"></span> ' + (text || 'در حال فعال‌سازی...')
+    : '<i class="fa-solid fa-key"></i> فعال‌سازی و ورود';
+}
+
+async function api(action, payload = {}) {
+  const res = await fetch(LICENSE_API, {
+    method: 'POST',
+    cache: 'no-store',
+    credentials: 'omit',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({action, ...payload})
+  });
+  let data;
+  try { data = await res.json(); }
+  catch (_) { throw new Error('پاسخ نامعتبر از سرور دریافت شد'); }
+  if (!res.ok) throw new Error(data.message || 'خطا در ارتباط با سرور');
+  return data;
+}
+
+async function activateWithWebAuthn(key) {
+  if (!window.SimpleWebAuthnBrowser) {
+    throw new Error('ابزار امنیتی ورود در مرورگر بارگذاری نشد. صفحه را دوباره باز کنید.');
+  }
+
+  const check = await api('check', {key});
+
+  if (!check.ok) {
+    const err = new Error(check.message || 'لایسنس نامعتبر یا منقضی شده است');
+    err.code = 'LICENSE';
+    throw err;
+  }
+
+  if (check.needsRegistration) {
+    setLicenseButtonLoading(true, 'در حال ثبت دستگاه امن...');
+    const optionsData = await api('deviceRegisterOptions', {key});
+    const registrationResponse =
+      await window.SimpleWebAuthnBrowser.startRegistration({
+        optionsJSON: optionsData.options || optionsData
+      });
+
+    const verified = await api('deviceRegisterVerify', {
+      key,
+      response: registrationResponse
+    });
+
+    if (!verified.ok) {
+      const err = new Error(verified.message || 'ثبت دستگاه انجام نشد');
+      err.code = 'AUTH';
+      throw err;
+    }
+
+    return verified;
+  }
+
+  if (check.needsAuthentication) {
+    setLicenseButtonLoading(true, 'در حال تأیید دستگاه...');
+    const optionsData = await api('deviceAuthOptions', {key});
+    const authenticationResponse =
+      await window.SimpleWebAuthnBrowser.startAuthentication({
+        optionsJSON: optionsData.options || optionsData
+      });
+
+    const verified = await api('deviceAuthVerify', {
+      key,
+      response: authenticationResponse
+    });
+
+    if (!verified.ok) {
+      const err = new Error(verified.message || 'تأیید دستگاه انجام نشد');
+      err.code = 'AUTH';
+      throw err;
+    }
+
+    return verified;
+  }
+
+  return check;
+}
+
+async function sha256Hex(text) {
+  const bytes = new TextEncoder().encode(String(text));
+  const hash = await crypto.subtle.digest('SHA-256', bytes);
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function getWebGLFingerprint() {
+  try {
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    if (!gl) return 'no-webgl';
+    const ext = gl.getExtension('WEBGL_debug_renderer_info');
+    const vendor = ext ? gl.getParameter(ext.UNMASKED_VENDOR_WEBGL) : gl.getParameter(gl.VENDOR);
+    const renderer = ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
+    return `${vendor}|${renderer}|${gl.getParameter(gl.VERSION)}`;
+  } catch (_) {
+    return 'webgl-error';
+  }
+}
+
+async function getDeviceFingerprint() {
+  const nav = navigator;
+  const screenData = [
+    screen.width, screen.height, screen.colorDepth, screen.pixelDepth,
+    window.devicePixelRatio || 1, screen.availWidth, screen.availHeight
+  ].join('|');
+  const hardware = [
+    nav.hardwareConcurrency || 0,
+    nav.deviceMemory || 0,
+    nav.maxTouchPoints || 0,
+    nav.platform || '',
+    Intl.DateTimeFormat().resolvedOptions().timeZone || '',
+    Array.isArray(nav.languages) ? nav.languages.join(',') : (nav.language || '')
+  ].join('|');
+  const webgl = await getWebGLFingerprint();
+  const features = [
+    'hamyar-device-v2', screenData, hardware, webgl,
+    typeof nav.gpu !== 'undefined' ? 'gpu' : 'nogpu',
+    typeof OffscreenCanvas !== 'undefined' ? 'offscreen' : 'nooffscreen'
+  ].join('||');
+  return await sha256Hex(features);
+}
+
+function deviceShortId(fingerprint) {
+  return 'HM-' + String(fingerprint || '').slice(0, 8).toUpperCase();
+}
+
+async function activateWithDeviceId(key) {
+  const fingerprint = await getDeviceFingerprint();
+  const deviceName = `دستگاه ${deviceShortId(fingerprint)}`;
+  const res = await fetch(DEVICE_API, {
+    method: 'POST',
+    cache: 'no-store',
+    credentials: 'omit',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({action:'deviceBind', key, fingerprint, deviceName})
+  });
+  let data;
+  try { data = await res.json(); }
+  catch (_) { throw new Error('پاسخ نامعتبر از سرور دریافت شد'); }
+  if (!res.ok) {
+    const err = new Error(data.message || 'دسترسی این دستگاه مجاز نیست');
+    err.code = data.code || 'DEVICE';
+    throw err;
+  }
+  return data;
+}
+
+async function checkLicense() {
+  const key = document.getElementById('pass').value.trim();
+  const err = document.getElementById('err');
+  const info = document.getElementById('licenseInfo');
+  if (err) err.textContent = '';
+  if (info) info.textContent = '';
+
+  if (!key) {
+    if (err) err.textContent = 'کد لایسنس را وارد کنید';
+    return;
+  }
+
+  setLicenseButtonLoading(true, 'در حال شناسایی دستگاه...');
+  if (info) info.textContent = 'در حال شناسایی دستگاه و بررسی لایسنس...';
+
+  try {
+    const data = await activateWithDeviceId(key);
+
+    if (data.ok) {
+      if (info) info.textContent = data.firstRegistration
+        ? '✓ دستگاه برای این لایسنس ثبت شد و ورود مجاز است'
+        : '✓ دستگاه تأیید شد و ورود مجاز است';
+      showMain(data);
+    } else {
+      if (err) err.textContent = data.message || 'لایسنس نامعتبر یا منقضی شده است';
+      if (info) info.textContent = '';
+    }
+  } catch (e) {
+    console.error(e);
+
+    if (e && e.code === 'DEVICE_MISMATCH') {
+      if (err) err.textContent = 'این لایسنس قبلاً روی دستگاه دیگری فعال شده است.';
+    } else if (e && e.code === 'LICENSE') {
+      if (err) err.textContent = e.message;
+    } else {
+      if (err) err.textContent = e.message || 'خطا در شناسایی دستگاه یا فعال‌سازی لایسنس';
+    }
+
+    if (info) info.textContent = '';
+    const pass = document.getElementById('pass');
+    if (pass) {
+      pass.classList.remove('shake');
+      void pass.offsetWidth;
+      pass.classList.add('shake');
+    }
+  } finally {
+    setLicenseButtonLoading(false);
+  }
+}
+function showMain(data) {
+  // پاسخ ثبت/تأیید دستگاه، اطلاعات لایسنس را داخل data.license برمی‌گرداند؛
+  // پاسخ check ممکن است خود اطلاعات لایسنس را در data داشته باشد.
+  const license = (data && data.license) ? data.license : (data || {});
+
+  const auth = document.getElementById('auth-screen');
+  const main = document.getElementById('main-content');
+  if (auth) auth.style.display = 'none';
+  if (main) main.style.display = 'block';
+
+  if (document.getElementById('customerLicenseKey')) {
+    document.getElementById('customerLicenseKey').textContent = license.key || '---';
+    document.getElementById('licenseCafeName').textContent = license.name || '---';
+    document.getElementById('licensePhone').textContent = license.phone || '---';
+    document.getElementById('licenseStartDate').textContent = license.start || '---';
+    document.getElementById('licenseExpiryDate').textContent = license.expiry || '---';
+    document.getElementById('licenseDuration').textContent = license.duration ? (Number(license.duration).toLocaleString('fa-IR') + ' روز') : '---';
+    document.getElementById('licenseRemaining').textContent = license.expired ? 'منقضی شده' : (license.remaining != null ? (Number(license.remaining).toLocaleString('fa-IR') + ' روز') : '---');
+
+    const devices = document.getElementById('licenseDevices');
+    if (devices) devices.textContent = Number(license.activeDevices || 1) > 0 ? 'فعال' : '---';
+
+    const box = document.getElementById('licenseRemainingBox');
+    if (box) box.className = 'license-stat ' + (license.expired ? 'expired' : 'remaining');
+  }
+
+  filterCat(-1);
+}
+
+window.addEventListener('DOMContentLoaded', async () => {
+  // Device identification is calculated fresh on every load.
+  // No license key or device fingerprint is stored in browser storage.
+  try { await getDeviceFingerprint(); } catch (_) {}
+});
+let activeCat = -1;
+
+function normalizeSearchText(value) {
+  return String(value || '').toLocaleLowerCase('fa-IR').replace(/ي/g,'ی').replace(/ك/g,'ک').replace(/ۀ/g,'ه').trim();
+}
+
+function filterCat(n) {
+  activeCat = Number(n);
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.classList.toggle('active', String(b.dataset.tab) === String(activeCat));
+  });
+  search();
+}
+
+function search() {
+  const input = document.getElementById('searchInput');
+  const q = normalizeSearchText(input ? input.value : '');
+  let count = 0;
+  let catsFound = 0;
+  document.querySelectorAll('.cat').forEach(sec => {
+    const visibleCat = activeCat < 0 || Number(sec.dataset.cat) === activeCat;
+    let any = false;
+    sec.querySelectorAll('.card').forEach(card => {
+      const nameEl = card.querySelector('.name');
+      const hay = normalizeSearchText((nameEl ? nameEl.textContent : '') + ' ' + card.textContent + ' ' + (card.getAttribute('href') || ''));
+      const ok = visibleCat && (!q || hay.includes(q));
+      card.style.display = ok ? '' : 'none';
+      if (ok) { any = true; count++; }
+    });
+    sec.style.display = any ? 'block' : 'none';
+    if (any) catsFound++;
+  });
+  const cnt = document.getElementById('count');
+  if (cnt) cnt.textContent = q ? `${count.toLocaleString('fa-IR')} لینک یافت شد` : `${count.toLocaleString('fa-IR')} لینک در ${catsFound.toLocaleString('fa-IR')} دسته`;
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  const input = document.getElementById('searchInput');
+  if (input) {
+    input.addEventListener('input', search);
+    input.addEventListener('keyup', search);
+  }
+  filterCat(-1);
+});
+</script>
+</body>
+</html>
