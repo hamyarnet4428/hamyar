@@ -932,7 +932,71 @@ const DOCUMENTS_API='https://dmvttrdvarysgyuzfhgg.supabase.co/functions/v1/hamya
 let documentsCache=[];let activeDocumentCat='all';
 function switchMainSection(section){const links=document.getElementById('linksPanel'),docs=document.getElementById('docsPanel'),training=document.getElementById('trainingPanel'),lb=document.getElementById('linksMainBtn'),db=document.getElementById('docsMainBtn'),tb=document.getElementById('trainingMainBtn'),isDocs=section==='docs',isTraining=section==='training';if(links)links.classList.toggle('active',!isDocs&&!isTraining);if(docs)docs.classList.toggle('active',isDocs);if(training)training.classList.toggle('active',isTraining);if(lb)lb.classList.toggle('active',!isDocs&&!isTraining);if(db)db.classList.toggle('active',isDocs);if(tb)tb.classList.toggle('active',isTraining);if(isDocs&&!documentsCache.length)loadDocuments();if(!isDocs&&!isTraining)search()}
 function documentCategory(doc){const t=String((doc&&doc.title)||'').toLowerCase();if(t.includes('رزومه'))return'resume';if(t.includes('نامه'))return'letter';if(t.includes('قرارداد'))return'contract';return'form'}
-function renderDocuments(){const grid=document.getElementById('documentsGrid'),status=document.getElementById('documentsStatus');if(!grid)return;const list=activeDocumentCat==='all'?documentsCache:documentsCache.filter(d=>documentCategory(d)===activeDocumentCat);grid.innerHTML='';if(!list.length){if(status){status.textContent='فایلی در این بخش وجود ندارد';status.className='documents-status documents-empty'}return}if(status)status.textContent='';list.forEach(doc=>{const card=document.createElement('div');card.className='document-card';const h=document.createElement('h3');h.textContent=doc.title||'فایل اداری';const p=document.createElement('p');p.textContent=doc.description||'فایل آماده استفاده';const meta=document.createElement('div');meta.className='document-meta';const type=document.createElement('span');type.textContent=doc.file_type||'FILE';const btn=document.createElement('button');btn.className='document-download';const available=!!doc.file_url;if(available){btn.innerHTML='<i class="fa-solid fa-download"></i> دریافت فایل';btn.onclick=()=>downloadDocument(doc,btn)}else{btn.innerHTML='<i class="fa-solid fa-circle-exclamation"></i> فایل موجود نیست';btn.disabled=true;btn.title='این فایل هنوز در Storage آپلود نشده است'}meta.append(type,btn);card.append(h,p,meta);grid.appendChild(card)})}
+function renderDocuments(){
+  const grid=document.getElementById('documentsGrid'),
+        status=document.getElementById('documentsStatus');
+  if(!grid)return;
+
+  const list=activeDocumentCat==='all'
+    ?documentsCache
+    :documentsCache.filter(d=>documentCategory(d)===activeDocumentCat);
+
+  grid.innerHTML='';
+
+  if(!list.length){
+    if(status){
+      status.textContent='فایلی در این بخش وجود ندارد';
+      status.className='documents-status documents-empty';
+    }
+    return;
+  }
+
+  if(status)status.textContent='';
+
+  list.forEach(doc=>{
+    const card=document.createElement('div');
+    card.className='document-card';
+
+    const h=document.createElement('h3');
+    h.textContent=doc.title||'فایل اداری';
+
+    const p=document.createElement('p');
+    p.textContent=doc.description||'فایل آماده استفاده';
+
+    const meta=document.createElement('div');
+    meta.className='document-meta';
+
+    const type=document.createElement('span');
+    type.textContent=doc.file_type||'FILE';
+
+    const filePath=String(doc.file_url||'').trim();
+
+    if(filePath){
+      const btn=document.createElement('a');
+      btn.className='document-download';
+      btn.href=DOCUMENTS_API+'?action=download&file='+encodeURIComponent(filePath);
+      btn.target='_blank';
+      btn.rel='noopener noreferrer';
+      btn.innerHTML='<i class="fa-solid fa-download"></i> دریافت فایل';
+      btn.title='دانلود فایل';
+      btn.style.pointerEvents='auto';
+      btn.style.position='relative';
+      btn.style.zIndex='10';
+      meta.append(type,btn);
+    }else{
+      const btn=document.createElement('button');
+      btn.className='document-download';
+      btn.disabled=true;
+      btn.innerHTML='<i class="fa-solid fa-circle-exclamation"></i> فایل موجود نیست';
+      btn.title='برای این مورد لینک فایل ثبت نشده است';
+      meta.append(type,btn);
+    }
+
+    card.append(h,p,meta);
+    grid.appendChild(card);
+  });
+}
+
 function filterDocuments(cat){activeDocumentCat=cat;document.querySelectorAll('.documents-subtab').forEach(b=>b.classList.toggle('active',b.dataset.docCat===cat));renderDocuments()}
 async function loadDocuments(){const status=document.getElementById('documentsStatus');try{const res=await fetch(DOCUMENTS_API+'?action=list',{cache:'no-store'}),data=await res.json();if(!res.ok||!data.ok)throw new Error(data.message||'خطا در دریافت فایل‌ها');documentsCache=Array.isArray(data.documents)?data.documents:[];renderDocuments()}catch(e){console.error(e);if(status){status.textContent='خطا در دریافت فهرست فایل‌ها';status.className='documents-status documents-error'}}}
 async function downloadDocument(doc,btn){
