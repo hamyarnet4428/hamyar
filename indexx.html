@@ -874,7 +874,7 @@ const LICENSE_API='https://buftdfinxtcvpsmeilhu.supabase.co/functions/v1/hamyar-
 const REG_CACHE_KEY='hamyar_registration_id';
 const REG_DATA_KEY='hamyar_registration_data';
 const ACCESS_KEY='hamyar_access_token';
-const ACCESS_TIMEOUT=20000;
+const ACCESS_TIMEOUT=60000;
 let registrationPollTimer=null, registrationBusy=false;
 function getDeviceId(){try{let x=localStorage.getItem('hamyar_device_id');if(!x){x=(globalThis.crypto?.randomUUID?.()||'HN-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2));localStorage.setItem('hamyar_device_id',x)}return x}catch{return 'HN-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2)}}
 function getDeviceInfo(){return {platform:navigator.platform||'',language:navigator.language||'',userAgent:navigator.userAgent||'',screen:(screen.width||0)+'x'+(screen.height||0),timezone:(Intl.DateTimeFormat().resolvedOptions().timeZone||'')}}
