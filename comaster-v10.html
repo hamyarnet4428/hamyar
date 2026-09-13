@@ -636,6 +636,13 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
 }
 </style>
 
+<style id="hn-custom-root-tabs-v20">
+#hnResourceTabs{grid-auto-flow:row!important;}
+#hnResourceTabs button[data-hn-custom-root]{display:flex!important;align-items:center;justify-content:center;min-width:0;}
+.hn-resource-panel[data-hn-custom-panel]{width:calc(100% - 20px)!important;max-width:1180px!important;margin-left:auto!important;margin-right:auto!important;box-sizing:border-box!important;}
+.hn-resource-panel[data-hn-custom-panel] .hn-v4-managed-content{width:100%!important;box-sizing:border-box!important;}
+@media(max-width:600px){#hnResourceTabs button[data-hn-custom-root]{font-size:10px!important;line-height:1.4!important;min-height:42px!important}.hn-resource-panel[data-hn-custom-panel]{width:calc(100% - 14px)!important;padding:0!important}}
+</style>
 </head>
 <body>
 <div class="hn-auth-screen" id="auth-screen">
@@ -1351,12 +1358,14 @@ function clearCustomerSession(){CUSTOMER=null;CUSTOMER_TOKEN='';localStorage.rem
 function prettyAuthError(e){const m=String(e?.message||e||'');if(m.includes('ACCOUNT_PENDING'))return '⏳ حساب شما در انتظار تأیید مدیر است.';if(m.includes('ACCOUNT_REJECTED'))return '❌ درخواست ثبت‌نام شما رد شده است.';if(m.includes('ACCOUNT_DISABLED'))return '⛔ حساب شما توسط مدیر غیرفعال شده است.';if(m.includes('ACCOUNT_DELETED'))return '⛔ حساب شما حذف شده است.';if(m.includes('LOGIN_INVALID'))return 'نام کاربری یا رمز عبور صحیح نیست.';if(m.includes('USERNAME_EXISTS'))return 'این نام کاربری قبلاً ثبت شده است.';if(m.includes('USERNAME_INVALID'))return 'نام کاربری فقط باید شامل حروف انگلیسی، عدد و _.- باشد.';if(m.includes('PASSWORD_TOO_SHORT'))return 'رمز عبور باید حداقل ۶ کاراکتر باشد.';if(m.includes('NAME_REQUIRED'))return 'نام کافی‌نت را وارد کنید.';if(m.includes('PHONE_REQUIRED'))return 'شماره تماس را صحیح وارد کنید.';if(m.includes('SESSION_INVALID'))return 'نشست شما منقضی شده است؛ دوباره وارد شوید.';return m||'عملیات انجام نشد.'}
 async function loginCustomer(){const u=normalizeUsername(document.getElementById('loginUsername').value),p=document.getElementById('loginPassword').value||'';if(u.length<3||!p)return setAuthMsg('نام کاربری و رمز عبور را وارد کنید.',true);const b=document.getElementById('loginCustomerBtn');b.disabled=true;b.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> در حال ورود...';try{const d=await customerRpc('login',{p_username:u,p_password:p});if(!d?.token||!d?.customer)throw new Error('LOGIN_INVALID');CUSTOMER_TOKEN=d.token;localStorage.setItem(CUSTOMER_TOKEN_KEY,CUSTOMER_TOKEN);setCustomerUI(d.customer);setAuthMsg('');startCustomerLiveSync();/* state در پس‌زمینه برای همگام‌سازی تب‌ها و محتوا */customerRpc('state',{p_session_token:CUSTOMER_TOKEN}).then(state=>{if(state?.customer){applyCustomerState(state);initV2()}}).catch(e=>{if(String(e?.message||'').includes('SESSION_INVALID'))clearCustomerSession()})}catch(e){setAuthMsg(prettyAuthError(e),true)}finally{b.disabled=false;b.innerHTML='<i class="fa-solid fa-right-to-bracket"></i> ورود به پنل'}}
 async function registerCustomerV5(){const name=(document.getElementById('cafeName').value||'').trim(),phone=(document.getElementById('cafePhone').value||'').trim(),u=normalizeUsername(document.getElementById('cafeUsername').value),p=document.getElementById('cafePassword').value||'',p2=document.getElementById('cafePassword2').value||'';if(name.length<2)return setAuthMsg('نام کافی‌نت را وارد کنید.',true);if(phone.replace(/[\s-]/g,'').length<7)return setAuthMsg('شماره تماس را صحیح وارد کنید.',true);if(!/^[a-z0-9_.-]{3,50}$/.test(u))return setAuthMsg('نام کاربری فقط شامل حروف انگلیسی، عدد و _.- باشد.',true);if(p.length<6)return setAuthMsg('رمز عبور باید حداقل ۶ کاراکتر باشد.',true);if(p!==p2)return setAuthMsg('تکرار رمز عبور یکسان نیست.',true);const b=document.getElementById('registerCustomerBtn');b.disabled=true;b.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> در حال ثبت درخواست...';try{const d=await customerRpc('register',{p_name:name,p_phone:phone,p_username:u,p_password:p});document.getElementById('loginUsername').value=u;showAuthMode('login');if(d?.status==='approved'||d?.auto_approved){setAuthMsg('✅ ثبت‌نام با موفقیت انجام شد.<br><b>حساب شما به‌صورت خودکار تأیید شد.</b><br>اکنون می‌توانید با همین نام کاربری و رمز وارد شوید.');}else{setAuthMsg('✅ ثبت‌نام انجام شد.<br><b>حساب شما در انتظار تأیید مدیر است.</b><br>پس از تأیید، با همین نام کاربری و رمز وارد شوید.');}}catch(e){setAuthMsg(prettyAuthError(e),true)}finally{b.disabled=false;b.innerHTML='<i class="fa-solid fa-user-plus"></i> ارسال درخواست ثبت‌نام'}}
+let __HN_LIVE_STARTED=false;let __HN_LIVE_HEARTBEAT_TIMER=null;let __HN_LIVE_STATE_TIMER=null;let __HN_LIVE_POLLING=false;let __HN_LIVE_FINGERPRINT='';
+async function __hnSyncOnline(){if(!CUSTOMER_TOKEN||__HN_LIVE_POLLING)return;__HN_LIVE_POLLING=true;try{const d=await customerRpc('state',{p_session_token:CUSTOMER_TOKEN});if(!d?.customer)throw new Error('SESSION_INVALID');const fp=JSON.stringify([d.tabs,d.overrides,d.content,d.config]);if(fp!==__HN_LIVE_FINGERPRINT){__HN_LIVE_FINGERPRINT=fp;CUSTOMER=d.customer;window.HN_CUSTOMER=d.customer;window.applyCustomerState?.(d);window.loadV2Content?.()}}catch(e){if(String(e?.message||'').includes('SESSION_INVALID'))window.clearCustomerSession?.()}finally{__HN_LIVE_POLLING=false}}
+async function __hnHeartbeat(){if(!CUSTOMER_TOKEN)return;try{await customerRpc('heartbeat',{p_session_token:CUSTOMER_TOKEN,p_event_type:'activity'})}catch(e){if(String(e?.message||'').toLowerCase().includes('session_invalid'))window.clearCustomerSession?.()}}
+function startCustomerLiveSync(){if(__HN_LIVE_STARTED||!CUSTOMER_TOKEN)return;__HN_LIVE_STARTED=true;__hnHeartbeat();__HN_LIVE_HEARTBEAT_TIMER=setInterval(__hnHeartbeat,30000);__HN_LIVE_STATE_TIMER=setInterval(__hnSyncOnline,15000)}
+window.startCustomerLiveSync=startCustomerLiveSync;
+
 async function validateCustomerSession(){if(!CUSTOMER_TOKEN){document.getElementById('auth-screen').style.display='flex';document.getElementById('main-content').style.display='none';return false}try{const d=await customerRpc('state',{p_session_token:CUSTOMER_TOKEN});if(!d?.customer)throw new Error('SESSION_INVALID');CUSTOMER=d.customer;window.HN_CUSTOMER=CUSTOMER;fillCafeInfo(CUSTOMER);document.getElementById('auth-screen').style.display='none';document.getElementById('main-content').style.display='block';applyCustomerState(d);initV2();startCustomerLiveSync();return true}catch(e){clearCustomerSession();setAuthMsg(prettyAuthError(e),true);return false}}
 function applyCustomerState(d){HN4.tabs=d.tabs||[];HN4.overrides=d.overrides||[];HN4.content=d.content||[];HN4.config=d.config||{};applyPanelConfig();applyRootTabs();applySiteTabs();applyBaseSiteUpdates();applyHiddenSites();renderNotices();renderTraining();renderForms();renderCustomRoots();window.switchResource('sites');window.search()}
-let lastFingerprint='';let polling=false;let liveSyncStarted=false;let liveHeartbeatTimer=null;let liveStateTimer=null;
-async function syncOnline4(){if(!CUSTOMER_TOKEN||polling)return;polling=true;try{const d=await customerRpc('state',{p_session_token:CUSTOMER_TOKEN});if(!d?.customer)throw new Error('SESSION_INVALID');const fp=JSON.stringify([d.tabs,d.overrides,d.content,d.config]);if(fp!==lastFingerprint){lastFingerprint=fp;CUSTOMER=d.customer;window.HN_CUSTOMER=d.customer;applyCustomerState(d);loadV2Content()}}catch(e){if(String(e?.message||'').includes('SESSION_INVALID'))clearCustomerSession()}finally{polling=false}}
-async function sendCustomerHeartbeat(){if(!CUSTOMER_TOKEN)return;try{await customerRpc('heartbeat',{p_session_token:CUSTOMER_TOKEN,p_event_type:'activity'})}catch(e){if(String(e?.message||'').toLowerCase().includes('session_invalid'))clearCustomerSession()}}
-function startCustomerLiveSync(){if(liveSyncStarted||!CUSTOMER_TOKEN)return;liveSyncStarted=true;sendCustomerHeartbeat();liveHeartbeatTimer=setInterval(sendCustomerHeartbeat,30000);liveStateTimer=setInterval(syncOnline4,15000)}
 async function customerLogout(){try{if(CUSTOMER_TOKEN)await customerRpc('logout',{p_session_token:CUSTOMER_TOKEN})}catch{}clearCustomerSession()}
 window.addEventListener('DOMContentLoaded',()=>{document.getElementById('loginPassword')?.addEventListener('keydown',e=>{if(e.key==='Enter')loginCustomer()});document.getElementById('cafePassword2')?.addEventListener('keydown',e=>{if(e.key==='Enter')registerCustomerV5()});setTimeout(validateCustomerSession,50)});
 let activeCat=-1;
@@ -1480,6 +1489,8 @@ function renderTabContents4(tabKey,host,type='content'){
  if(!host)return;
  const sites=added4(tabKey),cont=content4(tabKey);let box=host.querySelector(':scope > .hn-v4-managed-content');if(!box){box=document.createElement('div');box.className='hn-v4-managed-content hn-v4-content-grid';host.appendChild(box)}
  const html=[...cont.map(contentCard4)];box.innerHTML=html.join('');
+ // فایل‌های تب‌های جدید هم دقیقاً با کارت‌های جمع‌وجور فرم‌ها نمایش داده شوند.
+ box.classList.toggle('hn-file-list-grid', box.querySelector('[data-content-type="file"]')!==null);
  box.querySelectorAll('.hn-training-video').forEach(v=>v.addEventListener('click',e=>e.stopPropagation(),true));
  sites.forEach(o=>box.appendChild(siteCard4(o)));
 }
@@ -1491,7 +1502,30 @@ function renderNested4(parentKey,host){
  const nav=document.createElement('div');nav.className='hn-custom-subtabs';wrap.appendChild(nav);const body=document.createElement('div');body.className='hn-v4-managed-child-bodies';wrap.appendChild(body);
  kids.forEach((t,idx)=>{const b=document.createElement('button');b.className='hn-custom-subtab-btn'+(idx===0?' active':'');b.innerHTML='<i class="'+esc4(icon4(t.icon))+'"></i> '+esc4(t.title);nav.appendChild(b);const sec=document.createElement('div');sec.className='hn-custom-child-panel';sec.dataset.childTab=t.tab_key;sec.style.display=idx===0?'block':'none';body.appendChild(sec);renderTabContents4(t.tab_key,sec);renderNested4(t.tab_key,sec);b.onclick=()=>{nav.querySelectorAll('button').forEach(x=>x.classList.remove('active'));b.classList.add('active');body.querySelectorAll(':scope > .hn-custom-child-panel').forEach(x=>x.style.display=x===sec?'block':'none')};});host.appendChild(wrap);renderTabContents4(parentKey,host)
 }
-function applyRootTabs4(){const root=document.getElementById('hnResourceTabs');if(!root)return;const roots=HN4.tabs.filter(x=>!x.parent_key&&x.active!==false),map={sites:'resource:sites',training:'resource:training',forms:'resource:forms'};root.querySelectorAll('button[data-resource]').forEach(b=>{const t=tab4(map[b.dataset.resource]);b.style.display=t?'':'none';if(!t && !HN4.tabs.length)b.style.display='';if(t){const i=b.querySelector('i');if(i)i.className=icon4(t.icon);const txt=[...b.childNodes].find(n=>n.nodeType===3);if(txt)txt.textContent=' '+t.title}});root.querySelectorAll('button[data-hn-custom-root]').forEach(x=>x.remove());roots.filter(t=>!Object.values(map).includes(t.tab_key)).forEach(t=>{const b=document.createElement('button');b.dataset.resource='custom:'+t.tab_key;b.dataset.hnCustomRoot='1';b.innerHTML='<i class="'+esc4(icon4(t.icon))+'"></i> '+esc4(t.title);b.onclick=()=>window.switchResource('custom:'+t.tab_key);root.appendChild(b)})}
+function applyRootTabs4(){
+ const root=document.getElementById('hnResourceTabs');if(!root)return;
+ const map={sites:'resource:sites',training:'resource:training',forms:'resource:forms'};
+ const fallbackRoots=[
+  {tab_key:'tab:1ebf268e475c49e3b6e1283b47b115e6',title:'نرخ نامه های خدمات',icon:'fa-file-invoice'},
+  {tab_key:'tab:6e411654150c4f6ea32f4adac5c67aff',title:'مدارک مورد نیاز هر خدمت',icon:'fa-clipboard-list'}
+ ];
+ root.querySelectorAll('button[data-resource]').forEach(b=>{
+  const t=tab4(map[b.dataset.resource]);b.style.display=t?'':'none';
+  if(t){const i=b.querySelector('i');if(i)i.className=icon4(t.icon);const txt=[...b.childNodes].find(n=>n.nodeType===3);if(txt)txt.textContent=' '+t.title;}
+ });
+ root.querySelectorAll('button[data-hn-custom-root]').forEach(x=>x.remove());
+ const roots=HN4.tabs.filter(x=>!x.parent_key&&x.active!==false&&!String(x.tab_key||'').startsWith('resource:'));
+ const keys=new Set();
+ roots.forEach(t=>{
+  keys.add(t.tab_key);const b=document.createElement('button');b.dataset.resource='custom:'+t.tab_key;b.dataset.hnCustomRoot='1';
+  b.innerHTML='<i class="'+esc4(icon4(t.icon))+'"></i> '+esc4(t.title);b.onclick=()=>window.switchResource('custom:'+t.tab_key);root.appendChild(b);
+ });
+ fallbackRoots.forEach(t=>{
+  if(keys.has(t.tab_key))return;
+  const b=document.createElement('button');b.dataset.resource='custom:'+t.tab_key;b.dataset.hnCustomRoot='1';
+  b.innerHTML='<i class="'+esc4(icon4(t.icon))+'"></i> '+esc4(t.title);b.onclick=()=>window.switchResource('custom:'+t.tab_key);root.appendChild(b);
+ });
+}
 function applySiteTabs4(){
  const bar=document.getElementById('tabBar');
  if(!bar)return;
@@ -1607,7 +1641,23 @@ function startManagedDocumentsSync4(){
  if(window.__hnManagedDocsTimer){clearInterval(window.__hnManagedDocsTimer);window.__hnManagedDocsTimer=null;}
 }
 
-function renderCustomRoots4(){document.querySelectorAll('[data-hn-custom-panel]').forEach(x=>x.remove());const roots=HN4.tabs.filter(x=>!x.parent_key&&x.active!==false&&!x.tab_key.startsWith('resource:'));const anchor=document.getElementById('trainingPanel')||document.getElementById('formsPanel');roots.forEach(t=>{const p=document.createElement('section');p.className='hn-resource-panel';p.dataset.hnCustomPanel=t.tab_key;p.style.display='none';p.innerHTML='<div class="hn-v4-custom-head"><h2><i class="'+esc4(icon4(t.icon))+'"></i> '+esc4(t.title)+'</h2></div>';renderNested4(t.tab_key,p);(anchor?.parentNode||document.body).insertBefore(p,anchor||null)})}
+function renderCustomRoots4(){
+ document.querySelectorAll('[data-hn-custom-panel]').forEach(x=>x.remove());
+ const fallbackRoots=[
+  {tab_key:'tab:1ebf268e475c49e3b6e1283b47b115e6',title:'نرخ نامه های خدمات',icon:'fa-file-invoice'},
+  {tab_key:'tab:6e411654150c4f6ea32f4adac5c67aff',title:'مدارک مورد نیاز هر خدمت',icon:'fa-clipboard-list'}
+ ];
+ const realRoots=HN4.tabs.filter(x=>!x.parent_key&&x.active!==false&&!String(x.tab_key||'').startsWith('resource:'));
+ const byKey=new Map(realRoots.map(x=>[x.tab_key,x]));
+ fallbackRoots.forEach(x=>{if(!byKey.has(x.tab_key))byKey.set(x.tab_key,x)});
+ const roots=[...byKey.values()];
+ const anchor=document.getElementById('trainingPanel')||document.getElementById('formsPanel');
+ roots.forEach(t=>{
+  const p=document.createElement('section');p.className='hn-resource-panel';p.dataset.hnCustomPanel=t.tab_key;p.style.display='none';
+  p.innerHTML='<div class="hn-v4-custom-head"><h2><i class="'+esc4(icon4(t.icon))+'"></i> '+esc4(t.title)+'</h2></div>';
+  renderNested4(t.tab_key,p);(anchor?.parentNode||document.body).insertBefore(p,anchor||null);
+ });
+}
 function applyState4(d){HN4.tabs=Array.isArray(d?.tabs)?d.tabs:[];HN4.overrides=Array.isArray(d?.overrides)?d.overrides:[];HN4.content=Array.isArray(d?.content)?d.content:[];HN4.config=d?.config&&typeof d.config==='object'?d.config:{};applyPanelConfig4();applyRootTabs4();applySiteTabs4();applyBaseSiteUpdates4();applyHiddenSites4();renderNotices4();renderTraining4();renderForms4();renderCustomRoots4();window.switchResource(window.__HN4_RESOURCE||'sites');window.search?.()}
 window.applyCustomerState=applyState4;
 /* V7 FIX: preserve the currently selected resource tab when state polling refreshes. */
@@ -1633,10 +1683,12 @@ window.switchResource=function(type){
   document.querySelectorAll('[data-site-content],[data-resource-site]').forEach(e=>e.classList.toggle('body-resource-hidden',!isSites));
   document.getElementById('trainingPanel')?.classList.toggle('body-resource-hidden',type!=='training');
   document.getElementById('formsPanel')?.classList.toggle('body-resource-hidden',type!=='forms');
-  // زیرتب‌های «سایت‌ها و خدمات» فقط وقتی خود بخش سایت‌ها فعال است دیده شوند.
   ['tabBar','count','searchBox','searchWrap'].forEach(id=>{const e=document.getElementById(id);if(e)e.classList.toggle('body-resource-hidden',!isSites)});
   document.querySelectorAll('.tabs,.count').forEach(e=>e.classList.toggle('body-resource-hidden',!isSites));
-  document.querySelectorAll('[data-hn-custom-panel]').forEach(e=>e.style.display=(type==='custom:'+e.dataset.hnCustomPanel)?'block':'none');
+  document.querySelectorAll('[data-hn-custom-panel]').forEach(e=>{
+    e.style.display=(type==='custom:'+e.dataset.hnCustomPanel)?'block':'none';
+    e.classList.toggle('body-resource-hidden',type!=='custom:'+e.dataset.hnCustomPanel);
+  });
   if(isSites)window.filterCat('-1');
   else window.HN_ACTIVE_CAT='-999999';
 };
@@ -1657,7 +1709,56 @@ window.search=window.search||function(){};
   }
   window.addEventListener('DOMContentLoaded',()=>setTimeout(patchTrainingV6,1200));
 })();
-</script></body>
+</script>
+<style id="hn-all-custom-file-cards-v19">
+/* تمام تب‌های سفارشی: فایل‌ها با همان کارت کوچک و دو ستونه فرم‌ها */
+.hn-v4-managed-content.hn-file-list-grid{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:8px!important;
+  padding:10px!important;
+  background:rgba(248,250,252,.92)!important;
+  border:1px solid #e7ebf2!important;
+  border-radius:16px!important;
+}
+.hn-v4-managed-content.hn-file-list-grid > .hn-v4-content-card[data-content-type="file"]{
+  min-width:0!important;
+  min-height:58px!important;
+  width:100%!important;
+  box-sizing:border-box!important;
+  margin:0!important;
+  padding:10px 12px!important;
+  border:1px solid #edf0f5!important;
+  border-radius:14px!important;
+  background:#fff!important;
+  box-shadow:none!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:9px!important;
+}
+.hn-v4-managed-content.hn-file-list-grid > .hn-v4-content-card[data-content-type="file"] .hn-content-icon{
+  width:32px!important;height:32px!important;min-width:32px!important;
+  border-radius:10px!important;margin:0!important;font-size:14px!important;
+}
+.hn-v4-managed-content.hn-file-list-grid > .hn-v4-content-card[data-content-type="file"] h3{
+  flex:1!important;min-width:0!important;margin:0!important;
+  font-size:12px!important;line-height:1.7!important;text-align:right!important;
+}
+.hn-v4-managed-content.hn-file-list-grid > .hn-v4-content-card[data-content-type="file"] p{display:none!important}
+.hn-v4-managed-content.hn-file-list-grid > .hn-v4-content-card[data-content-type="file"] .hn-content-open{
+  flex:0 0 auto!important;margin:0!important;padding:7px 9px!important;
+  min-width:auto!important;border-radius:9px!important;font-size:10px!important;
+  white-space:nowrap!important;
+}
+@media(max-width:600px){
+  .hn-v4-managed-content.hn-file-list-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important;padding:8px!important}
+  .hn-v4-managed-content.hn-file-list-grid > .hn-v4-content-card[data-content-type="file"]{min-height:54px!important;padding:8px 9px!important;gap:7px!important}
+  .hn-v4-managed-content.hn-file-list-grid > .hn-v4-content-card[data-content-type="file"] .hn-content-icon{width:28px!important;height:28px!important;min-width:28px!important;font-size:12px!important}
+  .hn-v4-managed-content.hn-file-list-grid > .hn-v4-content-card[data-content-type="file"] h3{font-size:10.5px!important}
+  .hn-v4-managed-content.hn-file-list-grid > .hn-v4-content-card[data-content-type="file"] .hn-content-open{padding:6px 7px!important;font-size:9px!important}
+}
+</style>
+</body>
 </html>
 <style id="hn-training-head-bold">
 #trainingPanel .resource-head h2, #trainingPanel .resource-head p { font-weight: 800 !important; }
